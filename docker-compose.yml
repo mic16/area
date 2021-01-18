@@ -1,11 +1,11 @@
 version: "3.0"
 services:
-  # area-frontend:
-  #   build: ./frontend/
-  #   ports:
-  #     - "8081:3000"
-  #   depends_on:
-  #     - area-backend
+  area-frontend:
+    build: ./react_front/Area
+    ports:
+      - "8081:19006"
+    depends_on:
+      - area-backend
 
   area-backend:
     build: ./backend/

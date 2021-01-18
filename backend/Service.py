@@ -1,6 +1,7 @@
 import inspect
 from flask import request, abort, redirect, url_for
 services = {}
+redisClient = None
 
 def Service():
     def decorator(clazz):
@@ -48,6 +49,8 @@ def servicePage(serviceName, action, page):
     else:
         abort(404)
 
-def setup(app):
+def setup(app, redis):
+    for serviceName, service in services.items():
+        service['instance'].redis = redis
     app.route("/<serviceName>/<action>/<path:page>")(servicePage)
         
