@@ -1,11 +1,15 @@
 from markupsafe import escape
 from flask import Flask
+from AccountAPI import account_api
 import sqlite3
 import Twitter
 import Facebook
 import Service
 
 DATABASE = 'dataBase/data.db'
+app = Flask("AREA")
+
+app.register_blueprint(account_api)
 
 def get_db():
     db = getattr(Flask, '_database', None)
@@ -19,5 +23,4 @@ def close_connection(exception):
     if db is not None:
         db.close()
 
-app = Flask("AREA")
 Service.setup(app)
