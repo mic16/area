@@ -5,13 +5,13 @@ account_api = Blueprint('account_api', __name__)
 
 @account_api.route("/login", methods=['POST'])
 def login():
-    # print(request.form['username'], request.form['password'])
+    print(request.form['username'], request.form['password'])
+    return ("connard")
+
+@account_api.route("/register", methods=['POST'])
+def register():
     pass
 
-# @account_api.route("/register", methods=['POST'])
-# def login():
-#     pass
-
-# @account_api.route("/logout", methods=['POST'])
-# def login():
-#     pass
+@account_api.route("/logout", methods=['POST'])
+def logout():
+    pass
