@@ -1,0 +1,36 @@
+version: "3.0"
+services:
+  area-frontend:
+    build: ./frontend/
+    ports:
+      - "8081:3000"
+    depends_on:
+      - area-backend
+
+  area-backend:
+    build: ./backend/
+    # volumes:
+    #   - "./backend:/var/app"
+    ports:
+      - "8080:5000"
+    depends_on:
+      - redis
+    networks:
+      - redis-net
+
+  redis:
+    image: redislabs/rejson:latest
+    hostname: redis
+    command: redis-server --loadmodule /usr/lib/redis/modules/rejson.so --appendonly yes
+    networks:
+      - redis-net
+    volumes:
+      - ./redis-data:/data
+      - ./redis-dump:/var/lib/redis-dump
+
+volumes:
+  redis-data:
+  redis-dump:
+
+networks:
+  redis-net:
