@@ -1,22 +1,25 @@
 version: "3.0"
 services:
-  area-frontend:
-    build: ./frontend/
-    ports:
-      - "8081:3000"
-    depends_on:
-      - area-backend
+  # area-frontend:
+  #   build: ./frontend/
+  #   ports:
+  #     - "8081:3000"
+  #   depends_on:
+  #     - area-backend
 
   area-backend:
     build: ./backend/
-    # volumes:
-    #   - "./backend:/var/app"
+    volumes:
+      - "./backend:/var/app"
     ports:
       - "8080:5000"
     depends_on:
       - redis
     networks:
       - redis-net
+    environment:
+      - FLASK_APP=main.py
+      - FLASK_ENV=development
 
   redis:
     image: redislabs/rejson:latest

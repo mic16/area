@@ -9,4 +9,9 @@ import Facebook
 import Service
 
 app = Flask("AREA")
+
+@app.route('/')
+def index():
+    return 'Index'
+
 Service.setup(app)
