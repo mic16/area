@@ -1,19 +1,12 @@
 import sys
 from markupsafe import escape
-from flask import Flask
 from rejson import Client, Path
+from app import app, data
 import Service
-
-redis = Client(host='redis', port=6379, decode_responses=True)
+import authentification
 
 sys.path.append('./services/')
 import Twitter
 import Facebook
 
-app = Flask("AREA")
-
-@app.route('/')
-def index():
-    return 'Index'
-
-Service.setup(app, redis)
+Service.setup(app, data.getRedis())
