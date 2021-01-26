@@ -1,5 +1,6 @@
 __pycache__/
 storage/__pycache__/
+storage/__pycache__/
 service/__pycache__/
 services/__pycache__/
 tools/__pycache__/

@@ -4,6 +4,7 @@ import sys
 sys.path.append('./service/')
 sys.path.append('./types/')
 sys.path.append('./storage/')
+sys.path.append('./tools/')
 
 # Imports
 from markupsafe import escape
