@@ -1,14 +1,24 @@
-from Service import Service, Action, Reaction
+from Action import Action
+from Service import Service
+from Reaction import Reaction
+from Field import Field
 
 @Service()
 class Twitter():
     def __init__(self):
         pass
 
-    @Action('OnTweet', 'When a user tweet something')
-    def onTweet(self, request):
-        return request.args
+    @Action(
+        'When a user tweet something',
+        [str],
+    )
+    @Field('match', 'string', 'String that should be matched')
+    def onTweet(self, area, fields):
+        pass
 
-    @Reaction('Tweet', 'Tweet something to a user')
-    def tweet(self, request):
-        return 'Tweet'
+    @Reaction(
+        'Post a new tweet',
+        [str],
+    )
+    def tweet(self, area, fields, texts):
+        print(' '.join(texts))

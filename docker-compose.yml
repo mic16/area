@@ -3,7 +3,7 @@ services:
   area-frontend:
     build: ./react_front/Area
     ports:
-      - "8081:19006"
+      - "8081:19000"
     depends_on:
       - area-backend
 
