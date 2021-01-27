@@ -3,32 +3,13 @@ import React, { Component } from 'react';
 import { AppRegistry, TextInput, TouchableOpacity, TouchableOpacityBase } from "react-native"
 import { Alert, StyleSheet, View } from 'react-native';
 import { Text, Button, Container, Header, Content, Form, Item, Input, Label, Title } from 'native-base';
+import { Font } from 'expo';
+import { Ionicons } from '@expo/vector-icons';
+import LoginComponent from './Login';
 
 export default function App() {
   return (
-    <Container>
-        <Header />
-        <Title>
-          Welcome to the Area !
-        </Title>
-        <Content>
-          <Form>
-            <Item fixedLabel>
-              <Label>Username</Label>
-              <Input />
-            </Item>
-            <Item fixedLabel last>
-              <Label>Password</Label>
-              <Input />
-            </Item>
-            <Button>
-              <Text>
-                Login
-              </Text>
-            </Button>
-          </Form>
-        </Content>
-      </Container>
+    <LoginComponent></LoginComponent>
   );
 }
 
