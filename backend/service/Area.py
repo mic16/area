@@ -1,15 +1,27 @@
 import uuid
+import Service
 
 class Area():
-    def __init__(self, user, action, reaction, config):
-        assert hasattr(action, '__service__'), 'Expected action method to be annotated as an Action'
-        assert hasattr(reaction, '__service__'), 'Expected reaction method to be annotated as a Reaction'
-        self.user = user
-        self.action = action
-        self.reaction = reaction
+    def __init__(self, json):
+        self.errored = False
         self.uuid = uuid.uuid4().hex
-        self.actionConfig = config.get('action')
-        self.reactionConfig = config.get('reaction')
+
+        actionJson = json.get('action')
+        reactionJson = json.get('reaction')
+
+        # if not actionJson or not actionJson is dict
+        # or not reactionJson or not reactionJson is dict:
+        #     self.errored = True
+        #     return
+
+
+        
+        
+        
+
+
+    def isErrored(self):
+        return self.errored
 
     def getUUID(self):
         return self.uuid        
