@@ -5,6 +5,7 @@ sys.path.append('./service/')
 sys.path.append('./types/')
 sys.path.append('./storage/')
 sys.path.append('./tools/')
+sys.path.append('./API/')
 
 # Imports
 from markupsafe import escape
@@ -14,6 +15,9 @@ from flask import request
 import authentification
 import time
 from Area import Area
+
+import twitterApi
+import githubApi
 
 
 # Import Services
