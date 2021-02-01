@@ -5,6 +5,7 @@ sys.path.append('./service/')
 sys.path.append('./types/')
 sys.path.append('./storage/')
 sys.path.append('./tools/')
+sys.path.append('./API/')
 
 # Imports
 from markupsafe import escape
@@ -16,6 +17,8 @@ import time
 from Area import Area
 
 import twitterApi
+import githubApi
+
 
 # Import Services
 sys.path.append('./services/')

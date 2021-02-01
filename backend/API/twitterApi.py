@@ -4,6 +4,7 @@ from app import app, data
 import requests
 from requests_oauthlib.oauth1_auth import Client
 from flask_restful import Resource, reqparse
+import sys
 
 consumerKey = "DTGYoaM8PlsMw6Zf42dhor8Rj"
 consumerSecretKey = "4JyPpImRxcoxSi3acwVkMZAK1tgghpKpPsrFddETgXYNhKDSt9"
@@ -30,7 +31,7 @@ def oauthAuthorizedTwitter():
     args = parser.parse_args()
     res = requests.post('https://api.twitter.com/oauth/access_token?oauth_token=' + args['oauth_token'] + '&oauth_verifier=' + args['oauth_verifier'])
     
-    
+    print(res.text, file=sys.stderr)
     res_split = res.text.split('&')
     oauth_token = res_split[0].split('=')[1]
     oauth_secret = res_split[1].split('=')[1]
@@ -38,4 +39,4 @@ def oauthAuthorizedTwitter():
     username = res_split[3].split('=')[1]
     
     
-    return {"message": "connected as " + username}
+    return {"message": "connected as " + oauth_token}
