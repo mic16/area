@@ -1,14 +1,14 @@
 import inspect
 
-def Reaction(desc, inputTypes):
+def Reaction(desc, inputType=None):
     def decorator(func):
         assert inspect.isfunction(func), 'Reaction should be applied to a method'
-        assert type(inputTypes) == list, 'Expected a list of input types'
+        assert type(inputType) == type, 'Expected a class'
 
         func.__service__ = {
             'type': 'reaction',
             'description': desc,
-            'inputs': inputTypes
+            'inputs': inputType
         }
 
         return func

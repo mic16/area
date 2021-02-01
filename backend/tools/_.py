@@ -207,3 +207,12 @@ def has(obj, path):
         else:
             return False
     return True
+
+def Is(obj, ttype, default=None):
+    if type(ttype) is list:
+        if type(obj) in ttype:
+            return obj
+        return default
+    elif type(obj) is ttype:
+        return obj
+    return default

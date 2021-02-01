@@ -1,4 +1,5 @@
 import sys
+import builtins
 
 # Add subpath
 sys.path.append('./service/')
@@ -25,16 +26,15 @@ import Twitter
 def listServices():
     return {'result': Service.listServices()}
 
-@app.route('/services/<string:serviceName>/<string:actionName>/compatTable')
+@app.route('/services/<string:serviceName>/<string:actionName>/compatTable', methods=['POST'])
 def getServiceCompat(serviceName, actionName):
-    compatList = Service.listCompatibleReactions(serviceName, actionName)
+    compatList = Service.listCompatibleReactions(serviceName, actionName, request.json)
     if compatList is not None:
         return {'result': compatList}
     return {'error': 'Unkown action %s for service %s' % (actionName, serviceName)}
 
 @app.route('/services/<string:serviceName>')
 def serviceInfos(serviceName):
-    print(serviceName)
     infos = Service.getServiceInfos(serviceName)
     if infos:
         return {'result': infos}
