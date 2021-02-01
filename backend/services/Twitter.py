@@ -18,7 +18,7 @@ class Twitter():
         if fields.getBool('with image') == True:
             trig.addType(int)
 
-        def func(area):
+        def func(area, fields):
             if fields.getBool('with image') == True:
                 area.ret(666)
             area.ret('Hello')
@@ -27,7 +27,7 @@ class Twitter():
 
     @Reaction(
         'Post a new tweet',
-        int,
+        str,
     )
     def tweet(self, area, fields):
-        print(' '.join(texts))
+        print(area.get(str), area.get(int))

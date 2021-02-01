@@ -3,6 +3,9 @@ import Service
 from app import data
 import _
 from Config import Config
+from TokenManager import TokenManager
+
+tokenManager = TokenManager()
 
 class Area():
     def __init__(self, json):
@@ -16,7 +19,7 @@ class Area():
             self.errored = True
             return
 
-        self.user = data.getTokenUser(token)
+        self.user = tokenManager.getTokenUser(token)
 
         if not self.user:
             self.errored = True
@@ -37,25 +40,27 @@ class Area():
         reactionName = reactionJson.get('name')
         self.reactionConfig = reactionJson.get('config', {})
 
-        if not type(actionService) is str or not type(actionName) is str or not type(actionConfig) is dict:
+        if not type(actionService) is str or not type(actionName) is str or not type(self.actionConfig) is dict:
             self.errored = True
             return
 
-        if not type(reactionService) is str or not type(reactionName) is str or not type(reactionConfig) is dict:
+        if not type(reactionService) is str or not type(reactionName) is str or not type(self.reactionConfig) is dict:
             self.errored = True
             return
 
-        actionfunc, self.actionInstance = Service.getAction(actionService, actionName)
-        reactionfunc, self.reactionInstance = Service.getReaction(reactionService, reactionName)
+        actionInfos, self.actionInstance = Service.getAction(actionService, actionName)
+        reactionInfos, self.reactionInstance = Service.getReaction(reactionService, reactionName)
 
-        if not actionfunc or not reactionfunc:
+        if not actionInfos or not reactionInfos:
             self.errored = True
             return
+        
 
-        self.action = actionfunc(actionInstance, actionConfig)
-        self.reaction = reactionfunc
         self.actionConfig = Config(self.actionConfig)
         self.reactionConfig = Config(self.reactionConfig)
+
+        self.action = actionInfos['method'](self.actionInstance, self.actionConfig)
+        self.reaction = reactionInfos['method']
         
         
         
@@ -79,9 +84,9 @@ class Area():
         return self.user
 
     def trigger(self):
-        self.returns = []
+        self.returns = {}
         actionEx = self.action.getAction()
-        actionEx(self.actionInstance, self, self.actionConfig)
+        actionEx(self, self.actionConfig)
         inputs = self.reaction.__service__['inputs']
         if not inputs or inputs in self.returns:
             self.reaction(self.reactionInstance, self, self.reactionConfig)

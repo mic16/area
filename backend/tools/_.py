@@ -1,4 +1,5 @@
 import re
+import functools
 
 class Token():
     def __init__(self, value, type):
@@ -13,6 +14,7 @@ class Token():
 
 
 class PathParser():
+    @functools.cache
     def parse(self, path, constructMode=False):
         if type(path) is list:
             return path
