@@ -1,15 +1,81 @@
 import uuid
+import Service
+from app import data
+import _
+from Config import Config
+from TokenManager import TokenManager
+
+tokenManager = TokenManager()
 
 class Area():
-    def __init__(self, user, action, reaction, config):
-        assert hasattr(action, '__service__'), 'Expected action method to be annotated as an Action'
-        assert hasattr(reaction, '__service__'), 'Expected reaction method to be annotated as a Reaction'
-        self.user = user
-        self.action = action
-        self.reaction = reaction
+    def __init__(self, json):
+        self.errored = False
         self.uuid = uuid.uuid4().hex
-        self.actionConfig = config.get('action')
-        self.reactionConfig = config.get('reaction')
+        self.returns = {}
+
+        token = json.get('token')
+
+        if not type(token) is str:
+            self.errored = True
+            return
+
+        self.user = tokenManager.getTokenUser(token)
+
+        if not self.user:
+            self.errored = True
+            return
+
+        actionJson = json.get('action')
+        reactionJson = json.get('reaction')
+
+        if not type(actionJson) is dict or not type(reactionJson) is dict:
+            self.errored = True
+            return
+
+        actionService = actionJson.get('service')
+        actionName = actionJson.get('name')
+        self.actionConfig = actionJson.get('config', {})
+
+        reactionService = reactionJson.get('service')
+        reactionName = reactionJson.get('name')
+        self.reactionConfig = reactionJson.get('config', {})
+
+        if not type(actionService) is str or not type(actionName) is str or not type(self.actionConfig) is dict:
+            self.errored = True
+            return
+
+        if not type(reactionService) is str or not type(reactionName) is str or not type(self.reactionConfig) is dict:
+            self.errored = True
+            return
+
+        actionInfos, self.actionInstance = Service.getAction(actionService, actionName)
+        reactionInfos, self.reactionInstance = Service.getReaction(reactionService, reactionName)
+
+        if not actionInfos or not reactionInfos:
+            self.errored = True
+            return
+        
+
+        self.actionConfig = Config(self.actionConfig)
+        self.reactionConfig = Config(self.reactionConfig)
+
+        self.action = actionInfos['method'](self.actionInstance, self.actionConfig)
+        self.reaction = reactionInfos['method']
+        
+        
+        
+
+    def get(self, type):
+        return self.returns.get(type)
+    
+    def ret(self, value):
+        ttype = type(value)
+        array = self.returns.get(ttype) or []
+        array.append(value)
+        self.returns[ttype] = array
+
+    def isErrored(self):
+        return self.errored
 
     def getUUID(self):
         return self.uuid        
@@ -18,24 +84,10 @@ class Area():
         return self.user
 
     def trigger(self):
-        out = (self.action(self.service, self, self.actionConfig))
-        if out is not None and len(out) > 0:
-            inputs = self.reaction.__service__['inputs']
-            paramsOrdered = []
-            if len(inputs) > 0:
-                params = {}
-                for var in out:
-                    typeName = type(var).__name__
-                    paramType = params.get(typeName,  [])
-                    paramType.append(var)
-                    params[typeName] = paramType
-
-                if not params.get(inputs[0].__name__):
-                    return
-
-                for vartype in inputs:
-                    var = params.get(vartype.__name__)
-                    if var:
-                        paramsOrdered.append(var)
+        self.returns = {}
+        actionEx = self.action.getAction()
+        actionEx(self, self.actionConfig)
+        inputs = self.reaction.__service__['inputs']
+        if not inputs or inputs in self.returns:
+            self.reaction(self.reactionInstance, self, self.reactionConfig)
                 
-            self.reaction(self, self.service, self.reactionConfig, *paramsOrdered)
