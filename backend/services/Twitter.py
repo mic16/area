@@ -27,7 +27,7 @@ class Twitter():
 
     @Reaction(
         'Post a new tweet',
-        str,
+        int,
     )
     def tweet(self, area, fields):
         print(area.get(str), area.getUser().getMail())

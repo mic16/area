@@ -76,7 +76,7 @@ def createArea():
             if user := data.constructUser(mail):
                 area = Area(json, user)
                 if area.isErrored():
-                    return {'error': 'Missing or Wrongly formatted data'}
+                    return {'error': area.getErrorMessage() or 'Missing or Wrongly formatted data'}
                 
                 if not data.createArea(mail, area.getUUID(), json):
                     return {'error': 'Failed to create area, already exists'}

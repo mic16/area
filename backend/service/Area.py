@@ -10,6 +10,7 @@ tokenManager = TokenManager()
 class Area():
     def __init__(self, json, user, fuuid=None):
         self.errored = False
+        self.errormessage = None
         self.uuid = fuuid or uuid.uuid4().hex
         self.returns = {}
         self.lastTrigger = 0
@@ -20,7 +21,7 @@ class Area():
         reactionJson = json.get('reaction')
 
         if not type(actionJson) is dict or not type(reactionJson) is dict:
-            self.errored = True
+            self.error('Wrongly formatted Action or Reaction')
             return
 
         actionService = actionJson.get('service')
@@ -32,18 +33,18 @@ class Area():
         self.reactionConfig = reactionJson.get('config', {})
 
         if not type(actionService) is str or not type(actionName) is str or not type(self.actionConfig) is dict:
-            self.errored = True
+            self.error('Action, expected string for fields [service, name] and object for fields [config]')
             return
 
         if not type(reactionService) is str or not type(reactionName) is str or not type(self.reactionConfig) is dict:
-            self.errored = True
+            self.error('Reaction, expected string for fields [service, name] and object for fields [config]')
             return
 
         actionInfos, self.actionInstance = Service.getAction(actionService, actionName)
         reactionInfos, self.reactionInstance = Service.getReaction(reactionService, reactionName)
 
         if not actionInfos or not reactionInfos:
-            self.errored = True
+            self.error('Action / Reaction does not exists')
             return
         
 
@@ -52,8 +53,17 @@ class Area():
 
         self.action = actionInfos['method'](self.actionInstance, self.actionConfig)
         self.reaction = reactionInfos['method']
+
+        if not Service.isReactionCompatibleWithAction(reactionInfos, self.action):
+            self.error('Action and Reaction are incompatible')
+            return
         
-        
+    def error(self, message=None):
+        self.errored = True
+        self.errormessage = message
+    
+    def getErrorMessage(self):
+        return self.errormessage
         
 
     def get(self, type):
