@@ -1,7 +1,7 @@
 from Action import Action
 from Service import Service
 from Reaction import Reaction
-from Field import Field
+from Field import Field, FTYPE
 from Trigger import Trigger
 
 @Service()
@@ -10,8 +10,8 @@ class Twitter():
         pass
 
     @Action('When a user tweet something')
-    @Field('match', 'string', 'String that should be matched')
-    @Field('with image', 'bool', 'If the post should contain an image')
+    @Field('match', FTYPE.STRING, 'String that should be matched')
+    @Field('with image', FTYPE.BOOLEAN, 'If the post should contain an image')
     def onTweet(self, fields):
 
         trig = Trigger(types=[str])
