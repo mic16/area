@@ -37,7 +37,7 @@ class DataBase:
     def constructUser(self, mail):
         json = self.getUser(mail)
         if json:
-            return User(json)
+            return User(mail, self.redis)
         return None
 
     def createUser(self, mail, password):
