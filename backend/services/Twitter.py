@@ -3,6 +3,7 @@ from Service import Service
 from Reaction import Reaction
 from Field import Field
 from Trigger import Trigger
+import twitterApi
 
 @Service()
 class Twitter():
@@ -30,5 +31,4 @@ class Twitter():
         str,
     )
     def tweet(self, area, fields):
-        print('Salut')
-        print(area.get(str), area.get(int))
+        twitterApi.newTweet(area.getUser(), area.get(str)[0])
