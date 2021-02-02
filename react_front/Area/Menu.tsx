@@ -51,15 +51,11 @@ export default class MenuComponent extends Component {
               </Button>
               <Button vertical>
                 <Icon name="camera" />
-                <Text>Camera</Text>
-              </Button>
-              <Button vertical active>
-                <Icon active name="navigate" />
-                <Text>Navigate</Text>
+                <Text>Create Area</Text>
               </Button>
               <Button vertical>
                 <Icon name="person" />
-                <Text>Contact</Text>
+                <Text>My Area</Text>
               </Button>
             </FooterTab>
           </Footer>

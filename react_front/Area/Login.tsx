@@ -41,9 +41,9 @@ export default class LoginComponent extends Component {
                     Login
                 </Text>
                 
-                <Item last style={{ alignSelf:'center' }}>
-                  <Icon name="person-outline"></Icon>
-                  <Label>Username: </Label>
+                <Item last>
+                  <Icon name="mail-outline"></Icon>
+                  <Label>Email: </Label>
                   <Input />
                 </Item>
                 <Item last>
@@ -68,11 +68,6 @@ export default class LoginComponent extends Component {
                   <Input />
                 </Item>
                 <Item last>
-                  <Icon name="person-outline"></Icon>
-                  <Label>Username: </Label>
-                  <Input />
-                </Item>
-                <Item last>
                 <Icon name="lock-closed-outline"></Icon>
                   <Label>Password: </Label>
                   <Input secureTextEntry={true}/>
@@ -84,7 +79,7 @@ export default class LoginComponent extends Component {
                 </Item>
                 <Button style={{ alignItems:"center", justifyContent:'center', marginTop: 20, marginBottom: 20, width:'100%'}}>
                   <Text>
-                    Login
+                    Sign Up
                   </Text>
                 </Button>
               </Form>
@@ -104,12 +99,12 @@ export default class LoginComponent extends Component {
             <Content style= {{ position: "relative" }}>
               <Form style= {{ height: 150, position: "relative", marginTop: 10 }}>
               
-                <Item floatingLabel>
-                <Icon name="person-outline"></Icon>
-                  <Label>Username</Label>
+                <Item inlineLabel>
+                <Icon name="mail-outline"></Icon>
+                  <Label>Email</Label>
                   <Input />
                 </Item>
-                <Item floatingLabel last>
+                <Item inlineLabel last>
                 <Icon name="lock-closed-outline"></Icon>
                   <Label>Password</Label>
                   <Input secureTextEntry={true} />
@@ -125,25 +120,20 @@ export default class LoginComponent extends Component {
                     Create one below !
                 </Text>
                 <Form style= {{ height: 300, position: "relative" }}>
-                <Item floatingLabel>
+                <Item inlineLabel>
                 <Icon name="mail-outline"></Icon>
                   <Label>Email</Label>
                   <Input />
                 </Item>
-                <Item floatingLabel>
-                <Icon name="person-outline"></Icon>
-                  <Label>Username</Label>
-                  <Input />
-                </Item>
-                <Item floatingLabel last>
+                <Item inlineLabel last>
                 <Icon name="lock-closed-outline"></Icon>
                   <Label>Password</Label>
-                  <Input />
+                  <Input secureTextEntry={true} />
                 </Item>
-                <Item floatingLabel last>
+                <Item inlineLabel last>
                 <Icon name="lock-closed-outline"></Icon>
                   <Label>Confirm Password</Label>
-                  <Input />
+                  <Input secureTextEntry={true} />
                 </Item>
                 </Form>
             </Content>
