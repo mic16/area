@@ -1,4 +1,6 @@
-class FTYPE:
+from enum import Enum
+
+class FTYPE(Enum):
     INT = 'int'
     ARRAY = 'array'
     FLOAT = 'float'
