@@ -1,10 +1,9 @@
-FTYPE = {
-    'INT': 'int',
-    'ARRAY': 'array',
-    'FLOAT': 'float',
-    'STRING': 'string',
-    'BOOLEAN': 'boolean',
-}
+class FTYPE:
+    INT = 'int'
+    ARRAY = 'array'
+    FLOAT = 'float'
+    STRING = 'string'
+    BOOLEAN = 'boolean'
 
 def Field(name, type, desc):
     def decorator(func):
