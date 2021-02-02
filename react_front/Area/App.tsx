@@ -6,6 +6,7 @@ import { Text, Button, Container, Header, Content, Form, Item, Input, Label, Tit
 import { Font } from 'expo';
 import { Ionicons } from '@expo/vector-icons';
 import LoginComponent from './Login';
+import MenuComponent from './Menu';
 
 export default function App() {
   return (
