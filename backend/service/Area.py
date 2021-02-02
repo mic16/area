@@ -1,29 +1,20 @@
 import uuid
 import Service
-from app import data
 import _
 from Config import Config
 from TokenManager import TokenManager
+import time
 
 tokenManager = TokenManager()
 
 class Area():
-    def __init__(self, json):
+    def __init__(self, json, user, fuuid=None):
         self.errored = False
-        self.uuid = uuid.uuid4().hex
+        self.uuid = fuuid or uuid.uuid4().hex
         self.returns = {}
+        self.lastTrigger = 0
 
-        token = json.get('token')
-
-        if not type(token) is str:
-            self.errored = True
-            return
-
-        self.user = tokenManager.getTokenUser(token)
-
-        if not self.user:
-            self.errored = True
-            return
+        self.user = user
 
         actionJson = json.get('action')
         reactionJson = json.get('reaction')
@@ -84,10 +75,11 @@ class Area():
         return self.user
 
     def trigger(self):
-        self.returns = {}
-        actionEx = self.action.getAction()
-        actionEx(self, self.actionConfig)
-        inputs = self.reaction.__service__['inputs']
-        if not inputs or inputs in self.returns:
-            self.reaction(self.reactionInstance, self, self.reactionConfig)
-                
+        if (time.time() - self.lastTrigger)>= 60:
+            self.returns = {}
+            actionEx = self.action.getAction()
+            actionEx(self, self.actionConfig)
+            inputs = self.reaction.__service__['inputs']
+            if not inputs or inputs in self.returns:
+                self.reaction(self.reactionInstance, self, self.reactionConfig)
+            self.lastTrigger = time.time()

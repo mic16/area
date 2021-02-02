@@ -11,10 +11,11 @@ sys.path.append('./API/')
 # Imports
 from markupsafe import escape
 from rejson import Client, Path
-from app import app, data
+from app import app, data, areaManager
 from flask import request
 import authentification
 import time
+from TokenManager import TokenManager
 from Area import Area
 
 import twitterApi
@@ -25,6 +26,9 @@ import githubApi
 sys.path.append('./services/')
 import Service
 import Twitter
+
+tokenManager = TokenManager()
+data.load()
 
 @app.route('/services/')
 def listServices():
@@ -62,3 +66,35 @@ def aboutJSON():
         },
     }
     return result
+
+@app.route('/area/create', methods=['POST'])
+def createArea():
+    json = request.json
+    if token := json.get('token'):
+        if mail := tokenManager.getTokenUser(token):
+            if user := data.constructUser(mail):
+                area = Area(json, user)
+                if area.isErrored():
+                    return {'error': 'Missing or Wrongly formatted data'}
+                
+                if not data.createArea(mail, area.getUUID(), json):
+                    return {'error': 'Failed to create area, already exists'}
+                
+                areaManager.append(area)
+                return {'result': area.getUUID()}
+
+    return {'error': 'Invalid Token'}
+
+@app.route('/area/delete', methods=['POST'])
+def deleteArea():
+    json = request.json
+    if token := json.get('token'):
+        if mail := tokenManager.getTokenUser(token):
+            if user := data.constructUser(mail):
+                if uuid := json.get('uuid'):
+                    if data.deleteArea(mail, uuid):
+                        areaManager.remove(area.getUUID())
+                        return {'result': "Area '%s' removed" % uuid}
+                    return {'error': "Failed to delete area '%s' " % uuid}
+                return {'error': 'Missing UUID'}
+    return {'error': 'Invalid Token'}

@@ -15,4 +15,4 @@ class Trigger():
         return self
 
     def getAction(self):
-        return self.action    
+        return self.action

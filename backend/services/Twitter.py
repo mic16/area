@@ -30,4 +30,5 @@ class Twitter():
         str,
     )
     def tweet(self, area, fields):
+        print('Salut')
         print(area.get(str), area.get(int))

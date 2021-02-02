@@ -3,7 +3,6 @@ import string
 from flask import request, abort, redirect, url_for
 import math
 import time
-from app import app
 from Config import Config
 
 services = {}
