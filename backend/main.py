@@ -1,11 +1,12 @@
 import sys
 import builtins
+sys.path.append('./tools/')
+import logger
 
 # Add subpath
 sys.path.append('./service/')
 sys.path.append('./types/')
 sys.path.append('./storage/')
-sys.path.append('./tools/')
 sys.path.append('./API/')
 
 # Imports
