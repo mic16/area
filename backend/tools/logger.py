@@ -25,7 +25,7 @@ def log(*args, level=DEBUG):
         color = colors.RED
         prefix = '[ERROR]'
     elif level == DEBUG:
-        color = colors.PURPLE
+        color = colors.LIGHT_PURPLE
         prefix = '[DEBUG]'
     coloredMessage = '%s[%s]%s %s' % (color, __logger__, prefix, message)
     __print__(coloredMessage, file=sys.stderr)
