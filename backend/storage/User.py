@@ -3,9 +3,6 @@ class User:
         self.redis = redis
         self.mail = mail
 
-    def getTwitterInfo(self):
-        return self.get('twitter')
-
     def getMail(self):
         return self.get('mail')
 

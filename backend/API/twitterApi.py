@@ -34,6 +34,8 @@ def callbackParser():
 def oauthAuthorizedTwitter():
     req_data = request.get_json()
     if (req_data.get("token") == None):
+        return ({"error": "no token"})
+    if (TokenManager.getTokenUser(req_data.get("token")) == None):
         return ({"error": "bad token"})
     parser = callbackParser()
     args = parser.parse_args()
@@ -49,10 +51,28 @@ def oauthAuthorizedTwitter():
     return {"message": "connected as " + username}
 
 def newTweet(user, text):
-
     auth=tweepy.OAuthHandler(consumerKey,consumerSecretKey)
-    auth.set_access_token(user.getTwitterInfo().token, user.getTwitterInfo().oauth_secret)
+    auth.set_access_token(user.get("twitter.token"), user.get("twitter.token_secret"))
     api=tweepy.API(auth)
-
     tweet=input(text)
     api.update_status(tweet)
+
+def sendDirectMessage(user, text, userId):
+    auth = tweepy.OAuthHandler(consumerKey, consumerSecretKey)     
+    auth.set_access_token(user.get("twitter.token"), user.get("twitter.token_secret"))  
+    api = tweepy.API(auth) 
+    direct_message = api.send_direct_message(userId, text)
+
+def getLastLike(user):
+    auth = tweepy.OAuthHandler(consumerKey, consumerSecretKey)     
+    auth.set_access_token(user.get("twitter.token"), user.get("twitter.token_secret"))
+    api = tweepy.API(auth) 
+    lastFav = api.favorites(include_entities=True)[0]
+    if (user.get("twitter.lastLikeDate") == None):
+        user.set("twitter.lastLikeDate", lastFav.created_at)
+        return (None)
+    if (user.get("twitter.lastLikeDate") < lastFav.created_at):
+        user.set("twitter.lastLikeDate", lastFav.created_at)
+        return (lastFav)
+    else:
+        return (None)
