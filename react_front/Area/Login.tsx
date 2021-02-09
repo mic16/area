@@ -17,49 +17,51 @@ function postLog(mail:string, password:string, state:any) {
       password: password
     })
   });
-  let response = getAccesLogin();
-  if (response) {
-    state.navigation.navigate('CreateArea')
-  }
+  // if (response) {
+  //   state.navigation.navigate('CreateArea')
+  // }
 }
 
 function postRegister(mail:string, password:string, confPassword:string, state:any) {
   if (password === confPassword) {
-    fetch('localhost:8080/register', {
+    let res = fetch('localhost:8080/register/', {
       method: 'POST',
-      headers: {
-        Accept: 'application/json',
-        'Content-Type': 'application/json'
-      },
       body: JSON.stringify({
         mail: mail,
         password: password
       })
-    }).catch((error) => {
-      console.error(error);
-    })
-
-  let response = getAccesLogin();
-  // alert("MAIL: " + mail + " PASWORD : " + password + " CONF PASS = " + confPassword + "REPOSNE : " + response.name);
-  
-  // if (response != null) {
-  //     state.navigation.navigate('CreateArea')
-  //   }
-  }
-}
-
-const getAccesLogin = () => {
-  return fetch('localhost:8080/login')
-    .then((response) => response.json())
-    .then((json) => {
-      console.log(json.result)
+    }).then((response) => response.json()).then((json) => {
+      console.log(json.result);
+      alert("I GET IT, ITS " + json.result)
       return json.result;
     })
     .catch((error) => {
-      console.error(error);
-      return null
-    });
-};
+      console.error(error)
+      alert("I GET DON'T IT, ITS " + error)
+      return null;
+    })
+  }
+}
+
+function getService() {
+  let res = fetch('http://localhost:8080/services/', {
+    method: 'GET',
+    headers: {
+      Accept: 'application/json',
+      'Content-Type': 'application/json',
+    },
+    
+  }).then((response) => response.json()).then((json) => {
+    console.log(json.result);
+    alert("I GET IT, ITS " + json.result)
+    return json.result;
+  })
+  .catch((error) => {
+    console.error(error)
+    alert("I GET DON'T IT, ITS " + error)
+    return null;
+  })
+}
 
 export default class LoginComponent extends Component {
 
@@ -123,7 +125,7 @@ export default class LoginComponent extends Component {
                   <Label>Password: </Label>
                   <Input secureTextEntry={true} onChangeText={(text) => this.setState({wPassword:text})}/>
                 </Item>
-                <Button style={{ alignItems:"center", justifyContent:'center', marginTop: 20, marginBottom: 20, width:'100%'}}>
+                <Button onPress={ () => getService() } style={{ alignItems:"center", justifyContent:'center', marginTop: 20, marginBottom: 20, width:'100%'}}>
                   <Text>
                     Login
                   </Text>
