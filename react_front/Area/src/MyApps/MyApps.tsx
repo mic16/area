@@ -5,6 +5,18 @@ import * as Font from 'expo-font';
 import { Ionicons } from '@expo/vector-icons';
 
 
+const getServices = () => {
+  return fetch('localhost:8080/services')
+    .then((response) => response.json())
+    .then((json) => {
+      return json.result;
+    })
+    .catch((error) => {
+      console.error(error);
+      return null
+    });
+};
+
 export default class MyApps extends Component {
 
   constructor(props:any) {

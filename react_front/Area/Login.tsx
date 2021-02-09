@@ -35,13 +35,16 @@ function postRegister(mail:string, password:string, confPassword:string, state:a
         mail: mail,
         password: password
       })
-    });
+    }).catch((error) => {
+      console.error(error);
+    })
+
   let response = getAccesLogin();
   // alert("MAIL: " + mail + " PASWORD : " + password + " CONF PASS = " + confPassword + "REPOSNE : " + response.name);
-
-  if (response) {
-      state.navigation.navigate('CreateArea')
-    }
+  
+  // if (response != null) {
+  //     state.navigation.navigate('CreateArea')
+  //   }
   }
 }
 
@@ -49,6 +52,7 @@ const getAccesLogin = () => {
   return fetch('localhost:8080/login')
     .then((response) => response.json())
     .then((json) => {
+      console.log(json.result)
       return json.result;
     })
     .catch((error) => {
