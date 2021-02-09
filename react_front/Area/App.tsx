@@ -7,11 +7,11 @@ import { Font } from 'expo';
 import { Ionicons } from '@expo/vector-icons';
 import LoginComponent from './Login';
 import MenuComponent from './Menu';
-import MyArea from './src/Home/index.js';
+import Menu from './Menu';
 
 export default function App() {
   return (
-    <MyArea></MyArea>
+    <Menu></Menu>
   );
 }
 
