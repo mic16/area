@@ -56,7 +56,7 @@ def serviceInfos(serviceName):
 def aboutJSON():
     services = []
     for serviceName in Service.listServices():
-        serviceInfos = Service.getServiceInfos(serviceName)
+        serviceInfos = Service.getServiceInfos(serviceName, False)
         services.append({
             'name': serviceName,
             'actions': serviceInfos['actions'],
