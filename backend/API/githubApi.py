@@ -5,6 +5,7 @@ import requests
 from requests_oauthlib.oauth1_auth import Client
 from flask_restful import Resource, reqparse
 from TokenManager import TokenManager
+from github import Github
 
 import sys
 
@@ -38,6 +39,29 @@ def oauthAuthorizedGithub():
     return {"message": "connected as " + oauth_token}
 
 def getLastStar(user, repoLink):
-    pass
+    git = Github(user.get("github.token"))
+    repoLinkSplited = repoLink.rsplit('/', 1)
+    repo = git.get_repo(repoLinkSplited[-2] + '/' + repoLinkSplited[-1])
+    lastStargazers = repo.get_stargazers_with_dates()[0]
 
+    if (user.get("github.lastStarDate") == None):
+        user.set("github.lastStarDate", lastStargazers.starred_at)
+        return (None)
+    if (user.get("github.lastStarDate") < lastStargazers.starred_at):
+        user.set("github.lastStarDate", lastStargazers.starred_at)
+        return (lastStargazers)
+    else:
+        return (None)
 
+def getNewFollower(user):
+    git = Github(user.get("github.token"))
+    follower = git.get_user().get_followers()[0]
+    
+    if (user.get("github.lastFollower") == None):
+        user.set("github.lastFollower", follower.name)
+        return (None)
+    if (user.get("github.lastFollower") != follower.name):
+        user.set("github.lastFollower", follower.name)
+        return (follower.name)
+    else:
+        return (None)
