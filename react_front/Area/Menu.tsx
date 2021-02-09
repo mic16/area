@@ -37,17 +37,6 @@ export default class MenuComponent extends Component {
            <View></View>
          );
        }
-       if (Platform.OS == "web")
-        return (
-            <Container style= {{ position: "relative"}}>
-            <Header>
-            
-            </Header>
-            <Content style= {{ position: "relative" }}>
-
-            </Content>
-          </Container>
-        );
 
         return (
           <NavigationContainer>
