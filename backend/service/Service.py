@@ -41,22 +41,26 @@ def listServices():
         names.append(name)
     return names
 
-def getServiceInfos(serviceName):
+def getServiceInfos(serviceName, withFields=True):
     service = services.get(serviceName)
     if service:
         result = {'actions': [], 'reactions': []}
         for name, infos in service['actions'].items():
-            result['actions'].append({
+            action = {
                 'name': name,
                 'description': infos['description'],
-                'fields': infos['fields'],
-            })
+            }
+            if withFields:
+                action['fields'] = infos['fields']
+            result['actions'].append(action)
         for name, infos in service['reactions'].items():
-            result['reactions'].append({
+            reaction = {
                 'name': name,
                 'description': infos['description'],
-                'fields': infos['fields'],
-            })
+            }
+            if withFields:
+                reaction['fields'] = infos['fields']
+            result['reactions'].append(reaction)
         return result
     return None
 
