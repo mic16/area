@@ -149,7 +149,7 @@ export default class LoginComponent extends Component {
                   <Label>Confirm Password: </Label>
                   <Input secureTextEntry={true} onChangeText={(text) => this.setState({wRegConfPassword:text})}/>
                 </Item>
-                <Button style={{ alignItems:"center", justifyContent:'center', marginTop: 20, marginBottom: 20, width:'100%'}}>
+                <Button onPress={ () => postRegister(this.state.wRegMail, this.state.wRegPassword, this.state.wRegConfPassword, this.state)} style={{ alignItems:"center", justifyContent:'center', marginTop: 20, marginBottom: 20, width:'100%'}}>
                   <Text>
                     Sign Up
                   </Text>
