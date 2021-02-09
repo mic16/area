@@ -36,3 +36,8 @@ def oauthAuthorizedGithub():
     oauth_token = res_split[0].split('=')[1]
     data.updateUser(TokenManager.getTokenUser(req_data.get("token")), {"github": {"token": oauth_token}})
     return {"message": "connected as " + oauth_token}
+
+def getLastStar(user, repoLink):
+    pass
+
+

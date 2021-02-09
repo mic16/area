@@ -27,6 +27,7 @@ import youtubeApi
 sys.path.append('./services/')
 import Service
 import Twitter
+import Github
 
 tokenManager = TokenManager()
 data.load()
