@@ -236,7 +236,7 @@ Supprime une area
 ```json
 {
   "token": <user token>,
-  "uuid": <user uuid>,
+  "uuid": <area uuid>,
 }
 ```
 
