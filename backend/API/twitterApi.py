@@ -17,7 +17,7 @@ oauth = Client(consumerKey, client_secret=consumerSecretKey)
 def loginTwitter():
     req_data = request.get_json()
     if (req_data.get("token") == None):
-        return ({"error": "bad token"})
+        return ({"error": "no token"})
     uri, headers, body = oauth.sign('https://twitter.com/oauth/request_token')
     res = requests.get(uri, headers=headers, data=body)
     res_split = res.text.split('&')
@@ -32,10 +32,11 @@ def callbackParser():
 
 @app.route('/oauthAuthorizedTwitter')
 def oauthAuthorizedTwitter():
+    tokenManager = TokenManager()
     req_data = request.get_json()
     if (req_data.get("token") == None):
         return ({"error": "no token"})
-    if (TokenManager.getTokenUser(req_data.get("token")) == None):
+    if (tokenManager.getTokenUser(req_data.get("token")) == None):
         return ({"error": "bad token"})
     parser = callbackParser()
     args = parser.parse_args()
@@ -46,8 +47,10 @@ def oauthAuthorizedTwitter():
     userid = res_split[2].split('=')[1]
     username = res_split[3].split('=')[1]
 
-    data.updateUser(TokenManager.getTokenUser(req_data.get("token")), {"twitter": {"token": oauth_token, "token_secret": oauth_secret}})
+    data.updateUser(tokenManager.getTokenUser(req_data.get("token")), {"twitter": {"token": oauth_token, "token_secret": oauth_secret}})
     
+    print(oauth_token, file=sys.stderr)
+
     return {"message": "connected as " + username}
 
 def newTweet(user, text):
@@ -63,11 +66,28 @@ def sendDirectMessage(user, text, userId):
     api = tweepy.API(auth) 
     direct_message = api.send_direct_message(userId, text)
 
+def getLastTweetTimeline(user):
+    auth = tweepy.OAuthHandler(consumerKey, consumerSecretKey)     
+    auth.set_access_token(user.get("twitter.token"), user.get("twitter.token_secret"))
+    api = tweepy.API(auth) 
+
+    lastTweet = api.user_timeline(include_entities=True, count = 1)[0]
+
+    if (user.get("twitter.lastTweetDate") == None):
+        user.set("twitter.lastTweetDate", lastTweet.created_at)
+        return (None)
+    if (user.get("twitter.lastTweetDate") < lastTweet.created_at):
+        user.set("twitter.lastTweetDate", lastTweet.created_at)
+        return (lastTweet)
+    else:
+        return (None)
+
+
 def getLastLike(user):
     auth = tweepy.OAuthHandler(consumerKey, consumerSecretKey)     
     auth.set_access_token(user.get("twitter.token"), user.get("twitter.token_secret"))
     api = tweepy.API(auth) 
-    lastFav = api.favorites(include_entities=True)[0]
+    lastFav = api.favorites(include_entities=True, count = 1)[0]
     if (user.get("twitter.lastLikeDate") == None):
         user.set("twitter.lastLikeDate", lastFav.created_at)
         return (None)
