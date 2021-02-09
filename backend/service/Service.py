@@ -1,6 +1,5 @@
 import inspect
 import string
-from flask import request, abort, redirect, url_for
 import math
 import time
 from Config import Config
@@ -75,14 +74,14 @@ def getAction(serviceName, actionName):
     if service:
         action = service['actions'].get(actionName)
         return action, service['instance']
-    return None
+    return None, None
 
 def getReaction(serviceName, reactionName):
     service = services.get(serviceName)
     if service:
         reaction = service['reactions'].get(reactionName)
         return reaction, service['instance']
-    return None
+    return None, None
         
 def listCompatibleReactions(serviceName, actionName, config={}):
     actionInfo, serviceInstance = getAction(serviceName, actionName)

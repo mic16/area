@@ -11,7 +11,7 @@ __logger__ = 'AREA'
 
 __print__ = print
 
-def log(*args, level=DEBUG):
+def log(*args, level=DEBUG, end='\n', flush=False):
     message = ' '.join([str(i) for i in args])
     color = colors.LIGHT_WHITE
     prefix = ''
@@ -28,6 +28,6 @@ def log(*args, level=DEBUG):
         color = colors.LIGHT_PURPLE
         prefix = '[DEBUG]'
     coloredMessage = '%s[%s]%s %s' % (color, __logger__, prefix, message)
-    __print__(coloredMessage, file=sys.stderr)
+    __print__(coloredMessage, file=sys.stderr, end=end, flush=flush)
 
 builtins.print = log

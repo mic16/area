@@ -36,7 +36,7 @@ data.load()
 def listServices():
     return {'result': Service.listServices()}
 
-@app.route('/services/<string:serviceName>/<string:actionName>/compatTable', methods=['POST'])
+@app.route('/services/<string:serviceName>/<string:actionName>', methods=['POST'])
 def getServiceCompat(serviceName, actionName):
     compatList = Service.listCompatibleReactions(serviceName, actionName, request.json)
     if compatList is not None:
@@ -46,6 +46,7 @@ def getServiceCompat(serviceName, actionName):
 @app.route('/services/<string:serviceName>')
 def serviceInfos(serviceName):
     infos = Service.getServiceInfos(serviceName)
+    print(infos)
     if infos:
         return {'result': infos}
     return {'error': 'Unkown service %s' % serviceName}

@@ -4,6 +4,7 @@ import _
 from Config import Config
 from TokenManager import TokenManager
 import time
+from User import User
 
 tokenManager = TokenManager()
 
@@ -16,6 +17,14 @@ class Area():
         self.lastTrigger = 0
 
         self.user = user
+
+        if not type(json) is dict:
+            self.error('Expected json, got nothing')
+            return
+        
+        if not type(user) is User:
+            self.error()
+            return
 
         actionJson = json.get('action')
         reactionJson = json.get('reaction')
@@ -46,7 +55,6 @@ class Area():
         if not actionInfos or not reactionInfos:
             self.error('Action / Reaction does not exists')
             return
-        
 
         self.actionConfig = Config(self.actionConfig)
         self.reactionConfig = Config(self.reactionConfig)
@@ -69,11 +77,12 @@ class Area():
     def get(self, type):
         return self.returns.get(type)
     
-    def ret(self, value):
-        ttype = type(value)
-        array = self.returns.get(ttype) or []
-        array.append(value)
-        self.returns[ttype] = array
+    def ret(self, *values):
+        for value in values:
+            ttype = type(value)
+            array = self.returns.get(ttype) or []
+            array.append(value)
+            self.returns[ttype] = array
 
     def isErrored(self):
         return self.errored

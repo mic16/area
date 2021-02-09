@@ -1,6 +1,7 @@
 import _
 class Config():
     def __init__(self, conf):
+        assert type(conf) is dict, "Config can only be constructed from a dictionary"
         self.conf = conf
     
     def getString(self, path, default=None):
