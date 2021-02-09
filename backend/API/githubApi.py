@@ -1,10 +1,10 @@
 
-from flask import redirect
+from flask import redirect, request
 from app import app, data
 import requests
 from requests_oauthlib.oauth1_auth import Client
 from flask_restful import Resource, reqparse
-
+from TokenManager import TokenManager
 
 import sys
 
@@ -24,11 +24,20 @@ def callbackParser():
     
 @app.route('/oauthAuthorizedGithub')
 def oauthAuthorizedGithub():
+    req_data = request.get_json()
+    if (req_data.get("token") == None):
+        return ({"error": "no token"})
+    if (TokenManager.getTokenUser(req_data.get("token")) == None):
+        return ({"error": "bad token"})
     parser = callbackParser()
     args = parser.parse_args()
     res = requests.post(' https://github.com/login/oauth/access_token?code=' + args['code'] + '&client_id=' + consumerKey + '&client_secret=' + consumerSecretKey)
     res_split = res.text.split('&')
     oauth_token = res_split[0].split('=')[1]
-    
-    
+    data.updateUser(TokenManager.getTokenUser(req_data.get("token")), {"github": {"token": oauth_token}})
     return {"message": "connected as " + oauth_token}
+
+def getLastStar(user, repoLink):
+    pass
+
+

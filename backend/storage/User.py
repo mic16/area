@@ -2,7 +2,7 @@ class User:
     def __init__(self, mail, redis):
         self.redis = redis
         self.mail = mail
-    
+
     def getMail(self):
         return self.get('mail')
 
