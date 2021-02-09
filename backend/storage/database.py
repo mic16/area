@@ -1,4 +1,6 @@
 from rejson import Client, Path
+from User import User
+import secrets
 
 class DataBase:
 
@@ -18,10 +20,16 @@ class DataBase:
     def getUser(self, mail):
         return (self.redis.jsonget("user.%s"%mail))
 
+    def constructUser(self, mail):
+        json = self.getUser(mail)
+        if json:
+            return User(json)
+        return None
+
     def createUser(self, mail, password):
         if (self.userExist(mail)):
             return (False)
-        self.redis.jsonset("user.%s"%mail, ".", {"password" : password})
+        self.redis.jsonset("user.%s"%mail, ".", {"mail": mail, "password" : password})
         return (True)
 
     def deleteUser(self, mail):
