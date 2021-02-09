@@ -4,13 +4,23 @@ import { Footer, FooterTab, Text, Container, Header, Content, Form, Item, Input,
 import * as Font from 'expo-font';
 import { Ionicons } from '@expo/vector-icons';
 import LoginComponent from './Login';
+import { NavigationContainer } from '@react-navigation/native';
+import { createStackNavigator } from '@react-navigation/stack';
+import MyArea from './src/MyArea/MyArea';
+import MyApps from './src/MyApps/MyApps';
+import CreateArea from './src/CreateArea/CreateArea';
 
-
+const Stack = createStackNavigator();
 export default class MenuComponent extends Component {
 
-  state = {
-    loading: true
+  constructor(props:any) {
+    super(props);
+    this.state = {
+      navigation: this.props.navigation,
+      loading: true
+    }
   }
+
 
   async componentDidMount() {
       await Font.loadAsync({
@@ -40,30 +50,20 @@ export default class MenuComponent extends Component {
         );
 
         return (
-          <Container>
-          <Header />
-          <Content />
-          <Footer>
-            <FooterTab>
-              <Button vertical>
-                <Icon name="apps" />
-                <Text>Apps</Text>
-              </Button>
-              <Button vertical>
-                <Icon name="camera" />
-                <Text>Camera</Text>
-              </Button>
-              <Button vertical active>
-                <Icon active name="navigate" />
-                <Text>Navigate</Text>
-              </Button>
-              <Button vertical>
-                <Icon name="person" />
-                <Text>Contact</Text>
-              </Button>
-            </FooterTab>
-          </Footer>
-        </Container>
+          <NavigationContainer>
+            <Stack.Navigator>
+              <Stack.Screen name="LoginComponent" component={LoginComponent}
+              options={{headerShown: false}}/>
+              <Stack.Screen name="MyArea" component={MyArea}
+              options={{headerShown: false}}/>
+              <Stack.Screen name="MyApps" component={MyApps}
+              options={{headerShown: false}}/>
+              <Stack.Screen name="CreateArea" component={CreateArea}
+              options={{headerShown: false}}/>
+              {/* <Stack.Screen name="LoginComponent" component={LoginComponent}
+              options={{headerShown: false}}/> */}
+            </Stack.Navigator>
+          </NavigationContainer>
       );
    }
 }
