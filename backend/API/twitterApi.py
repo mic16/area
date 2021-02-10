@@ -15,9 +15,12 @@ oauth = Client(consumerKey, client_secret=consumerSecretKey)
 
 @app.route('/loginTwitter', methods = [ 'GET', 'POST' ])
 def loginTwitter():
+    tokenManager = TokenManager()
     req_data = request.get_json()
     if (req_data.get("token") == None):
         return ({"error": "no token"})
+    if (tokenManager.getTokenUser(req_data.get("token")) == None):
+        return ({"error": "bad token"})
     uri, headers, body = oauth.sign('https://twitter.com/oauth/request_token')
     res = requests.get(uri, headers=headers, data=body)
     res_split = res.text.split('&')

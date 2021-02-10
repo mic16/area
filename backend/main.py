@@ -29,6 +29,7 @@ sys.path.append('./services/')
 import Service
 import Twitter
 import Github
+import Youtube
 
 tokenManager = TokenManager()
 data.load()
