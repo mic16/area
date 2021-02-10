@@ -1,7 +1,7 @@
 from Action import Action
 from Service import Service
 from Reaction import Reaction
-from Field import Field
+from Field import Field, FTYPE
 from Trigger import Trigger
 import githubApi
 

@@ -35,11 +35,26 @@ def Service():
     return decorator
 
 
+def serviceExists(serviceName):
+    return serviceName in services
+
 def listServices():
     names = []
     for name in services:
         names.append(name)
     return names
+
+def listActions(serviceName):
+    service = services.get(serviceName)
+    if service:
+        return [*service['actions']]
+    return []
+    
+def listReactions(serviceName):
+    service = services.get(serviceName)
+    if service:
+        return [*service['reactions']]
+    return []
 
 def getServiceInfos(serviceName, withFields=True):
     service = services.get(serviceName)
