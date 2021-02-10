@@ -1,9 +1,8 @@
 import inspect
 import string
-from flask import request, abort, redirect, url_for
 import math
 import time
-from app import app
+from Config import Config
 
 services = {}
 
@@ -20,7 +19,6 @@ def Service():
                 if info['type'] == 'action':
                     service['actions'][methodName] = {
                         'method': method,
-                        'outputs': info['outputs'],
                         'description': info['description'],
                         'fields': hasattr(method, '__fields__') and method.__fields__ or []
                     }
@@ -64,39 +62,41 @@ def getServiceInfos(serviceName):
 
 def isReactionCompatibleWithAction(reaction, action):
     inputs = reaction['inputs']
-    outputs = action['outputs']
+    outputs = action.getTypes()
 
-    if len(inputs) == 0:
+    if not inputs:
         return True
 
-    return outputs[0] in inputs
+    return inputs in outputs
 
 def getAction(serviceName, actionName):
     service = services.get(serviceName)
     if service:
         action = service['actions'].get(actionName)
-        return action
-    return None
+        return action, service['instance']
+    return None, None
 
 def getReaction(serviceName, reactionName):
     service = services.get(serviceName)
     if service:
         reaction = service['reactions'].get(reactionName)
-        return reaction
-    return None
+        return reaction, service['instance']
+    return None, None
         
-def listCompatibleReactions(serviceName, actionName):
-    actionInfo = getAction(serviceName, actionName)
+def listCompatibleReactions(serviceName, actionName, config={}):
+    actionInfo, serviceInstance = getAction(serviceName, actionName)
     
     if not actionInfo:
         return None
+
+    trigger = actionInfo['method'](serviceInstance, Config(config))
 
     compatibleReactions = {}
 
     for serviceName, serviceInfos in services.items():
         reactions = []
         for reactionName, reactionInfo in serviceInfos['reactions'].items():
-            if isReactionCompatibleWithAction(reactionInfo, actionInfo):
+            if isReactionCompatibleWithAction(reactionInfo, trigger):
                 reactions.append({
                     'name': reactionName,
                     'description': reactionInfo['description']

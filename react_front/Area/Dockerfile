@@ -7,4 +7,4 @@ RUN yarn install
 RUN yarn global add expo-cli
 EXPOSE 3000
 
-CMD ["yarn", "start"]
+CMD ["yarn", "web"]

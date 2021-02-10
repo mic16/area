@@ -15,7 +15,6 @@ export default class Home extends Component {
       drawer: any,
       drawerState: false,
     }
-    console.log("test")
   }
 
   openCloseDrawer = () => {
@@ -26,6 +25,10 @@ export default class Home extends Component {
     this.setState({
       drawerState: !this.state.drawerState,
     })
+  }
+
+  getServices = () => {
+
   }
 
   render() {
