@@ -60,7 +60,7 @@ def oauthAuthorizedYoutube():
 def Diff(li1, li2):
     return (list(list(set(li1)-set(li2)) + list(set(li2)-set(li1))))
 
-def getLastFollower(user):
+def getLastSubscriber(user):
 
     c = google.oauth2.credentials.Credentials(**user.get("youtube.credential"))
 
@@ -69,6 +69,7 @@ def getLastFollower(user):
     
     request = youtube.subscriptions().list(
         part="subscriberSnippet",
+        maxResults=50,
         mySubscribers=True
     )
     response = request.execute()
@@ -76,9 +77,9 @@ def getLastFollower(user):
     if (user.get("youtube.subscriber") == None):
         user.set("youtube.subscriber", response)
         return (None)
-    oldFollowers = user.get("youtube.subscriber")
-    if (len(oldFollowers) != len(response)):
-        diff = Diff(response, oldFollowers)
+    oldSubscriber = user.get("youtube.subscriber")
+    if (len(oldSubscriber) != len(response)):
+        diff = Diff(response, oldSubscriber)
 
         if (len(diff) == 0):
             user.set("youtube.subscriber", response)
@@ -86,11 +87,15 @@ def getLastFollower(user):
         else:
             user.set("youtube.subscriber", response)
             tab = []
-            for u in response:
+            for u in diff:
                 tab.append(u.title)
-            return (diff)
+            return (tab)
     else:
         return (None)
+
+
+def getLastLikedVideo(user):
+    pass
 
 
 def credentials_to_dict(credentials):

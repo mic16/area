@@ -17,7 +17,7 @@ class Youtube():
         trig = Trigger(types=[str])
 
         def func(area, fields):
-            newSubscibers = youtubeApi.getLastFollower(area.getUser())
+            newSubscibers = youtubeApi.getLastSubscriber(area.getUser())
             if (len(newSubscibers) == 0):
                 return
             area.ret(newSubscibers)
