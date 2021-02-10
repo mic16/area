@@ -12,6 +12,7 @@ RUN pip3 install requests-oauthlib --trusted-host pypi.python.org
 RUN pip3 install flask-restful --trusted-host pypi.python.org
 RUN pip3 install --upgrade google-api-python-client --trusted-host pypi.python.org
 RUN pip3 install --upgrade google-auth google-auth-oauthlib google-auth-httplib2 --trusted-host pypi.python.org
+RUN pip3 install PyGithub --trusted-host pypi.python.org
 
 EXPOSE 5000
 
