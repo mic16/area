@@ -29,8 +29,8 @@ class Github():
         trig = Trigger(types=[str])
 
         def func(area, fields):
-            star = githubApi.getLastStar(area.getUser(), fields.getString('url'))
-            if (star == None):
+            follower = githubApi.getNewFollower(area.getUser(), fields.getString('url'))
+            if (follower == None):
                 return
-            area.ret(star.user.name)
+            area.ret(follower.name)
         return trig.setAction(func)

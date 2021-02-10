@@ -55,13 +55,18 @@ def getLastStar(user, repoLink):
 
 def getNewFollower(user):
     git = Github(user.get("github.token"))
-    follower = git.get_user().get_followers()[0]
+    followers = git.get_user().get_followers()
     
-    if (user.get("github.lastFollower") == None):
-        user.set("github.lastFollower", follower.name)
+    if (user.get("github.followers") == None):
+        user.set("github.followers", followers)
         return (None)
-    if (user.get("github.lastFollower") != follower.name):
-        user.set("github.lastFollower", follower.name)
-        return (follower.name)
+    oldFollowers = user.get("github.followers")
+    if (len(oldFollowers) != len(followers)):
+        if (followers[0] in oldFollowers):
+            user.set("github.followers", followers)
+            return (None)
+        else:
+            user.set("github.followers", followers)
+            return (followers[0])
     else:
         return (None)
