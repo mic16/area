@@ -1,17 +1,40 @@
 import { StatusBar } from 'expo-status-bar';
 import React, { Component } from 'react';
+import Home from './src/Home/Home';
+import { NavigationContainer } from '@react-navigation/native';
+import { createStackNavigator } from '@react-navigation/stack';
+import LinkedApps from './src/LinkedApps/LinkedApps'
+
+export function printing(str: string) {
+  alert(str)
+}
+let val = ""
+export function saveVar(str: string) {
+  val = str
+}
 import { AppRegistry, TextInput, TouchableOpacity, TouchableOpacityBase } from "react-native"
 import { Alert, StyleSheet, View } from 'react-native';
 import { Text, Button, Container, Header, Content, Form, Item, Input, Label, Title } from 'native-base';
 import { Font } from 'expo';
 import { Ionicons } from '@expo/vector-icons';
-import LoginComponent from './Login';
-import MenuComponent from './Menu';
-import Menu from './Menu';
+import LoginComponent from './src/Login/Login';
+import MenuComponent from './src/Menu/Menu';
+import Menu from './src/Menu/Menu';
+
+const Stack = createStackNavigator();
 
 export default function App() {
   return (
     <Menu></Menu>
+    // <NavigationContainer>
+    //   <Stack.Navigator>
+    //     <Stack.Screen name="Home" component={Home}
+    //       options={{headerShown: false}}/>
+    //     <Stack.Screen name="LinkedApps" component={LinkedApps}
+    //       options={{headerShown: false}}/>
+    //   </Stack.Navigator>
+    // </NavigationContainer>
+    
   );
 }
 

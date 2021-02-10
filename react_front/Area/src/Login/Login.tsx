@@ -4,6 +4,7 @@ import { Text, FooterTab, Footer, Button, Container, Header, Content, Form, Item
 import * as Font from 'expo-font';
 import { Ionicons } from '@expo/vector-icons';
 import { NavigationContainer } from "react-navigation";
+import { navigate } from '@react-navigation/routers/lib/typescript/src/CommonActions';
 
 function postLog(mail:string, password:string, state:any) {
   fetch('localhost:8080/login', {
@@ -103,7 +104,7 @@ export default class LoginComponent extends Component {
        if (Platform.OS == "web")
         return (
             <Container>
-                <ImageBackground source={require('./assets/login.png')} style={{ width: '100%', height: '100%' }} >
+                <ImageBackground source={require('../../assets/login.png')} style={{ width: '100%', height: '100%' }} >
             <Content>
                 
               <Text style={{ paddingTop:'10%', fontSize:48, alignSelf:"center" }}>
@@ -125,7 +126,7 @@ export default class LoginComponent extends Component {
                   <Label>Password: </Label>
                   <Input secureTextEntry={true} onChangeText={(text) => this.setState({wPassword:text})}/>
                 </Item>
-                <Button onPress={ () => getService() } style={{ alignItems:"center", justifyContent:'center', marginTop: 20, marginBottom: 20, width:'100%'}}>
+                <Button onPress={ () => this.state.navigation.navigate('MyApps') } style={{ alignItems:"center", justifyContent:'center', marginTop: 20, marginBottom: 20, width:'100%'}}>
                   <Text>
                     Login
                   </Text>
