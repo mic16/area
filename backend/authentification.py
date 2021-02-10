@@ -6,6 +6,8 @@ from TokenManager import TokenManager
 @app.route('/login', methods = ["POST"])
 def login():
     req_data = request.get_json()
+    if req_data is None:
+        return {"error": "Expected json body, got nothing"}
     if (req_data.get("mail") != None and req_data.get("password") != None):
         user = data.getUser(req_data.get("mail"))
         if (user == None):
@@ -22,6 +24,8 @@ def login():
 @app.route('/register', methods = ["POST"])
 def register():
     req_data = request.get_json()
+    if req_data is None:
+        return {"error": "Expected json body, got nothing"}
     if (req_data.get("mail") != None and req_data.get("password") != None):
         if (data.createUser(req_data.get("mail"), hashlib.sha256(req_data.get("password").encode()).hexdigest())):
             tokenManager = TokenManager()
@@ -35,6 +39,8 @@ def register():
 @app.route('/logout', methods = ["POST"])
 def logout():
     req_data = request.get_json()
+    if req_data is None:
+        return {"error": "Expected json body, got nothing"}
     if (req_data.get("token") != None):
         tokenManager = TokenManager()
         if (tokenManager.deleteTokenUser(req_data.get("token"))):

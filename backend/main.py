@@ -73,7 +73,9 @@ def aboutJSON():
 
 @app.route('/area/create', methods=['POST'])
 def createArea():
-    json = request.json
+    json = request.get_json()
+    if json is None:
+        return {"error": "Expected json body, got nothing"}
     if token := json.get('token'):
         if mail := tokenManager.getTokenUser(token):
             if user := data.constructUser(mail):
@@ -91,7 +93,9 @@ def createArea():
 
 @app.route('/area/delete', methods=['POST'])
 def deleteArea():
-    json = request.json
+    json = request.get_json()
+    if json is None:
+        return {"error": "Expected json body, got nothing"}
     if token := json.get('token'):
         if mail := tokenManager.getTokenUser(token):
             if user := data.constructUser(mail):
