@@ -15,7 +15,7 @@ class Area():
         self.errormessage = None
         self.uuid = fuuid or uuid.uuid4().hex
         self.returns = {}
-        self.reacReturns = []
+        self.returnStates = []
         self.lastTrigger = 0
 
         self.user = user
@@ -109,10 +109,9 @@ class Area():
             array.append(value)
             self.returns[ttype] = array
     
-    def newReaction():
+    def newReaction(self):
         self.returns = {}
-        self.reacReturns.append(self.returns)
-
+        self.returnStates.append(self.returns)
 
     def isErrored(self):
         return self.errored
@@ -125,12 +124,13 @@ class Area():
 
     def trigger(self):
         if (time.time() - self.lastTrigger)>= 60:
-            self.reacReturns = []
             self.returns = {}
-            for reacReturn in reacReturns:
-                actionEx = self.action.getAction()
-                actionEx(self, self.actionConfig)
-                inputs = self.reaction.__service__['inputs']
-                if not inputs or inputs in reacReturn:
+            self.returnStates = []
+            actionEx = self.action.getAction()
+            actionEx(self, self.actionConfig)
+            inputs = self.reaction.__service__['inputs']
+            for returnState in self.returnStates:
+                if not inputs or inputs in returnState:
+                    self.returns = returnState
                     self.reaction(self.reactionInstance, self, self.reactionConfig)
                 self.lastTrigger = time.time()
