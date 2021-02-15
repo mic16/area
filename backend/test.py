@@ -13,6 +13,10 @@ import pytest
 
 import Area_test
 import Config_test
+import Action_test
+import Reaction_test
+import Field_test
+import Service_test
 
 pytest.diagnostic()
 
