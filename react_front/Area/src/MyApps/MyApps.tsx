@@ -148,7 +148,7 @@ export default class MyApps extends Component<MyProps, MyState> {
                               style={{width: "30%", marginLeft: 10, marginBottom: 10, borderWidth: 1, borderRadius: 5}}
                               />
                           </Form>
-                          <Button onPress={() => this.createArea()}></Button>
+                          {/* <Button onPress={() => this.createArea()}></Button> */}
                         </View>
                       </View>
                     </View>
