@@ -17,10 +17,13 @@ class Github():
         trig = Trigger(types=[str])
 
         def func(area, fields):
-            star = githubApi.getLastStar(area.getUser(), fields.getString('url'))
-            if (star == None):
+            stars = githubApi.getLastStar(area.getUser(), fields.getString('url'))
+            if stars == None:
                 return
-            area.ret(star.user.name)
+            for star in stars:
+                area.newReaction()
+                area.ret(star["user"]["name"])
+
         return trig.setAction(func)
 
     @Action('When a user follow the connected user')
@@ -29,8 +32,10 @@ class Github():
         trig = Trigger(types=[str])
 
         def func(area, fields):
-            follower = githubApi.getNewFollower(area.getUser(), fields.getString('url'))
-            if (follower == None):
+            followers = githubApi.getNewFollower(area.getUser(), fields.getString('url'))
+            if (followers == None):
                 return
-            area.ret(follower.name)
+            for follower in followers:
+                area.newReaction()
+                area.ret(follower["name"])
         return trig.setAction(func)

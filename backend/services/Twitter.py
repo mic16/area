@@ -10,24 +10,26 @@ class Twitter():
     def __init__(self):
         pass
 
-    @Action('When a user tweet something')
+    @Action('When the user like something')
     @Field('match', FTYPE.STRING, 'String that should be matched')
     @Field('with image', FTYPE.BOOLEAN, 'If the post should contain an image')
-    def onTweet(self, fields):
+    def onLike(self, fields):
 
         trig = Trigger(types=[str])
         if fields.getBool('with image') == True:
             trig.addType(int)
 
         def func(area, fields):
-            fav = twitterApi.getLastLike(area.getUser())
-            if (fav == None):
+            favs = twitterApi.getLastLike(area.getUser())
+            if (favs == None):
                 return
-            if fields.getBool('with image') == True:
-                if 'media' in fav.entities:
-                    for image in fav.entities['media']:
-                        area.ret(image)
-            area.ret(fav.text)
+            for fav in favs:
+                area.newReaction()
+                if fields.getBool('with image') == True:
+                    if 'media' in fav["entities"]:
+                        for image in fav["entities"]['media']:
+                            area.ret(image)
+                area.ret(fav.text)
 
         return trig.setAction(func)
 
@@ -40,14 +42,16 @@ class Twitter():
             trig.addType(int)
 
         def func(area, fields):
-            fav = twitterApi.getLastTweetTimeline(area.getUser())
-            if (fav == None):
+            tweets = twitterApi.getLastTweetTimeline(area.getUser())
+            if (tweets == None):
                 return
-            if fields.getBool('with image') == True:
-                if 'media' in fav.entities:
-                    for image in fav.entities['media']:
-                        area.ret(image)
-            area.ret(fav.text)
+            for tweet in tweets:
+                area.newReaction()
+                if fields.getBool('with image') == True:
+                    if 'media' in tweet["entities"]:
+                        for image in tweet["entities"]['media']:
+                            area.ret(image)
+                area.ret(tweet.text)
 
         return trig.setAction(func)      
 
