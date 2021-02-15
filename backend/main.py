@@ -28,6 +28,7 @@ import youtubeApi
 sys.path.append('./services/')
 import Service
 import Twitter
+import Github
 
 tokenManager = TokenManager()
 data.load()
@@ -46,7 +47,6 @@ def getServiceCompat(serviceName, actionName):
 @app.route('/services/<string:serviceName>')
 def serviceInfos(serviceName):
     infos = Service.getServiceInfos(serviceName)
-    print(infos)
     if infos:
         return {'result': infos}
     return {'error': 'Unkown service %s' % serviceName}
@@ -55,7 +55,7 @@ def serviceInfos(serviceName):
 def aboutJSON():
     services = []
     for serviceName in Service.listServices():
-        serviceInfos = Service.getServiceInfos(serviceName)
+        serviceInfos = Service.getServiceInfos(serviceName, False)
         services.append({
             'name': serviceName,
             'actions': serviceInfos['actions'],
@@ -72,7 +72,9 @@ def aboutJSON():
 
 @app.route('/area/create', methods=['POST'])
 def createArea():
-    json = request.json
+    json = request.get_json()
+    if json is None:
+        return {"error": "Expected json body, got nothing"}
     if token := json.get('token'):
         if mail := tokenManager.getTokenUser(token):
             if user := data.constructUser(mail):
@@ -81,16 +83,17 @@ def createArea():
                     return {'error': area.getErrorMessage() or 'Missing or Wrongly formatted data'}
                 
                 if not data.createArea(mail, area.getUUID(), json):
-                    return {'error': 'Failed to create area, already exists'}
+                    return {'error': 'Area already exists'}
                 
                 areaManager.append(area)
                 return {'result': area.getUUID()}
-
     return {'error': 'Invalid Token'}
 
 @app.route('/area/delete', methods=['POST'])
 def deleteArea():
-    json = request.json
+    json = request.get_json()
+    if json is None:
+        return {"error": "Expected json body, got nothing"}
     if token := json.get('token'):
         if mail := tokenManager.getTokenUser(token):
             if user := data.constructUser(mail):

@@ -20,6 +20,7 @@ class foobar():
     @Action('')
     def foo(self, fields):
         def func(area, fields):
+            area.newReaction()
             global action_counter
             action_counter += 1
             area.ret('foobar')
@@ -69,6 +70,7 @@ def single_return_type_value():
 
     assert not area.isErrored(), "Area should not have been flagged as errored"
 
+    area.newReaction()
     area.ret(1)
     area.ret(2)
     area.ret(3)
@@ -81,6 +83,7 @@ def multiple_return_type_value():
 
     assert not area.isErrored(), "Area should not have been flagged as errored"
 
+    area.newReaction()
     area.ret(1)
     area.ret(2)
     area.ret(3)
@@ -97,6 +100,7 @@ def multiple_return_at_once():
 
     assert not area.isErrored(), "Area should not have been flagged as errored"
 
+    area.newReaction()
     area.ret(1,2,3)
     area.ret('str', 'str2')
     area.ret(4,'5',6.0)

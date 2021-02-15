@@ -1,14 +1,83 @@
 import React, { Component } from 'react';
-import { ImageBackground, Platform, View, } from "react-native";
-import { Text, Button, Container, Header, Content, Form, Item, Input, Label, Title, Icon } from 'native-base';
+import { Alert, ImageBackground, Platform, View } from "react-native";
+import { Text, FooterTab, Footer, Button, Container, Header, Content, Form, Item, Input, Label, Title, Icon, Grid, Col } from 'native-base';
 import * as Font from 'expo-font';
 import { Ionicons } from '@expo/vector-icons';
+import { NavigationContainer } from "react-navigation";
 
 
-export default class LoginComponent extends Component {
+export default class LoginComponent extends Component<{}, any> {
 
-  state = {
-    loading: true
+  constructor(props:any) {
+    super(props);
+    this.state = {
+      navigation: this.props.navigation,
+      loading: true,
+      wMail: "",
+      wPassword: "",
+      wRegMail: "",
+      wRegPassword: "",
+      wRegConfPassword: "",
+      Mail: "",
+      Password: "",
+      RegMail: "",
+      RegPassword: "",
+      RegConfPassword: ""
+    }
+  }
+
+  public postLog(mail:string, password:string) {
+    fetch('http://localhost:8080/login', {
+      method: 'POST',
+      headers: {
+        Accept: 'application/json',
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({
+        mail,
+        password
+      })
+    }).then((response) => response.json()).then((json) => {
+      alert("CONNECTED WITH TOKEN: {" + json.result + "}")
+      this.state.navigation.navigate('CreateArea')
+    })
+    .catch((error) => {
+      console.error(error)
+      alert("I GET DON'T IT, ITS " + error)
+      return error;
+    })
+  }
+  
+  public postRegister(mail:string, password:string, confPassword:string) {
+    // if (mail.length === 0 || mail.includes("@") === false || mail.includes("."))
+    //   return
+    if (password === confPassword) {
+      let res = fetch('http://localhost:8080/register', {
+        method: 'POST',
+        headers: {
+          Accept: 'application/json',
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({
+          mail,
+          password
+        })
+      }).then((response) => response.json()).then((json) => {
+        if (json.error != undefined) {
+          console.error(json.error)
+          return null
+        }
+        console.log(json.result);
+        alert("Connection Sucessfull = " + json.result)
+        this.state.navigation.navigate('CreateArea')
+        return json.result;
+      })
+      .catch((error) => {
+        console.error(error)
+        alert("I GET DON'T IT, ITS " + error)
+        return error;
+      })
+    }
   }
 
   async componentDidMount() {
@@ -21,7 +90,8 @@ export default class LoginComponent extends Component {
   }
 
   render() {
-       if (this.state.loading) {
+    // alert("type = " + this.)
+    if (this.state.loading) {
          return (
            <View></View>
          );
@@ -41,17 +111,17 @@ export default class LoginComponent extends Component {
                     Login
                 </Text>
                 
-                <Item last style={{ alignSelf:'center' }}>
-                  <Icon name="person-outline"></Icon>
-                  <Label>Username: </Label>
-                  <Input />
+                <Item last>
+                  <Icon name="mail-outline"></Icon>
+                  <Label>Email: </Label>
+                  <Input onChangeText={(text) => this.setState({wMail:text})}/>
                 </Item>
                 <Item last>
                 <Icon name="lock-closed-outline"></Icon>
                   <Label>Password: </Label>
-                  <Input secureTextEntry={true}/>
+                  <Input secureTextEntry={true} onChangeText={(text) => this.setState({wPassword:text})}/>
                 </Item>
-                <Button style={{ alignItems:"center", justifyContent:'center', marginTop: 20, marginBottom: 20, width:'100%'}}>
+                <Button onPress={ () => this.postLog(this.state.wMail, this.state.wPassword, this.state) } style={{ alignItems:"center", justifyContent:'center', marginTop: 20, marginBottom: 20, width:'100%'}}>
                   <Text>
                     Login
                   </Text>
@@ -65,26 +135,21 @@ export default class LoginComponent extends Component {
               <Item last>
                   <Icon name="mail-outline"></Icon>
                   <Label>Email: </Label>
-                  <Input />
-                </Item>
-                <Item last>
-                  <Icon name="person-outline"></Icon>
-                  <Label>Username: </Label>
-                  <Input />
+                  <Input onChangeText={(text) => this.setState({wRegMail:text})}/>
                 </Item>
                 <Item last>
                 <Icon name="lock-closed-outline"></Icon>
                   <Label>Password: </Label>
-                  <Input secureTextEntry={true}/>
+                  <Input secureTextEntry={true} onChangeText={(text) => this.setState({wRegPassword:text})}/>
                 </Item>
                 <Item last>
                 <Icon name="lock-closed-outline"></Icon>
                   <Label>Confirm Password: </Label>
-                  <Input secureTextEntry={true}/>
+                  <Input secureTextEntry={true} onChangeText={(text) => this.setState({wRegConfPassword:text})}/>
                 </Item>
-                <Button style={{ alignItems:"center", justifyContent:'center', marginTop: 20, marginBottom: 20, width:'100%'}}>
+                <Button onPress={ () => this.postRegister(this.state.wRegMail, this.state.wRegPassword, this.state.wRegConfPassword, this.state)} style={{ alignItems:"center", justifyContent:'center', marginTop: 20, marginBottom: 20, width:'100%'}}>
                   <Text>
-                    Login
+                    Sign In
                   </Text>
                 </Button>
               </Form>
@@ -93,6 +158,7 @@ export default class LoginComponent extends Component {
             </ImageBackground>
           </Container>
         );
+
 
         return (
             <Container style= {{ position: "relative"}}>
@@ -103,19 +169,19 @@ export default class LoginComponent extends Component {
             </Header>
             <Content style= {{ position: "relative" }}>
               <Form style= {{ height: 150, position: "relative", marginTop: 10 }}>
-              
-                <Item floatingLabel>
-                <Icon name="person-outline"></Icon>
-                  <Label>Username</Label>
-                  <Input />
+
+                <Item inlineLabel>
+                <Icon name="mail-outline"></Icon>
+                  <Label>Email</Label>
+                  <Input onChangeText={(text) => this.setState({mail:text})}/>
                 </Item>
-                <Item floatingLabel last>
+                <Item inlineLabel last>
                 <Icon name="lock-closed-outline"></Icon>
                   <Label>Password</Label>
-                  <Input secureTextEntry={true} />
+                  <Input secureTextEntry={true} onChangeText={(text) => this.setState({password:text})} />
                 </Item>
                 </Form>
-                <Button style={{ backgroundColor: "darkblue", width: '90%', height: 50, justifyContent: 'center', alignSelf: "center", marginTop: 20 }}>
+                <Button onPress={ () => this.postLog(this.state.wMail, this.state.wPassword, this.state) } style={{ backgroundColor: "darkblue", width: '90%', height: 50, justifyContent: 'center', alignSelf: "center", marginTop: 20 }}>
                   <Text>
                     Login
                   </Text>
@@ -125,29 +191,24 @@ export default class LoginComponent extends Component {
                     Create one below !
                 </Text>
                 <Form style= {{ height: 300, position: "relative" }}>
-                <Item floatingLabel>
+                <Item inlineLabel>
                 <Icon name="mail-outline"></Icon>
                   <Label>Email</Label>
-                  <Input />
+                  <Input onChangeText={(text) => this.setState({RegMail:text})}/>
                 </Item>
-                <Item floatingLabel>
-                <Icon name="person-outline"></Icon>
-                  <Label>Username</Label>
-                  <Input />
-                </Item>
-                <Item floatingLabel last>
+                <Item inlineLabel last>
                 <Icon name="lock-closed-outline"></Icon>
                   <Label>Password</Label>
-                  <Input />
+                  <Input secureTextEntry={true} onChangeText={(text) => this.setState({RegPassword:text})} />
                 </Item>
-                <Item floatingLabel last>
+                <Item inlineLabel last>
                 <Icon name="lock-closed-outline"></Icon>
                   <Label>Confirm Password</Label>
-                  <Input />
+                  <Input secureTextEntry={true} onChangeText={(text) => this.setState({RegConfPassword:text})} />
                 </Item>
                 </Form>
             </Content>
-            <Button style={{ width: '90%', height: 50, backgroundColor: 'darkblue', justifyContent: 'center', alignSelf: 'center', marginBottom: 10, alignItems: 'center', position: 'relative', bottom: 0 }}>
+            <Button onPress={ () => this.postRegister(this.state.RegMail, this.state.RegPassword, this.state.RegConfPassword, this.state)} style={{ width: '90%', height: 50, backgroundColor: 'darkblue', justifyContent: 'center', alignSelf: 'center', marginBottom: 10, alignItems: 'center', position: 'relative', bottom: 0 }}>
                 <Text>
                 Sign In
                 </Text>

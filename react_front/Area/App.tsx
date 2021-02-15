@@ -19,42 +19,13 @@ import { Font } from 'expo';
 import { Ionicons } from '@expo/vector-icons';
 import LoginComponent from './Login';
 import MenuComponent from './Menu';
+import Menu from './Menu';
 
 const Stack = createStackNavigator();
 
 export default function App() {
   return (
-    <NavigationContainer>
-      <Stack.Navigator>
-        <Stack.Screen name="Home" component={Home}
-          options={{headerShown: false}}/>
-        <Stack.Screen name="LinkedApps" component={LinkedApps}
-          options={{headerShown: false}}/>
-      </Stack.Navigator>
-    </NavigationContainer>
-    // <Container>
-    //     <Header />
-    //     <Title>
-    //       Welcome to the Area !
-    //     </Title>
-    //     <Content>
-    //       <Form>
-    //         <Item fixedLabel>
-    //           <Label>Username</Label>
-    //           <Input />
-    //         </Item>
-    //         <Item fixedLabel last>
-    //           <Label>Password</Label>
-    //           <Input />
-    //         </Item>
-    //         <Button>
-    //           <Text>
-    //             Login
-    //           </Text>
-    //         </Button>
-    //       </Form>
-    //     </Content>
-    //   </Container>
+    <Menu></Menu>
   );
 }
 
