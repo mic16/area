@@ -75,27 +75,55 @@ def getLastSubscriber(user):
     response = request.execute()
 
     if (user.get("youtube.subscriber") == None):
-        user.set("youtube.subscriber", response)
+        user.set("youtube.subscriber", response['items'])
         return (None)
     oldSubscriber = user.get("youtube.subscriber")
-    if (len(oldSubscriber) != len(response)):
-        diff = Diff(response, oldSubscriber)
+    if (len(oldSubscriber) != len(response['items'])):
+        diff = Diff(response['items'], oldSubscriber)
 
         if (len(diff) == 0):
-            user.set("youtube.subscriber", response)
             return (None)
         else:
-            user.set("youtube.subscriber", response)
+            user.set("youtube.subscriber", response['items'])
             tab = []
             for u in diff:
-                tab.append(u.title)
+                tab.append(u["subscriberSnippet"]["title"])
             return (tab)
     else:
         return (None)
 
 
 def getLastLikedVideo(user):
-    pass
+    c = google.oauth2.credentials.Credentials(**user.get("youtube.credential"))
+
+    youtube = googleapiclient.discovery.build(
+        API_SERVICE_NAME, API_VERSION, credentials=c)
+    
+    request = youtube.videos().list(
+        part="snippet,contentDetails,statistics",
+        maxResults=50,
+        myRating="like"
+    )
+
+    response = request.execute()
+
+    if (user.get("youtube.likes") == None):
+        user.set("youtube.likes", response['items'])
+        return (None)
+    oldlikes = user.get("youtube.likes")
+    if (len(oldlikes) != len(response['items'])):
+        diff = Diff(response['items'], oldlikes)
+
+        if (len(diff) == 0):
+            return (None)
+        else:
+            user.set("youtube.likes", response['items'])
+            tab = []
+            for u in diff:
+                tab.append(u["subscriberSnippet"]["title"])
+            return (tab)
+    else:
+        return (None)
 
 
 def credentials_to_dict(credentials):
