@@ -38,3 +38,11 @@ class Youtube():
                 area.newReaction()
                 area.ret(like)
         return trig.setAction(func)
+
+    @Reaction(
+        'Send a comment on a vidéo',
+        str,
+    )
+    @Field('videoId', 'string', 'videoId of the youtube video')
+    def direct_message(self, area, fields):
+        youtubeApi.sendNewComment(area.getUser(), fields.get(str)['userId'], area.get(str)[0])

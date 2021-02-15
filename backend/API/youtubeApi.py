@@ -125,6 +125,28 @@ def getLastLikedVideo(user):
     else:
         return (None)
 
+def sendNewComment(user, videoId, text):
+
+    c = google.oauth2.credentials.Credentials(**user.get("youtube.credential"))
+
+    youtube = googleapiclient.discovery.build(
+        API_SERVICE_NAME, API_VERSION, credentials=c)
+
+    request = youtube.commentThreads().insert(
+        part="snippet",
+        body={
+          "snippet": {
+            "videoId": videoId,
+            "topLevelComment": {
+              "snippet": {
+                "textOriginal": text
+              }
+            }
+          }
+        }
+    )
+    request.execute()
+
 
 def credentials_to_dict(credentials):
     return {'token': credentials.token,
