@@ -1,9 +1,9 @@
 import React, { Component } from 'react';
 import { ImageBackground, Platform, View, } from "react-native";
-import { Footer, FooterTab, Text, Button, Container, Header, Content, Form, Item, Input, Label, Title, Icon, Picker } from 'native-base';
+import { Footer, FooterTab, Text, Button, Container, Header, Content, Form, Item, Input, Label, Title, Icon, Picker, Spinner } from 'native-base';
 import * as Font from 'expo-font';
 import { Ionicons } from '@expo/vector-icons';
-
+import { mobileIP } from '../../Login';
 
 export default class CreateArea extends Component<{}, any> {
 
@@ -18,7 +18,7 @@ export default class CreateArea extends Component<{}, any> {
   }
 
   public getServices() {
-    return fetch('http://localhost:8080/services/', {
+    return fetch('http://' + mobileIP + ':8080/services/', {
         method: 'GET',
         headers: {
           Accept: 'application/json',
@@ -44,10 +44,12 @@ export default class CreateArea extends Component<{}, any> {
       if (this.state.servicesData.length === 0) {
         this.getServices()
         .then((_) => {
+          let i = 0
           this.state.servicesData.forEach((elem:string, key:Number) => {
             reactList.push(
-              <Picker.Item label={elem} value={key}/>
+              <Picker.Item label={elem} value={i}/>
             )
+            i += 1
           })
           this.setState({reactListData:reactList})
         });
@@ -63,6 +65,14 @@ export default class CreateArea extends Component<{}, any> {
       return reactList;
     }
 
+
+  onValueChange(value: string) {
+    this.setState({
+      selected: value
+    });
+  }
+  
+
   async componentDidMount() {
       await Font.loadAsync({
           Roboto: require('native-base/Fonts/Roboto.ttf'),
@@ -74,17 +84,20 @@ export default class CreateArea extends Component<{}, any> {
 
   render() {
        if (this.state.loading) {
+          this.listElem()
          return (
-           <View></View>
+           <View>
+             <Spinner color="blue" />
+           </View>
          );
        }
        if (Platform.OS == "web")
         return (
             <Container>
-                <ImageBackground source={require('../../assets/login.png')} style={{ width: '100%', height: '100%' }} >
+                <ImageBackground source={require('../../assets/login.png')} style={{ width: '100%', height: '100%' }}>
             <Content>
 
-            <Item onPress={ () => this.listElem()} style={{ alignSelf:'center', justifyContent:'center', flex: 1 }} picker>
+            <Item style={{ alignSelf:'center', justifyContent:'center', flex: 1 }} picker>
               <Picker placeholder="Select your Service for the Action" placeholderStyle={{ color: "#bfc6ea" }} placeholderIconColor="#007aff" iosIcon={<Icon name="arrow-down" />}>
                 {
                   this.state.reactListData || <Picker.Item label="No Service Available now" value="None" />
@@ -105,6 +118,80 @@ export default class CreateArea extends Component<{}, any> {
             </Text>
             </Header>
             <Content style= {{ position: "relative" }}>
+              <Text style= {{ alignSelf:'center', color:'rgba(0, 0, 0, 0.5)', marginTop:5 }} >Select the Service you want to use as Action:</Text>
+            <Item style= {{ marginBottom: 10 }} >
+              <Picker
+                mode="dropdown"
+                iosIcon={<Icon name="arrow-down" />}
+                placeholder="Select your SIM"
+                placeholderStyle={{ color: "#bfc6ea" }}
+                placeholderIconColor="#007aff"
+                style={{ width: undefined }}
+                selectedValue={this.state.selected}
+                onValueChange={this.onValueChange.bind(this)}
+              >
+                  {
+                    this.state.reactListData || <Picker.Item label="No Service Available now" value="None" />
+                  }
+                </Picker>
+              </Item>
+              <Text style= {{ alignSelf:'center', color:'rgba(0, 0, 0, 0.5)', marginTop:5 }} >Then select the action:</Text>
+              <Item style= {{ marginBottom: 10 }} >
+              <Picker
+                mode="dropdown"
+                iosIcon={<Icon name="arrow-down" />}
+                placeholder="Select your SIM"
+                placeholderStyle={{ color: "#bfc6ea" }}
+                placeholderIconColor="#007aff"
+                style={{ width: undefined }}
+                selectedValue={this.state.selected}
+                onValueChange={this.onValueChange.bind(this)}
+              >
+                  {
+                    this.state.reactListData || <Picker.Item label="No Service Available now" value="None" />
+                  }
+                </Picker>
+              </Item>
+              <Icon name="arrow-down-outline" style={{ alignSelf:'center' }} />
+              <Text style= {{ alignSelf:'center', color:'rgba(0, 0, 0, 0.5)', marginTop:5 }} >Select the Service to use as Reaction:</Text>
+              <Item style= {{ marginBottom: 10 }} >
+              <Picker
+                mode="dropdown"
+                iosIcon={<Icon name="arrow-down" />}
+                placeholder="Select your SIM"
+                placeholderStyle={{ color: "#bfc6ea" }}
+                placeholderIconColor="#007aff"
+                style={{ width: undefined }}
+                selectedValue={this.state.selected}
+                onValueChange={this.onValueChange.bind(this)}
+              >
+                  {
+                    this.state.reactListData || <Picker.Item label="No Service Available now" value="None" />
+                  }
+                </Picker>
+              </Item>
+              <Text style= {{ alignSelf:'center', color:'rgba(0, 0, 0, 0.5)', marginTop:5 }} >Then select the reaction:</Text>
+              <Item style= {{ marginBottom: 10 }} >
+              <Picker
+                mode="dropdown"
+                iosIcon={<Icon name="arrow-down" />}
+                placeholder="Select your SIM"
+                placeholderStyle={{ color: "#bfc6ea" }}
+                placeholderIconColor="#007aff"
+                style={{ width: undefined }}
+                selectedValue={this.state.selected}
+                onValueChange={this.onValueChange.bind(this)}
+              >
+                  {
+                    this.state.reactListData || <Picker.Item label="No Service Available now" value="None" />
+                  }
+                </Picker>
+              </Item>
+            <Button style={{ alignSelf:'center', marginTop:"40%" }}>
+              <Text>
+              Create the AREA !
+              </Text>
+            </Button>
             </Content>
             <Footer>
             <FooterTab>
