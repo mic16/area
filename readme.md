@@ -38,6 +38,7 @@ Liste de toutes les routes de l'area
 | `/services/<serviceNames>`              | **GET**  | Liste les actions et reactions des services avec les configs |
 | `/services/<serviceNames>/<actionName>` | **POST** | Liste toutes les reactions compatibles avec l'action         |
 | `/area/create`                          | **POST** | Crée une area                                                |
+| `/area/list`                            | **POST** | Liste les areas déjà crée                                    |
 | `/area/delete`                          | **POST** | Supprime une area                                            |
 | `/about.json`                           | **GET**  | Renvoie des informations sur tout les services               |
 
@@ -222,6 +223,43 @@ Crée une area avec la configuration spécifiée
 ```json
 {
   "result": <area uuid>
+}
+```
+
+<hr>
+
+## **[`POST`]** /area/list
+
+Liste toutes les areas crée par l'utilisateur
+
+### Request Body
+
+```json
+{
+    "token": <user token>
+}
+```
+
+### Response
+
+```json
+{
+  "result": [
+    {
+      "action": {
+        "service:" <service name>,
+        "name": <action name>,
+        "config": <action configuration>
+      },
+      "reaction": {
+        "service:" <service name>,
+        "name": <reaction name>,
+        "config": <reaction configuration>
+      },
+      "uuid": <area uuid>
+    },
+    ...
+  ]
 }
 ```
 
