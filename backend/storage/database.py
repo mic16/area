@@ -10,6 +10,7 @@ class DataBase:
 
     def __init__(self):
         self.redis = Client(host='redis', port=6379, decode_responses=True)
+        self.users = {}
     
     def load(self):
         if areas := self.redis.jsonget('area_list'):
@@ -35,9 +36,13 @@ class DataBase:
         return (self.redis.jsonget("user.%s"%mail))
 
     def constructUser(self, mail):
+        if user := self.users.get(mail):
+            return user
         json = self.getUser(mail)
         if json:
-            return User(mail, self.redis)
+            user = User(mail, self.redis)
+            self.users[mail] = user
+            return user
         return None
 
     def createUser(self, mail, password):
@@ -49,6 +54,7 @@ class DataBase:
     def deleteUser(self, mail):
         if (self.userExist(mail)):
             self.redis.jsondel("user.%s"%mail)
+            self.users.pop(mail)
             return (True)
         return (False)
     
@@ -92,3 +98,13 @@ class DataBase:
                 self.redis.jsonset("area_list", ".", area)
             return True
         return False
+    
+    def listArea(self, mail):
+        userAreas = []
+        if areas := self.redis.jsonget('area_list'):
+            for id in areas:
+                areaJson = self.redis.jsonget('area.%s' % id)
+                user = self.constructUser(areaJson.get('user'))
+                if user.mail == mail:
+                    userAreas.append(areaJson)
+        return userAreas
