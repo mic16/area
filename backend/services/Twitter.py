@@ -67,5 +67,5 @@ class Twitter():
         str,
     )
     @Field('userId', 'string', 'userId of the target user')
-    def direct_message(self, area, fields):
+    def directMessage(self, area, fields):
         twitterApi.sendDirectMessage(area.getUser(), area.get(str)[0], fields.get(str)['userId'])
