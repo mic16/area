@@ -9,6 +9,7 @@ import { createStackNavigator } from '@react-navigation/stack';
 import MyArea from './src/MyArea/MyArea';
 import MyApps from './src/MyApps/MyApps';
 import CreateArea from './src/CreateArea/CreateArea';
+import ConfigComponent from './src/Configfield/Configfield';
 
 const Stack = createStackNavigator();
 export default class MenuComponent extends Component {
@@ -20,7 +21,6 @@ export default class MenuComponent extends Component {
       loading: true
     }
   }
-
 
   async componentDidMount() {
       await Font.loadAsync({
@@ -48,6 +48,8 @@ export default class MenuComponent extends Component {
               <Stack.Screen name="MyApps" component={MyApps}
               options={{headerShown: false}}/>
               <Stack.Screen name="CreateArea" component={CreateArea}
+              options={{headerShown: false}}/>
+              <Stack.Screen name="Config" component={ConfigComponent}
               options={{headerShown: false}}/>
             </Stack.Navigator>
           </NavigationContainer>

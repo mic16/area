@@ -4,6 +4,7 @@ import { Footer, FooterTab, Text, Button, Container, Header, Content, Form, Item
 import * as Font from 'expo-font';
 import { Ionicons } from '@expo/vector-icons';
 import { mobileIP } from '../../Login';
+import ConfigComponent from '../Configfield/Configfield';
 
 export default class CreateArea extends Component<{}, any> {
 
@@ -15,11 +16,12 @@ export default class CreateArea extends Component<{}, any> {
       servicesData: [],
       reactListData: [],
       reactListDataSecond: [],
-      actionReaction: [],
+      actionReact: [],
+      reactionReact: [],
       areact: [],
+      rreact: [],
       actionApp: "",
       action: "",
-      reactionApp: "",
       reaction: ""
     }
   }
@@ -34,7 +36,6 @@ export default class CreateArea extends Component<{}, any> {
       })
       .then((response) => response.json()).then((json) => {
         let var_tmp:Array<String> = []
-        console.log(json.result);
         json.result.forEach((element:String) => {
           var_tmp.push(element);
         });
@@ -44,23 +45,6 @@ export default class CreateArea extends Component<{}, any> {
         console.error(error)
         alert("I GET DON'T IT, ITS " + error)
       })
-    }
-
-    public listApp():Array<any> {
-      let reactList:Array<any> = []
-      if (this.state.servicesData.length === 0) {
-        this.getServices()
-        .then((_) => {
-          this.state.servicesData.forEach((elem:string, key:number) => {
-            reactList.push(
-              <Picker.Item label={elem} value={elem} key={key}/>
-            )
-          })
-          this.setState({reactListDataSecond:reactList})
-        });
-        return reactList
-        }
-      return reactList;
     }
 
     public getReaction(service:String, action:String, config:Object) {
@@ -75,14 +59,8 @@ export default class CreateArea extends Component<{}, any> {
           })
         })
         .then((response) => response.json()).then((json) => {
-          let mapAREA:Map<String, Array<Object>> = new Map()
-          console.log(json)
-          Array(json.result).forEach((obj:any) => {
-            console.log(obj)
-          });
-          // mapAREA.set("ServicesReaction", json.result)
-          // mapAREA.set("Reaction", json.result.reactions)
-          // this.setState({actionReaction:mapAREA})
+          let mapAREA:Map<String, Array<Object>> = new Map(Object.entries(json.result))
+          this.setState({reactionReact:mapAREA})
         })
         .catch((error) => {
           console.error(error)
@@ -90,26 +68,21 @@ export default class CreateArea extends Component<{}, any> {
         })
       }
 
-    public pickerReaction(action:String) {
+    public pickerReactionService(action:String) {
       let reactReaction = new Array()
       let config:Object = new Object()
-      // if (this.state.actionReaction.length === 0) {
       this.getReaction(this.state.actionApp, action, config)
       .then((_) => {
-      // this.state.actionReaction.get("Action").forEach((obj:any) => {
-      //   reactAction.push(
-      //     <Picker.Item label={obj["description"]} value={obj["name"]} key={obj["name"]}/>
-      //   )
-      // });
-      this.state.actionReaction.get("Reaction").forEach((obj:any) => {
-        reactReaction.push(
-          <Picker.Item label={obj["description"]} value={obj["name"]} key={obj["name"]}/>
-        )
+      this.state.reactionReact.forEach((obj:any, name:string) => {
+        obj.forEach((objs:any) => {
+          this.setState({action:objs})
+          reactReaction.push(
+            <Picker.Item label={name} value={name} key={name}/>
+          )
       });
-      // this.setState({areact:reactAction})
-      this.setState({rreact:reactReaction})
+      });
+      this.setState({reactListDataSecond:reactReaction})
     });
-    // }
     }
 
     public getAction(service:String) {
@@ -123,8 +96,7 @@ export default class CreateArea extends Component<{}, any> {
         .then((response) => response.json()).then((json) => {
           let mapAREA:Map<String, Array<Object>> = new Map()
           mapAREA.set("Action", json.result.actions)
-          // mapAREA.set("Reaction", json.result.reactions)
-          this.setState({actionReaction:mapAREA})
+          this.setState({actionReact:mapAREA})
         })
         .catch((error) => {
           console.error(error)
@@ -134,28 +106,32 @@ export default class CreateArea extends Component<{}, any> {
 
     public pickerAction(service:String) {
       let reactAction = new Array()
-      let reactReaction = new Array()
-      // if (this.state.actionReaction.length === 0) {
       this.getAction(service)
       .then((_) => {
-      this.state.actionReaction.get("Action").forEach((obj:any) => {
+      this.state.actionReact.get("Action").forEach((obj:any) => {
+        console.log(obj)
         reactAction.push(
           <Picker.Item label={obj["description"]} value={obj["name"]} key={obj["name"]}/>
         )
       });
-      // this.state.actionReaction.get("Reaction").forEach((obj:any) => {
-      //   reactReaction.push(
-      //     <Picker.Item label={obj["description"]} value={obj["name"]} key={obj["name"]}/>
-      //   )
-      // });
       this.setState({areact:reactAction})
-      // this.setState({rreact:reactReaction})
     });
-    // }
+    }
+
+    public pickerReaction(service:string) {
+      let reactReaction = new Array()
+      this.getAction(service)
+      .then((_) => {
+        this.state.reactionReact.get(service).forEach((objs:any) => {
+          reactReaction.push(
+            <Picker.Item label={objs["description"]} value={objs["name"]} key={objs["name"]}/>
+          )
+          });
+      this.setState({rreact:reactReaction})
+    });
     }
 
     public listElem():Array<any> {
-      this.listApp()
       let reactList:Array<any> = []
       if (this.state.servicesData.length === 0) {
         this.getServices()
@@ -191,8 +167,7 @@ export default class CreateArea extends Component<{}, any> {
     });
     console.log("Action of the service selected is " + value)
     if (value.length != 0) {
-      this.setState({action:value})
-      this.pickerReaction(value)
+      this.pickerReactionService(value)
     }
   }
 
@@ -201,8 +176,11 @@ export default class CreateArea extends Component<{}, any> {
       selectedAppTwo: value
     });
     console.log("The other service selected is " + value)
+    if (value === undefined)
+      return
     if (value.length != 0) {
       this.setState({reactionApp:value})
+      this.pickerReaction(value)
     }
   }
 
@@ -243,7 +221,7 @@ export default class CreateArea extends Component<{}, any> {
             <Item style={{ alignSelf:'center', justifyContent:'center', flex: 1 }} picker>
               <Picker placeholder="Select your Service for the Action" placeholderStyle={{ color: "#bfc6ea" }} placeholderIconColor="#007aff" iosIcon={<Icon name="arrow-down" />}>
                 {
-                  this.state.reactListData || <Picker.Item label="No Service Available now" value="None" />
+                  this.state.reactListData || <Picker.Item label="No Service Available now" value="None" color="grey" />
                 }
               </Picker>
             </Item>
@@ -274,7 +252,7 @@ export default class CreateArea extends Component<{}, any> {
                 onValueChange={this.onValueChangeAppOne.bind(this)}
               >
                   {
-                    this.state.reactListData || <Picker.Item label="No Service Available now" value="None" />
+                    this.state.reactListData || <Picker.Item label="Loading, please wait" value="None" color="grey" />
                   }
                 </Picker>
               </Item>
@@ -291,9 +269,12 @@ export default class CreateArea extends Component<{}, any> {
                 onValueChange={this.onValueChangeAction.bind(this)}
               >
                   {
-                    this.state.areact || <Picker.Item label="No Service Available now" value="None" />
+                    this.state.areact || <Picker.Item label="Loading, please wait" value="None" color="grey" />
                   }
                 </Picker>
+                {
+                  this.state.areact.length != 0 ? <Button icon style={{ marginRight:10 }} onPress={() => this.state.navigation.navigate("Config", this.state.action)} ><Icon name='settings-outline' /></Button>: <Text></Text>
+                }
               </Item>
               <Icon name="arrow-down-outline" style={{ alignSelf:'center' }} />
               <Text style= {{ alignSelf:'center', color:'rgba(0, 0, 0, 0.5)', marginTop:5 }} >Select the Service to use as Reaction:</Text>
@@ -309,7 +290,7 @@ export default class CreateArea extends Component<{}, any> {
                 onValueChange={this.onValueChangeAppTwo.bind(this)}
               >
                   {
-                    this.state.reactListDataSecond || <Picker.Item label="No Service Available now" value="None" />
+                    this.state.reactListDataSecond || <Picker.Item label="Loading, please wait" value="None" color="grey" />
                   }
                 </Picker>
               </Item>
@@ -325,9 +306,12 @@ export default class CreateArea extends Component<{}, any> {
                 onValueChange={this.onValueChangeReaction.bind(this)}
               >
                   {
-                    this.state.rreact || <Picker.Item label="No Service Available now" value="None" />
+                    this.state.rreact || <Picker.Item label="Loading, please wait" value="None" color="grey" />
                   }
                 </Picker>
+                {
+                  this.state.rreact.length != 0 ? <Button icon style={{ marginRight:10 }} ><Icon name='settings-outline' /></Button>: <Text></Text>
+                }
               </Item>
             <Button style={{ alignSelf:'center', marginTop:"40%" }}>
               <Text>

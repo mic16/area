@@ -83,7 +83,7 @@ export default class MyApps extends Component<{}, any> {
           
           this.state.actionReaction.get("Action").forEach((obj:any) => {
             reactAREA.push(
-              <View style={{ flex:1, height:50, marginBottom:20 }} key>
+              <View style={{ flex:1, height:50, marginBottom:20 }}>
                 <Text>Name: {obj["name"]}</Text>
                 <Text>Description: {obj["description"]}</Text>
               </View>
@@ -157,7 +157,7 @@ export default class MyApps extends Component<{}, any> {
 
     public listElem() {
       let reactList:Array<any> = []
-      let iconList:Array<any> = [<Icon name="logo-twitter" style={{color:"#1da1f2"}}/>, <Icon name="logo-github" />]
+      let iconList:Array<any> = [<Icon name="logo-twitter" style={{color:"#1da1f2"}}/>, <Icon name="logo-github" />, <Icon name="logo-youtube" style={{color:"#FF0000"}}/>]
       let i = 0
       if (this.state.servicesData.length === 0) {
         this.getServices()
