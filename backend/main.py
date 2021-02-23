@@ -22,6 +22,8 @@ from Area import Area
 import twitterApi
 import githubApi
 import youtubeApi
+import gmailApi
+import googleConnect
 
 
 # Import Services
@@ -29,6 +31,7 @@ sys.path.append('./services/')
 import Service
 import Twitter
 import Github
+import Youtube
 
 tokenManager = TokenManager()
 data.load()
@@ -93,7 +96,7 @@ def createArea():
 def deleteArea():
     json = request.get_json()
     if json is None:
-        return {"error": "Expected json body, got nothing"}
+        return {'error': 'Expected json body, got nothing'}
     if token := json.get('token'):
         if mail := tokenManager.getTokenUser(token):
             if user := data.constructUser(mail):
@@ -103,4 +106,22 @@ def deleteArea():
                         return {'result': "Area '%s' removed" % uuid}
                     return {'error': "Failed to delete area '%s' " % uuid}
                 return {'error': 'Missing UUID'}
+    return {'error': 'Invalid Token'}
+
+@app.route('/area/list', methods=['POST'])
+def listArea():
+    json = request.get_json()
+    if json is None:
+        return {'error': 'Expected json body, got nothing'}
+    if token := json.get('token'):
+        if mail := tokenManager.getTokenUser(token):
+            areas = data.listArea(mail)
+            userAreas = []
+            for area in areas:
+                userAreas.append({
+                    'action': area['action'],
+                    'reaction': area['reaction'],
+                    'uuid': area['uuid']
+                })
+            return {'result': userAreas}
     return {'error': 'Invalid Token'}

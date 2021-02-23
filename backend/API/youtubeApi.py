@@ -2,48 +2,101 @@ from app import app, data
 import os
 import flask
 import requests
+import sys
 
 import google.oauth2.credentials
 import google_auth_oauthlib.flow
 import googleapiclient.discovery
 
-CLIENT_SECRETS_FILE = "API/code_secret_client_108810952137-1tic3bntk3p466t851t1c89p5a75r6bj.apps.googleusercontent.com.json"
-SCOPES = ['https://www.googleapis.com/auth/youtube.force-ssl']
 API_SERVICE_NAME = 'youtube'
 API_VERSION = 'v3'
 
-@app.route('/loginYoutube')
-def loginYoutube():
-  flow = google_auth_oauthlib.flow.Flow.from_client_secrets_file(
-      CLIENT_SECRETS_FILE, scopes=SCOPES)
-  flow.redirect_uri = flask.url_for('oauthAuthorizedYoutube', _external=True)
+def Diff(li1, li2):
+    return (list(list(set(li1)-set(li2)) + list(set(li2)-set(li1))))
 
-  authorization_url, state = flow.authorization_url(
-      access_type='offline',
-      include_granted_scopes='true')
-  flask.session['state'] = state
-  return flask.redirect(authorization_url)
+def getLastSubscriber(user):
+
+    c = google.oauth2.credentials.Credentials(**user.get("Google.credential"))
+
+    youtube = googleapiclient.discovery.build(
+        API_SERVICE_NAME, API_VERSION, credentials=c)
+    
+    request = youtube.subscriptions().list(
+        part="subscriberSnippet",
+        maxResults=50,
+        mySubscribers=True
+    )
+    response = request.execute()
+
+    if (user.get("youtube.subscriber") == None):
+        user.set("youtube.subscriber", response['items'])
+        return (None)
+    oldSubscriber = user.get("youtube.subscriber")
+    if (len(oldSubscriber) != len(response['items'])):
+        diff = Diff(response['items'], oldSubscriber)
+
+        if (len(diff) == 0):
+            return (None)
+        else:
+            user.set("youtube.subscriber", response['items'])
+            tab = []
+            for u in diff:
+                tab.append(u["subscriberSnippet"]["title"])
+            return (tab)
+    else:
+        return (None)
 
 
-@app.route('/oauthAuthorizedYoutube')
-def oauthAuthorizedYoutube():
-  state = flask.session['state']
+def getLastLikedVideo(user):
+    c = google.oauth2.credentials.Credentials(**user.get("Google.credential"))
 
-  flow = google_auth_oauthlib.flow.Flow.from_client_secrets_file(
-      CLIENT_SECRETS_FILE, scopes=SCOPES, state=state)
-  flow.redirect_uri = flask.url_for('oauthAuthorizedYoutube', _external=True)
+    youtube = googleapiclient.discovery.build(
+        API_SERVICE_NAME, API_VERSION, credentials=c)
+    
+    request = youtube.videos().list(
+        part="snippet,contentDetails,statistics",
+        maxResults=50,
+        myRating="like"
+    )
 
-  authorization_response = flask.request.url
-  flow.fetch_token(authorization_response=authorization_response)
+    response = request.execute()
 
-  credentials = flow.credentials
+    if (user.get("youtube.likes") == None):
+        user.set("youtube.likes", response['items'])
+        return (None)
+    oldlikes = user.get("youtube.likes")
+    if (len(oldlikes) != len(response['items'])):
+        diff = Diff(response['items'], oldlikes)
 
-  return {"message": credentials_to_dict(credentials)}
+        if (len(diff) == 0):
+            return (None)
+        else:
+            user.set("youtube.likes", response['items'])
+            tab = []
+            for u in diff:
+                tab.append(u["subscriberSnippet"]["title"])
+            return (tab)
+    else:
+        return (None)
 
-def credentials_to_dict(credentials):
-  return {'token': credentials.token,
-          'refresh_token': credentials.refresh_token,
-          'token_uri': credentials.token_uri,
-          'client_id': credentials.client_id,
-          'client_secret': credentials.client_secret,
-          'scopes': credentials.scopes}
+def sendNewComment(user, videoId, text):
+
+    c = google.oauth2.credentials.Credentials(**user.get("Google.credential"))
+
+    youtube = googleapiclient.discovery.build(
+        API_SERVICE_NAME, API_VERSION, credentials=c)
+
+    request = youtube.commentThreads().insert(
+        part="snippet",
+        body={
+          "snippet": {
+            "videoId": videoId,
+            "topLevelComment": {
+              "snippet": {
+                "textOriginal": text
+              }
+            }
+          }
+        }
+    )
+    request.execute()

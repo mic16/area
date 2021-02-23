@@ -124,13 +124,19 @@ class Area():
 
     def trigger(self):
         if (time.time() - self.lastTrigger)>= 60:
-            self.returns = {}
-            self.returnStates = []
-            actionEx = self.action.getAction()
-            actionEx(self, self.actionConfig)
-            inputs = self.reaction.__service__['inputs']
-            for returnState in self.returnStates:
-                if not inputs or inputs in returnState:
-                    self.returns = returnState
-                    self.reaction(self.reactionInstance, self, self.reactionConfig)
+            try:
+                self.returns = {}
+                self.returnStates = []
+                actionEx = self.action.getAction()
+                actionEx(self, self.actionConfig)
+                inputs = self.reaction.__service__['inputs']
+                for returnState in self.returnStates:
+                    try:
+                        if not inputs or inputs in returnState:
+                            self.returns = returnState
+                            self.reaction(self.reactionInstance, self, self.reactionConfig)
+                    except Exception as err:
+                        print(err)
                 self.lastTrigger = time.time()
+            except Exception as err:
+                print(err)
