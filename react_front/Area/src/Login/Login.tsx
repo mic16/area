@@ -39,8 +39,8 @@ export default class LoginComponent extends Component<{}, any> {
         password
       })
     }).then((response) => response.json()).then((json) => {
-      alert("CONNECTED WITH TOKEN: {" + json.result + "}")
-      this.state.navigation.navigate('CreateArea')
+      console.log(json.result)
+      this.state.navigation.navigate('CreateArea', {token: json.result})
     })
     .catch((error) => {
       console.error(error)

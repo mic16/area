@@ -4,7 +4,7 @@ import { Container, Button, Text, Drawer } from 'native-base';
 import Icon from 'react-native-vector-icons/FontAwesome';
 import { render } from 'react-dom';
 
-export default class Header extends Component {
+export default class CustomHeader extends Component {
   constructor(props) {
     super(props);
     this.state = {

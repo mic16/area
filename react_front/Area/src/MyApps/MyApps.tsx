@@ -5,20 +5,7 @@ import * as Font from 'expo-font';
 import { Ionicons } from '@expo/vector-icons';
 import { any } from 'prop-types';
 import Navigation from '../Navigation/Navigation';
-import Header from '../Header/Header'
-import CreateArea from '../CreateArea/CreateArea';
-
-const getServices = () => {
-  return fetch('localhost:8080/services')
-    .then((response) => response.json())
-    .then((json) => {
-      return json.result;
-    })
-    .catch((error) => {
-      console.error(error);
-      return null
-    });
-};
+import CustomHeader from '../CustomHeader/CustomHeader';
 
 type MyProps = { navigation: any };
 type MyState = { navigation: any, loading: boolean, drawer: any, drawerState: boolean, token: string };

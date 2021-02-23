@@ -1,9 +1,7 @@
 import { StatusBar } from 'expo-status-bar';
 import React, { Component } from 'react';
-import Home from './src/Home/Home';
 import { NavigationContainer } from '@react-navigation/native';
 import { createStackNavigator } from '@react-navigation/stack';
-import LinkedApps from './src/LinkedApps/LinkedApps'
 
 export function printing(str: string) {
   alert(str)
@@ -26,15 +24,6 @@ const Stack = createStackNavigator();
 export default function App() {
   return (
     <Menu></Menu>
-    // <NavigationContainer>
-    //   <Stack.Navigator>
-    //     <Stack.Screen name="Home" component={Home}
-    //       options={{headerShown: false}}/>
-    //     <Stack.Screen name="LinkedApps" component={LinkedApps}
-    //       options={{headerShown: false}}/>
-    //   </Stack.Navigator>
-    // </NavigationContainer>
-    
   );
 }
 

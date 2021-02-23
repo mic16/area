@@ -43,11 +43,11 @@ export default class MenuComponent extends Component {
             <Stack.Navigator>
               <Stack.Screen name="LoginComponent" component={LoginComponent}
               options={{headerShown: false}}/>
+              <Stack.Screen name="CreateArea" component={CreateArea}
+              options={{headerShown: false}}/>
               <Stack.Screen name="MyArea" component={MyArea}
               options={{headerShown: false}}/>
               <Stack.Screen name="MyApps" component={MyApps}
-              options={{headerShown: false}}/>
-              <Stack.Screen name="CreateArea" component={CreateArea}
               options={{headerShown: false}}/>
             </Stack.Navigator>
           </NavigationContainer>
