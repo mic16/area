@@ -22,6 +22,8 @@ from Area import Area
 import twitterApi
 import githubApi
 import youtubeApi
+import gmailApi
+import googleConnect
 
 
 # Import Services
