@@ -7,8 +7,8 @@ services:
     depends_on:
       - area-backend
     entrypoint: ["yarn", "web"]
-    volumes:
-      - "./react_front/Area:/var/app"
+    # volumes:
+    #   - "./react_front/Area:/var/app"
 
   area-mobile:
     build: ./react_front/Area
@@ -17,12 +17,13 @@ services:
     depends_on:
       - area-backend
     entrypoint: ["yarn", "android"]
-    volumes:
-      - "./react_front/Area:/var/app"
+    # volumes:
+    #   - "./react_front/Area:/var/app"
 
   area-backend:
     build: ./backend/
     volumes:
+      - "./logs/backend:/var/logs"
       - "./backend:/var/app"
     ports:
       - "8080:5000"
