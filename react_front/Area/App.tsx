@@ -14,7 +14,7 @@ export function saveVar(str: string) {
 }
 import { AppRegistry, TextInput, TouchableOpacity, TouchableOpacityBase } from "react-native"
 import { Alert, StyleSheet, View } from 'react-native';
-import { Text, Button, Container, Header, Content, Form, Item, Input, Label, Title } from 'native-base';
+import { Text, Button, Container, Header, Content, Form, Item, Input, Label, Title, Root } from 'native-base';
 import { Font } from 'expo';
 import { Ionicons } from '@expo/vector-icons';
 import LoginComponent from './Login';
@@ -25,7 +25,9 @@ const Stack = createStackNavigator();
 
 export default function App() {
   return (
+    // <Root>
     <Menu></Menu>
+    // </Root>
   );
 }
 
