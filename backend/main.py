@@ -135,3 +135,5 @@ def listArea():
                 })
             return {'result': userAreas}
     return {'error': 'Invalid Token'}
+
+print('started')

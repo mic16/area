@@ -124,6 +124,7 @@ class Area():
 
     def trigger(self):
         if (time.time() - self.lastTrigger)>= 60:
+            print("Executing area %s" % self.getUUID())
             try:
                 self.returns = {}
                 self.returnStates = []
@@ -137,6 +138,6 @@ class Area():
                             self.reaction(self.reactionInstance, self, self.reactionConfig)
                     except Exception as err:
                         print(err)
-                self.lastTrigger = time.time()
             except Exception as err:
                 print(err)
+            self.lastTrigger = time.time()
