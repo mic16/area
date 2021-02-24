@@ -17,7 +17,7 @@ def levenshtein(s1, s2):
     
     return previous_row[-1]
 
-def DidYouMean(str, words, maxDistance=4):
+def DidYouMean(str, words, maxDistance=8):
     minScore = -1
     closestWord = None
     for word in words:

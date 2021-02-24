@@ -18,6 +18,7 @@ import authentification
 import time
 from TokenManager import TokenManager
 from Area import Area
+from didyoumean import DidYouMean
 
 import twitterApi
 import githubApi
@@ -45,14 +46,23 @@ def getServiceCompat(serviceName, actionName):
     compatList = Service.listCompatibleReactions(serviceName, actionName, request.json)
     if compatList is not None:
         return {'result': compatList}
-    return {'error': 'Unkown action %s for service %s' % (actionName, serviceName)}
+    if not Service.serviceExists(serviceName):
+        if potentialServiceName := DidYouMean(serviceName, Service.listServices()):
+            return {"error": "Service '%s' doesn't exists, did you mean '%s' ?" % (serviceName, potentialServiceName)}
+        return {"error": "Service '%s' doesn't exists" % (serviceName)}
+    if potentialActionName := DidYouMean(actionName, Service.listActions(serviceName)):
+        return {"error": "Action '%s' from service '%s' doesn't exists, did you mean '%s' ?" %  (actionName, serviceName, potentialActionName)}
+    return {"error": "Action '%s' from service '%s' doesn't exists" % (actionName, serviceName)}
 
 @app.route('/services/<string:serviceName>')
 def serviceInfos(serviceName):
     infos = Service.getServiceInfos(serviceName)
     if infos:
         return {'result': infos}
-    return {'error': 'Unkown service %s' % serviceName}
+    
+    if potentialServiceName := DidYouMean(serviceName, Service.listServices()):
+        return {"error": "Service '%s' doesn't exists, did you mean '%s' ?" % (serviceName, potentialServiceName)}
+    return {"error": "Service '%s' doesn't exists" % (serviceName)}
 
 @app.route('/about.json')
 def aboutJSON():
