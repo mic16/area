@@ -12,7 +12,7 @@ __logger__ = 'AREA'
 
 __print__ = print
 
-logfile = open('/var/logs/%s.log' % (time.strftime("%T-%d-%m-%Y")), 'w')
+logfile = open('/var/logs/%s.log' % (time.strftime("%d-%m-%Y")), 'w')
 def log(*args, level=DEBUG, end='\n', flush=False):
     message = ' '.join([str(i) for i in args])
     color = colors.LIGHT_WHITE
@@ -29,8 +29,8 @@ def log(*args, level=DEBUG, end='\n', flush=False):
     elif level == DEBUG:
         color = colors.LIGHT_PURPLE
         prefix = '[DEBUG]'
-    coloredMessage = '%s[%s]%s %s' % (color, __logger__, prefix, message)
-    logfile.write('[%s]%s %s\n' % (__logger__, prefix, message))
+    coloredMessage = '%s[%s][%s]%s %s' % (color, time.ctime(), __logger__, prefix, message)
+    logfile.write('[%s][%s]%s %s\n' % (time.ctime(), __logger__, prefix, message))
     logfile.flush()
     __print__(coloredMessage, file=sys.stderr, end=end, flush=flush)
 

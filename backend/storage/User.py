@@ -1,3 +1,5 @@
+import _
+
 class User:
     def __init__(self, mail, redis):
         self.redis = redis
@@ -7,7 +9,9 @@ class User:
         return self.get('mail')
 
     def get(self, field):
-        return self.redis.jsonget('user.%s'  % self.mail, '.%s' % (field or ''))
+        return _.get(self.redis.jsonget('user.%s' % self.mail, '.'), field)
 
     def set(self, field, value):
-        self.redis.jsonset('user.%s'  % self.mail, '.%s' % (field or ''), value)
+        obj = self.redis.jsonget('user.%s' % self.mail, '.')
+        obj = _.set(obj, field, value) or {}
+        self.redis.jsonset('user.%s' % self.mail, '.', obj)

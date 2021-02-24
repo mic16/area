@@ -185,6 +185,67 @@ def get(obj, path, default=None):
             fobj = None
     return fobj
 
+class Rollback():
+    def __init__(self, name):
+        self.name = name
+
+def _nextset(obj, path, default):
+    if type(obj) is list:
+        if type(path) is int:
+            if path >= -len(obj) and path < len(obj):
+                if not type(obj[path]) is dict and not type(obj[path]) is list:
+                    obj[path] = {}
+            elif path >= 0:
+                obj += [default] * (path - len(obj)+1)
+                obj[path] = {}
+            return obj[path]
+        else:
+            return Rollback('convert')
+    elif type(obj) is dict:
+        if obj.get(path) is None or (not type(obj.get(path)) is dict and not type(obj.get(path)) is list):
+            obj[path] = {}
+        return obj[path]
+    return Rollback('replace')
+
+def set(obj, path, value, default=None):
+    parser = PathParser()
+    fobj = obj
+    pobj = obj
+    ppath = None
+    cpath = parser.parse(path)
+    for p in cpath[:-1]:
+        if fobj is None:
+            return None
+        if type(fobj := _nextset(fobj, p, default)) is Rollback:
+            if not ppath is None:
+                if fobj.name == 'replace':
+                    pobj[ppath] = {}
+                    fobj=pobj[ppath]
+                elif fobj.name ==  'convert':
+                    data={}
+                    for i in range(len(pobj[ppath])):
+                        data[i] = pobj[ppath][i]
+                    pobj[ppath] = data
+                    fobj = data
+            else:
+                if fobj.name == 'replace':
+                    pobj = {}
+                    fobj=pobj
+                elif fobj.name ==  'convert':
+                    data={}
+                    for i in range(len(pobj)):
+                        data[i] = pobj[i]
+                    pobj = data
+                    fobj = data
+                obj = pobj
+            fobj[p] = {}
+            fobj = fobj[p]
+        pobj = fobj
+        ppath = p
+    fobj[cpath[-1]] = value
+    return obj
+    
+
 def has(obj, path):
     parser = PathParser()
     fobj = obj
