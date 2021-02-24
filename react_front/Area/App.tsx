@@ -1,9 +1,7 @@
 import { StatusBar } from 'expo-status-bar';
 import React, { Component } from 'react';
-import Home from './src/Home/home';
 import { NavigationContainer } from '@react-navigation/native';
 import { createStackNavigator } from '@react-navigation/stack';
-import LinkedApps from './src/LinkedApps/linked-apps'
 
 export function printing(str: string) {
   alert(str)
@@ -17,9 +15,9 @@ import { Alert, StyleSheet, View } from 'react-native';
 import { Text, Button, Container, Header, Content, Form, Item, Input, Label, Title, Root } from 'native-base';
 import { Font } from 'expo';
 import { Ionicons } from '@expo/vector-icons';
-import LoginComponent from './Login';
-import MenuComponent from './Menu';
-import Menu from './Menu';
+import LoginComponent from './src/Login/Login';
+import MenuComponent from './src/Menu/Menu';
+import Menu from './src/Menu/Menu';
 
 const Stack = createStackNavigator();
 

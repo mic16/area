@@ -4,7 +4,7 @@ import { Container, Button, Text, Drawer } from 'native-base';
 import Icon from 'react-native-vector-icons/FontAwesome';
 import { render } from 'react-dom';
 
-export default class Header extends Component {
+export default class CustomHeader extends Component {
   constructor(props) {
     super(props);
     this.state = {
@@ -35,10 +35,8 @@ export default class Header extends Component {
 
 const styles = StyleSheet.create({
   header: {
-    borderBottomWidth: 0.5,
-    borderColor: '#c7c7c7',
     width: '100%',
     height: '5%',
-    backgroundColor: '#ededed',
+    backgroundColor: '#3c84c7',
   }
 });

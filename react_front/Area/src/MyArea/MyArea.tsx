@@ -4,7 +4,6 @@ import { Footer, FooterTab, Text, Button, Container, Header, Content, Form, Item
 import * as Font from 'expo-font';
 import { Ionicons } from '@expo/vector-icons';
 
-
 export default class MyArea extends Component {
 
   constructor(props:any) {
@@ -32,11 +31,10 @@ export default class MyArea extends Component {
        }
        if (Platform.OS == "web")
         return (
-            <Container>
-                <ImageBackground source={require('../../assets/login.png')} style={{ width: '100%', height: '100%' }} >
-            <Content>
-                
-            </Content>
+          <Container>
+            <ImageBackground source={require('../../assets/login.png')} style={{ width: '100%', height: '100%' }} >
+              <Content>
+              </Content>
             </ImageBackground>
           </Container>
         );
