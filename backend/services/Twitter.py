@@ -3,6 +3,7 @@ from Service import Service
 from Reaction import Reaction
 from Field import Field, FTYPE
 from Trigger import Trigger
+from Imgs import Imgs
 import twitterApi
 
 @Service()
@@ -17,7 +18,7 @@ class Twitter():
 
         trig = Trigger(types=[str])
         if fields.getBool('with image') == True:
-            trig.addType(int)
+            trig.addType(Imgs)
 
         def func(area, fields):
             favs = twitterApi.getLastLike(area.getUser())
@@ -27,31 +28,29 @@ class Twitter():
                 area.newReaction()
                 if fields.getBool('with image') == True:
                     if 'media' in fav["entities"]:
-                        for image in fav["entities"]['media']:
-                            area.ret(image)
+                        area.ret(Imgs([fav["entities"]['media']['media_url']]))
                 area.ret(fav.text)
 
         return trig.setAction(func)
 
-    @Action('When a new element appear in the user Timeline')
+    @Action('When the user tweet something')
     @Field('match', FTYPE.STRING, 'String that should be matched')
     @Field('with image', FTYPE.BOOLEAN, 'If the post should contain an image')
-    def onTweetTimeline(self, fields):
+    def onTweet(self, fields):
         trig = Trigger(types=[str])
         if fields.getBool('with image') == True:
-            trig.addType(int)
+            trig.addType(Imgs)
 
         def func(area, fields):
-            tweets = twitterApi.getLastTweetTimeline(area.getUser())
+            tweets = twitterApi.getLastTweetUser(area.getUser())
             if (tweets == None):
                 return
             for tweet in tweets:
                 area.newReaction()
                 if fields.getBool('with image') == True:
                     if 'media' in tweet["entities"]:
-                        for image in tweet["entities"]['media']:
-                            area.ret(image)
-                area.ret(tweet.text)
+                        area.ret(Imgs([tweet["entities"]['media']['media_url']]))
+                area.ret(tweet['text'])
 
         return trig.setAction(func)      
 

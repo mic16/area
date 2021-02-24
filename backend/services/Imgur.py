@@ -52,8 +52,8 @@ class Imgur():
     def createPost(self, area, fields):
         title = ''
         description = ''
-        if area.get(str)[0] != None:
+        if len(area.get(str)) >= 1:
             title = area.get(str)[0]
-        if area.get(str)[1] != None:
+        if len(area.get(str)) >= 2:
             description = area.get(str)[1]
         imgurApi.createPost(area.getUser(), area.get(Imgs)[0].getImages(), title, description)

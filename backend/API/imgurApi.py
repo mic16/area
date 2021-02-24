@@ -3,6 +3,7 @@ from flask import redirect, request
 from flask_restful import Resource, reqparse
 import requests
 import json
+from utils import diffFirstSecond
 from TokenManager import TokenManager
 
 from imgurpython import ImgurClient
@@ -12,25 +13,35 @@ client_secret = '1d2a939c474367667bdd4de55ede8b67b633694a'
 
 @app.route('/loginImgur', methods = [ 'GET', 'POST' ])
 def loginImgur():
+    tokenManager = TokenManager()
+    req_data = request.get_json()
+    if (req_data.get("token") == None):
+        return ({"error": "no token"})
+    if (tokenManager.getTokenUser(req_data.get("token")) == None):
+        return ({"error": "bad token"})
     client = ImgurClient(client_id, client_secret)
     return redirect(client.get_auth_url('token'))
 
+def callbackParser():
+    parser = reqparse.RequestParser()
+    parser.add_argument('access_token')
+    parser.add_argument('refresh_token')
+    parser.add_argument('account_username')
+    return parser
+
 @app.route('/oauthAuthorizedImgur')
 def oauthAuthorizedImgur():
-    print (request.get_json )
-    return ('ok')
+    tokenManager = TokenManager()
+    req_data = request.get_json()
+    if (req_data.get("token") == None):
+        return ({"error": "no token"})
+    if (tokenManager.getTokenUser(req_data.get("token")) == None):
+        return ({"error": "bad token"})
 
-
-def diffFirstSecond(l1, l2):
-    tab = []
-    for i in l1:
-        a = False
-        for j in l2:
-            if i == j:
-                a = True
-        if not a:
-            tab.append(i)
-    return tab  
+    parser = callbackParser()
+    args = parser.parse_args()
+    data.updateUser(tokenManager.getTokenUser(req_data.get("token")), {"imgur": {"token": args['access_token'], "refresh_token": args['refresh_token'], "username":args['account_username']}})
+    return {"message": "connected as " + args['account_username']}
 
 def getLastFav(user):
     client = ImgurClient(client_id, client_secret, user.get("imgur.token"), user.get("imgur.refresh_token"))
