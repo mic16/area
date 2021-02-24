@@ -1,10 +1,14 @@
 import React, { Component } from 'react';
-import { ImageBackground, Platform, View, } from "react-native";
-import { Footer, FooterTab, Text, Button, Container, Header, Content, Form, Item, Input, Label, Title, Icon, Picker, Spinner, Toast } from 'native-base';
+import { any } from 'prop-types';
+import { ImageBackground, Platform, View, StyleSheet} from "react-native";
+import { Footer, FooterTab, Text, Button, Container, Header, Content, Form, Item, Input, Label, Title, Icon, Picker, Spinner, Toast, Drawer, ListItem, CheckBox } from 'native-base';
 import * as Font from 'expo-font';
 import { Ionicons } from '@expo/vector-icons';
-import { mobileIP } from '../../Login';
+import { mobileIP } from '../Login/Login';
 import ConfigComponent from '../Configfield/Configfield';
+import Navigation from '../Navigation/Navigation';
+import CustomHeader from '../CustomHeader/CustomHeader';
+import { userToken } from '../Login/Login';
 
 export default class CreateArea extends Component<{}, any> {
 
@@ -14,6 +18,26 @@ export default class CreateArea extends Component<{}, any> {
       navigation: this.props.navigation,
       loading: true,
       servicesData: [],
+      actionServiceList: [],
+      reactionServiceList: [],
+      drawer: any,
+      drawerState: false,
+      actionList: [],
+      reactionList: {['']: any},
+      actionService: '',
+      reactionService: '',
+      serviceAction: '',
+      serviceReaction: '',
+      actionNameList: [],
+      reactionNameList: [],
+      confirmButton: true,
+      actionFieldList: [],
+      reactionFieldList: [],
+      isChecked: false,
+      field: [],
+      fieldText: '',
+      actionFieldName: [],
+      reactionFieldName: [],
       reactListData: [],
       reactListDataSecond: [],
       actionReact: [],
@@ -22,10 +46,36 @@ export default class CreateArea extends Component<{}, any> {
       rreact: [],
       actionApp: "",
       action: "",
+      reactionApp: "",
       reaction: "",
+      actionValue: '',
+      reactionValue: '',
+      mreaction: "",
       mapAction: [],
       mapReaction: []
     }
+
+    let reactList: Array<any> = [<Picker.Item label={''} value={0} key={0}/>];
+
+    if (this.state.servicesData.length === 0) {
+      this.getServices()
+      .then((_) => {
+        this.state.servicesData.forEach((elem: string, key: number) => {
+          reactList.push(
+            <Picker.Item label={elem} value={key + 1} key={key + 1}/>
+          )
+        })
+        this.setState({actionServiceList: reactList});
+      });
+    } else {
+      this.state.servicesData.forEach((elem: string, key: number) => {
+        reactList.push(
+          <Picker.Item label={elem} value={key + 1} key={key + 1}/>
+        )
+      })
+      this.setState({actionServiceList: reactList});
+    }
+    console.log(userToken)
   }
 
   public getServices() {
@@ -38,6 +88,7 @@ export default class CreateArea extends Component<{}, any> {
       })
       .then((response) => response.json()).then((json) => {
         let var_tmp:Array<String> = []
+
         json.result.forEach((element:String) => {
           var_tmp.push(element);
         });
@@ -45,9 +96,33 @@ export default class CreateArea extends Component<{}, any> {
       })
       .catch((error) => {
         console.error(error)
-        
       })
     }
+
+  public listElemWeb(): Array<any> {
+    let reactList: Array<any> = [];
+
+    if (this.state.servicesData.length === 0) {
+      this.getServices()
+      .then((_) => {
+        this.state.servicesData.forEach((elem: string, key: number) => {
+          reactList.push(
+            <Picker.Item label={elem} value={key + 1}/>
+          )
+        })
+        this.setState({actionServiceList: reactList})
+      });
+      return reactList
+    } else {
+      this.state.servicesData.forEach((elem: string, key: number) => {
+        reactList.push(
+          <Picker.Item label={elem} value={key + 1}/>
+        )
+      })
+      this.setState({actionServiceList: reactList})
+    }
+    return reactList;
+  }
 
     public getReaction(service:String, action:String, config:Object) {
       return fetch('http://' + mobileIP + ':8080/services/' + service + '/' + action, {
@@ -68,7 +143,8 @@ export default class CreateArea extends Component<{}, any> {
           console.error(error)
           
         })
-      }
+        this.setState({reactListDataSecond:reactList})
+    }
 
     public pickerReactionService(action:String) {
       let reactReaction = new Array()
@@ -247,6 +323,200 @@ export default class CreateArea extends Component<{}, any> {
       this.setState({ loading: false });
   }
 
+  createArea = async () => {
+    let test = {
+      action: {
+        service: this.state.actionService,
+        name: this.state.serviceAction,
+        config: {
+
+        }
+      },
+      reaction:  {
+        service: this.state.reactionService,
+        name: this.state.serviceReaction,
+        config: {
+          
+        }
+      },
+    token: userToken};
+    console.log(this.state.actionFieldName)
+    this.state.actionFieldName.forEach(element => {
+      if (element.type === 'string')
+        test.action.config[element.name] = this.state.fieldText;
+      if (element.type === 'boolean')
+        test.action.config[element.name] = this.state.isChecked;
+    });
+    // this.state.reactionFieldName
+    console.log(test)
+    // await fetch('http://localhost:8080/area/create', {
+    //   method: 'POST',
+    //   headers: {
+    //     Accept: 'application/json',
+    //     'Content-Type': 'application/json',
+    //   },
+    //   body: JSON.stringify(test),
+    // }).then((response) => response.json()).then((json) => {
+    //   console.log(json.result);
+    // })
+    // .catch((error) => {
+    //   console.error(error);
+    // })
+  }
+
+  openCloseDrawer = () => {
+    if (!this.state.drawerState)
+      this.state.drawer._root.open();
+    else
+      this.state.drawer._root.close();
+    this.setState({
+      drawerState: !this.state.drawerState,
+    })
+  }
+
+  changeService = async (value: any, type: string) => {
+    let service = '';
+
+    if (type === 'action') {
+      this.setState({actionValue: 0, actionFieldList: [], reactionServiceList: [], actionList: [], reactionList: []});
+      service = this.state.actionServiceList[value].props.label;
+      this.setState({actionService: service});
+      await fetch('http://localhost:8080/services/' + service, {
+        method: 'GET',
+        headers: {
+          Accept: 'application/json',
+          'Content-Type': 'application/json',
+        },
+      }).then((response) => response.json()).then((json) => {
+        console.log(json.result)
+        let tmpActionList: Array<any> = [<Picker.Item label={''} value={0} key={0}/>];
+        let tmpActionNameList: Array<any> = [];
+        json.result.actions.forEach((elem: any, key: number) => {
+          tmpActionList.push(
+            <Picker.Item label={elem.description} value={key + 1} key={key + 1}/>
+          )
+          tmpActionNameList.push(json.result.actions[key])
+        })
+        this.setState({actionList: tmpActionList, actionNameList: tmpActionNameList});
+      }).catch((error) => {
+        console.error(error)
+      })
+    } else if (type === 'reaction') {
+      service = this.state.reactionServiceList[value].props.label;
+      this.setState({reactionService: service, reactionValue: 0});
+      if (value === '0') {
+        this.setState({reactionService: ''});
+      }
+    }
+  }
+
+  updateField = (key: number) => {
+    this.setState({isChecked: !this.state.isChecked});
+    let tmpField = this.state.field;
+
+    tmpField[key] = <CheckBox checked={this.state.isChecked} onPress={() => this.updateField(key)}/>
+    this.setState({field: tmpField});
+  }
+
+  generateField = (element: any, key: number) => {
+    if (element.type === 'boolean') {
+      let tmpField = this.state.field;
+
+      tmpField.push(
+        <CheckBox style={{marginTop: '10px'}} color='black' checked={this.state.isChecked} onPress={() => this.updateField(key)}/>
+      )
+      this.setState({field: tmpField});
+    }
+    if (element.type === 'string') {
+      let tmpField = this.state.field;
+
+      tmpField.push(
+        <Form style={{height: '25%', marginTop: '10px'}}>
+          <Input onChangeText={(text) => this.setState({fieldText: text})}/>
+        </Form>
+      )
+    }
+  }
+  
+  changeAction = async (value: number) => {
+    this.setState({actionFieldList: [], actionValue: value, reactionServiceList: [], reactionList: []})
+    if (value === '0') {
+      return;
+    }
+    this.setState({serviceAction: this.state.actionNameList[value - 1].name})
+    await fetch('http://localhost:8080/services/' + this.state.actionService + '/' + this.state.actionNameList[value - 1].name, {
+      method: 'POST',
+      headers: {
+        Accept: 'application/json',
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        'with image': false,
+        'string': '',
+      })
+    }).then((response) => response.json()).then((json) => {
+      console.log(json.result)
+      let tmpReactionList: {[k: string]: any} = {};
+      let tmpReactionNameList = '';
+      let tmpReactionServiceList = [<Picker.Item label={''} value={0} key={0}/>];
+      let serviceKey = 1;
+      let tmpReactionFieldList = [];
+      
+      for (let service in json.result) {
+        if (json.result.hasOwnProperty(service)) {
+          tmpReactionList[service] = [<Picker.Item label={''} value={0} key={0}/>];
+          tmpReactionServiceList.push(
+            <Picker.Item label={service} value={serviceKey} key={serviceKey}/>
+          )
+          json.result[service].forEach((reaction: any, key: number) => {
+            tmpReactionList[service].push(
+              <Picker.Item label={reaction.description} value={key + 1} key={key + 1}/>
+            )
+            tmpReactionNameList = reaction.name;
+            tmpReactionFieldList.push(reaction)
+          })
+          serviceKey += 1;
+        }
+      }
+      this.setState({actionFieldName: this.state.actionNameList[value - 1].fields, reactionServiceList: tmpReactionServiceList})
+      let tmpActionFieldList: Array<any> = [<View key={0}></View>];
+
+      this.state.actionNameList[value - 1].fields.forEach((element: any, key: number) => {
+        this.generateField(element, key);
+        tmpActionFieldList.push(
+          <View key={key + 1}>
+            {element.style === 'boolean' ?
+              <View style={{flexDirection: "row"}}>
+                {this.state.field[key]}
+                <Text>
+                  {element.description}
+                </Text>
+              </View>
+            :
+              <View>
+                {this.state.field[key]}
+                <Text style={{fontSize: 12, marginTop: '10px'}}>
+                  {element.description}
+                </Text>
+              </View>
+            }
+          </View>
+        )
+      });
+      this.setState({reactionList: tmpReactionList, reactionNameList: tmpReactionNameList, actionFieldList: tmpActionFieldList});
+    }).catch((error) => {
+      console.error(error)
+    })
+  }
+
+  changeReaction = (value: any) => {
+    if (value !== '0')
+      this.setState({confirmButton: false})
+    else
+      this.setState({confirmButton: true});
+    this.setState({serviceReaction: this.state.reactionNameList, reactionValue: value})
+  }
+
   render() {
       // console.log("LES PROPS :")
       // console.log(this.props.route)
@@ -260,129 +530,207 @@ export default class CreateArea extends Component<{}, any> {
        }
        if (Platform.OS == "web")
         return (
-            <Container>
-                <ImageBackground source={require('../../assets/login.png')} style={{ width: '100%', height: '100%' }}>
-            <Content>
-
-            <Item style={{ alignSelf:'center', justifyContent:'center', flex: 1 }} picker>
-              <Picker placeholder="Select your Service for the Action" placeholderStyle={{ color: "#bfc6ea" }} placeholderIconColor="#007aff" iosIcon={<Icon name="arrow-down" />}>
-                {
-                  this.state.reactListData || <Picker.Item label="No Service Available now" value="None" color="grey" />
-                }
-              </Picker>
-            </Item>
-
-            </Content>
+          <Container>
+            <CustomHeader onPressButton={() => this.openCloseDrawer()}/>
+            <ImageBackground source={require('../../assets/login.png')} style={{ width: '100%', height: '100%' }} >
+              <View style={styles.navigation}>
+                <View style={{flexDirection: 'row', height: '100%'}}>
+                  <Drawer
+                    ref={(ref) => { this.state.drawer = ref }}
+                    content={<Navigation navigation={this.state.navigation}/>}>
+                    <View style={{height: '90%', width: '78%', right: 0, position: 'absolute'}}>
+                      <View style={styles.container}>
+                        <Text style={{
+                          marginLeft: 'auto',
+                          marginRight: 'auto',
+                          fontSize: 30,
+                          fontWeight: 'bold',
+                          marginBottom: 10,
+                          marginTop: 10,
+                        }}>
+                          Area
+                        </Text>
+                        <View style={styles.smallContainer}>
+                          <Text style={{marginLeft: 'auto', marginRight: 'auto', marginTop: 10, marginBottom: 10}}>
+                            Select the apps you want to link!
+                          </Text>
+                          <View style={{display: 'flex', flexDirection: 'row', height: '100%'}}>
+                            <View style={{width: '50%', left: 0, backgroundColor: 'rgba(255, 255, 255, 0.5)', height: '100%', borderRadius: 20 }}>
+                              <Form style={{ width: '90%', alignSelf:'center', marginTop: 10, height: '25%' }}>
+                                <Picker style={{borderRadius: 5}} onValueChange={(value) => this.changeService(value, 'action')}>
+                                  {
+                                    this.state.actionServiceList
+                                  }
+                                </Picker>
+                                <Picker style={{borderRadius: 5, marginTop: 10}} selectedValue={this.state.actionValue} onValueChange={(value) => this.changeAction(value)}>
+                                  {
+                                    this.state.actionList
+                                  }
+                                </Picker>
+                                {
+                                  this.state.actionFieldList
+                                }
+                              </Form>
+                            </View>
+                            <Icon style={{marginTop: 10, }} name="arrow-forward-sharp"/>
+                            <View style={{width: '50%', right: 0, backgroundColor: 'rgba(255, 255, 255, 0.5)', height: '100%', borderRadius: 20 }}>
+                              <Form style={{ width: '90%', alignSelf:'center', marginTop: 10, height: '25%' }}>
+                                <Picker style={{borderRadius: 5}} onValueChange={(value) => this.changeService(value, 'reaction')}>
+                                  {
+                                    this.state.reactionServiceList
+                                  }
+                                </Picker>
+                                <Picker style={{borderRadius: 5, marginTop: 10}} selectedValue={this.state.reactionValue} onValueChange={(value) => this.changeReaction(value)}>
+                                  {
+                                    this.state.reactionList[this.state.reactionService]
+                                  }
+                                </Picker>
+                                {
+                                  this.state.reactionFieldList
+                                }
+                              </Form>
+                            </View>
+                          </View>
+                          <Button disabled={this.state.confirmButton} onPress={() => this.createArea()}><Text>Confirm</Text></Button>
+                        </View>
+                      </View>
+                    </View>
+                  </Drawer>
+                </View>
+              </View>
             </ImageBackground>
           </Container>
         );
 
         return (
-            <Container style= {{ position: "relative"}}>
-            <Header>
-            <Text style={{ color: "white", fontSize:22, alignSelf:"center" }}>
-                My Create Area Page
-            </Text>
-            </Header>
-            <Content style= {{ position: "relative" }}>
-              <Text style= {{ alignSelf:'center', color:'rgba(0, 0, 0, 0.5)', marginTop:5 }} >Select the Service you want to use as Action:</Text>
+          <Container style= {{ position: "relative"}}>
+          <Header>
+          <Text style={{ color: "white", fontSize:22, alignSelf:"center" }}>
+              My Create Area Page
+          </Text>
+          </Header>
+          <Content style= {{ position: "relative" }}>
+            <Text style= {{ alignSelf:'center', color:'rgba(0, 0, 0, 0.5)', marginTop:5 }} >Select the Service you want to use as Action:</Text>
+          <Item style= {{ marginBottom: 10 }} >
+            <Picker
+              mode="dropdown"
+              iosIcon={<Icon name="arrow-down" />}
+              placeholder="Select your SIM"
+              placeholderStyle={{ color: "#bfc6ea" }}
+              placeholderIconColor="#007aff"
+              style={{ width: undefined }}
+              selectedValue={this.state.selectedAppOne}
+              onValueChange={this.onValueChangeAppOne.bind(this)}
+            >
+                {
+                  this.state.reactListData || <Picker.Item label="Loading, please wait" value="None" color="grey" />
+                }
+              </Picker>
+            </Item>
+            <Text style= {{ alignSelf:'center', color:'rgba(0, 0, 0, 0.5)', marginTop:5 }} >Then select the action:</Text>
             <Item style= {{ marginBottom: 10 }} >
-              <Picker
-                mode="dropdown"
-                iosIcon={<Icon name="arrow-down" />}
-                placeholder="Select your SIM"
-                placeholderStyle={{ color: "#bfc6ea" }}
-                placeholderIconColor="#007aff"
-                style={{ width: undefined }}
-                selectedValue={this.state.selectedAppOne}
-                onValueChange={this.onValueChangeAppOne.bind(this)}
-              >
-                  {
-                    this.state.reactListData || <Picker.Item label="Loading, please wait" value="None" color="grey" />
-                  }
-                </Picker>
-              </Item>
-              <Text style= {{ alignSelf:'center', color:'rgba(0, 0, 0, 0.5)', marginTop:5 }} >Then select the action:</Text>
-              <Item style= {{ marginBottom: 10 }} >
-              <Picker
-                mode="dropdown"
-                iosIcon={<Icon name="arrow-down" />}
-                placeholder="Select your SIM"
-                placeholderStyle={{ color: "#bfc6ea" }}
-                placeholderIconColor="#007aff"
-                style={{ width: undefined }}
-                selectedValue={this.state.selectedAction}
-                onValueChange={this.onValueChangeAction.bind(this)}
-              >
-                  {
-                    this.state.areact || <Picker.Item label="Loading, please wait" value="None" color="grey" />
-                  }
-                </Picker>
+            <Picker
+              mode="dropdown"
+              iosIcon={<Icon name="arrow-down" />}
+              placeholder="Select your SIM"
+              placeholderStyle={{ color: "#bfc6ea" }}
+              placeholderIconColor="#007aff"
+              style={{ width: undefined }}
+              selectedValue={this.state.selectedAction}
+              onValueChange={this.onValueChangeAction.bind(this)}
+            >
                 {
-                  this.state.areact.length != 0 ? <Button icon style={{ marginRight:10 }} onPress={() => this.state.navigation.navigate("Config", {data: this.state.mapAction.get(this.state.selectedAction), type:"action"})} ><Icon name='settings-outline' /></Button>: <Text></Text>
+                  this.state.areact || <Picker.Item label="Loading, please wait" value="None" color="grey" />
                 }
-              </Item>
-              <Icon name="arrow-down-outline" style={{ alignSelf:'center' }} />
-              <Text style= {{ alignSelf:'center', color:'rgba(0, 0, 0, 0.5)', marginTop:5 }} >Select the Service to use as Reaction:</Text>
-              <Item style= {{ marginBottom: 10 }} >
-              <Picker
-                mode="dropdown"
-                iosIcon={<Icon name="arrow-down" />}
-                placeholder="Select your SIM"
-                placeholderStyle={{ color: "#bfc6ea" }}
-                placeholderIconColor="#007aff"
-                style={{ width: undefined }}
-                selectedValue={this.state.selectedAppTwo}
-                onValueChange={this.onValueChangeAppTwo.bind(this)}
-              >
-                  {
-                    this.state.reactListDataSecond || <Picker.Item label="Loading, please wait" value="None" color="grey" />
-                  }
-                </Picker>
-              </Item>
-              <Text style= {{ alignSelf:'center', color:'rgba(0, 0, 0, 0.5)', marginTop:5 }} >Then select the reaction:</Text>
-              <Item style= {{ marginBottom: 10 }} >
-              <Picker
-                mode="dropdown"
-                iosIcon={<Icon name="arrow-down" />}
-                placeholder="Select your SIM"
-                placeholderStyle={{ color: "#bfc6ea" }}
-                placeholderIconColor="#007aff"
-                selectedValue={this.state.selectedReaction}
-                onValueChange={this.onValueChangeReaction.bind(this)}
-              >
-                  {
-                    this.state.rreact || <Picker.Item label="Loading, please wait" value="None" color="grey" />
-                  }
-                </Picker>
+              </Picker>
+              {
+                this.state.areact.length != 0 ? <Button icon style={{ marginRight:10 }} onPress={() => this.state.navigation.navigate("Config", {data: this.state.mapAction.get(this.state.selectedAction), type:"action"})} ><Icon name='settings-outline' /></Button>: <Text></Text>
+              }
+            </Item>
+            <Icon name="arrow-down-outline" style={{ alignSelf:'center' }} />
+            <Text style= {{ alignSelf:'center', color:'rgba(0, 0, 0, 0.5)', marginTop:5 }} >Select the Service to use as Reaction:</Text>
+            <Item style= {{ marginBottom: 10 }} >
+            <Picker
+              mode="dropdown"
+              iosIcon={<Icon name="arrow-down" />}
+              placeholder="Select your SIM"
+              placeholderStyle={{ color: "#bfc6ea" }}
+              placeholderIconColor="#007aff"
+              style={{ width: undefined }}
+              selectedValue={this.state.selectedAppTwo}
+              onValueChange={this.onValueChangeAppTwo.bind(this)}
+            >
                 {
-                  this.state.rreact.length != 0 ? <Button icon style={{ marginRight:10 }} onPress={() => this.state.navigation.navigate("Config", {data:this.state.mapReaction.get(this.state.selectedReaction), type:"reaction"})}><Icon name='settings-outline' /></Button>: <Text></Text>
+                  this.state.reactListDataSecond || <Picker.Item label="Loading, please wait" value="None" color="grey" />
                 }
-              </Item>
-            <Button style={{ alignSelf:'center', marginTop:"40%" }} onPress={() => this.createArea()} >
-              <Text>
-              Create the AREA !
-              </Text>
+              </Picker>
+            </Item>
+            <Text style= {{ alignSelf:'center', color:'rgba(0, 0, 0, 0.5)', marginTop:5 }} >Then select the reaction:</Text>
+            <Item style= {{ marginBottom: 10 }} >
+            <Picker
+              mode="dropdown"
+              iosIcon={<Icon name="arrow-down" />}
+              placeholder="Select your SIM"
+              placeholderStyle={{ color: "#bfc6ea" }}
+              placeholderIconColor="#007aff"
+              selectedValue={this.state.selectedReaction}
+              onValueChange={this.onValueChangeReaction.bind(this)}
+            >
+                {
+                  this.state.rreact || <Picker.Item label="Loading, please wait" value="None" color="grey" />
+                }
+              </Picker>
+              {
+                this.state.rreact.length != 0 ? <Button icon style={{ marginRight:10 }} onPress={() => this.state.navigation.navigate("Config", {data:this.state.mapReaction.get(this.state.selectedReaction), type:"reaction"})}><Icon name='settings-outline' /></Button>: <Text></Text>
+              }
+            </Item>
+          <Button style={{ alignSelf:'center', marginTop:"40%" }} onPress={() => this.createArea()} >
+            <Text>
+            Create the AREA !
+            </Text>
+          </Button>
+          </Content>
+          <Footer>
+          <FooterTab>
+            <Button vertical onPress={ () =>  this.state.navigation.navigate('MyApps')}>
+              <Icon name="apps" />
+              <Text>Apps</Text>
             </Button>
-            </Content>
-            <Footer>
-            <FooterTab>
-              <Button vertical onPress={ () =>  this.state.navigation.navigate('MyApps')}>
-                <Icon name="apps" />
-                <Text>Apps</Text>
-              </Button>
-              <Button vertical onPress={ () =>  this.state.navigation.navigate('CreateArea')}>
-                <Icon name="add-outline" />
-                <Text>Create Area</Text>
-              </Button>
-              <Button vertical onPress={ () =>  this.state.navigation.navigate('MyArea')}>
-                <Icon name="person" />
-                <Text>My Area</Text>
-              </Button>
-            </FooterTab>
-          </Footer>
-            </Container>
-                )
-   }
+            <Button vertical onPress={ () =>  this.state.navigation.navigate('CreateArea')}>
+              <Icon name="add-outline" />
+              <Text>Create Area</Text>
+            </Button>
+            <Button vertical onPress={ () =>  this.state.navigation.navigate('MyArea')}>
+              <Icon name="person" />
+              <Text>My Area</Text>
+            </Button>
+          </FooterTab>
+        </Footer>
+          </Container>
+              )
+ }
 }
 
+const styles = StyleSheet.create({
+  navigation: {
+    height: '100%',
+  },
+  container: {
+    width: '100%',
+    margin: 5,
+    marginRight: 10,
+    borderRadius: 20,
+    height: '100%',
+    position: 'absolute',
+    right: 0,
+    backgroundColor: 'rgba(255, 255, 255, 0.5)'
+  },
+  smallContainer: {
+    marginLeft: 'auto',
+    marginRight: 'auto',
+    marginTop: 10,
+    width: '60%',
+    borderRadius: 25,
+    height: '40%',
+  }
+});

@@ -118,7 +118,8 @@ def listCompatibleReactions(serviceName, actionName, config={}):
             if isReactionCompatibleWithAction(reactionInfo, trigger):
                 reactions.append({
                     'name': reactionName,
-                    'description': reactionInfo['description']
+                    'description': reactionInfo['description'],
+                    'fields': reactionInfo['fields']
                 })
         if len(reactions) > 0:
             compatibleReactions[serviceName] = reactions

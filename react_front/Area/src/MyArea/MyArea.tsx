@@ -3,8 +3,8 @@ import { ImageBackground, Platform, View, } from "react-native";
 import { Footer, FooterTab, Text, Button, Container, Header, Content, Form, Item, Input, Label, Title, Icon, Toast } from 'native-base';
 import * as Font from 'expo-font';
 import { Ionicons } from '@expo/vector-icons';
-import { mobileIP } from '../../Login';
-import { userToken } from '../../Login';
+import { mobileIP } from '../Login/Login';
+import { userToken } from '../Login/Login';
 
 export default class MyArea extends Component {
 
@@ -122,11 +122,10 @@ export default class MyArea extends Component {
        }
        if (Platform.OS == "web")
         return (
-            <Container>
-                <ImageBackground source={require('../../assets/login.png')} style={{ width: '100%', height: '100%' }} >
-            <Content>
-                
-            </Content>
+          <Container>
+            <ImageBackground source={require('../../assets/login.png')} style={{ width: '100%', height: '100%' }} >
+              <Content>
+              </Content>
             </ImageBackground>
           </Container>
         );

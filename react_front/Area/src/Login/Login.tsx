@@ -4,6 +4,7 @@ import { Spinner, Root, Text, Accordion, FooterTab, Footer, Button, Container, H
 import * as Font from 'expo-font';
 import { Ionicons } from '@expo/vector-icons';
 import { NavigationContainer } from "react-navigation";
+import { navigate } from '@react-navigation/routers/lib/typescript/src/CommonActions';
 import { TextInput } from 'react-native-gesture-handler';
 
 export let mobileIP = ""
@@ -173,7 +174,7 @@ export default class LoginComponent extends Component<{}, any> {
         mobileIP = "localhost"
         return (
             <Container>
-                <ImageBackground source={require('./assets/login.png')} style={{ width: '100%', height: '100%' }} >
+                <ImageBackground source={require('../../assets/login.png')} style={{ width: '100%', height: '100%' }} >
             <Content>
               <Text style={{ paddingTop:'10%', fontSize:48, alignSelf:"center" }}>
               Welcome to the Area !

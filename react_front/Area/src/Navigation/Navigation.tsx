@@ -12,19 +12,17 @@ export default function Navigation({ navigation }) {
       <View style={styles.container}>
         <Button
           style={styles.button}
-          onPress={() => navigation.navigate('Home')}
+          // onPress={() => navigation.navigate('Home')}
           transparent={true}
           full={true}
         >
-          Home
         </Button>
         <Button
           style={styles.button}
-          onPress={() => navigation.navigate('LinkedApps')}
+          // onPress={() => navigation.navigate('LinkedApps')}
           transparent={true}
           full={true}
         >
-          LinkedApps
         </Button>
       </View>
     </View>

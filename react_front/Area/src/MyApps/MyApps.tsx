@@ -1,9 +1,12 @@
 import React, { Component } from 'react';
-import { ImageBackground, Platform, View, } from "react-native";
-import { Accordion, Spinner, Picker, Footer, FooterTab, Text, Button, Container, Header, Content, Form, Item, Input, Label, Title, Icon, Card, CardItem, Body, Left, Right } from 'native-base';
+import { ImageBackground, Platform, View, StyleSheet } from "react-native";
+import { Footer, FooterTab, Text, Button, Container, Content, Form, Item, Input, Label, Title, Icon, Drawer, Accordion, Spinner, Picker, Header, Card, CardItem, Body, Left, Right } from 'native-base';
 import * as Font from 'expo-font';
 import { Ionicons } from '@expo/vector-icons';
-import { mobileIP } from '../../Login';
+import { any } from 'prop-types';
+import Navigation from '../Navigation/Navigation';
+import CustomHeader from '../CustomHeader/CustomHeader';
+import { mobileIP } from '../Login/Login';
 
 
 export default class MyApps extends Component<{}, any> {
@@ -13,6 +16,9 @@ export default class MyApps extends Component<{}, any> {
     this.state = {
       navigation: this.props.navigation,
       loading: true,
+      drawer: any,
+      drawerState: false,
+      token: '',
       servicesData: [],
       reactListData: [],
       showState: [],
@@ -20,6 +26,7 @@ export default class MyApps extends Component<{}, any> {
       actionReaction: [],
       arrayAREA: new Map()
     }
+    this.getServices();
   }
 
   public getServices() {
@@ -199,6 +206,50 @@ export default class MyApps extends Component<{}, any> {
       this.setState({ loading: false });
   }
 
+  openCloseDrawer = () => {
+    if (!this.state.drawerState)
+      this.state.drawer._root.open();
+    else
+      this.state.drawer._root.close();
+    this.setState({
+      drawerState: !this.state.drawerState,
+    })
+  }
+
+  createArea = async () => {
+    await fetch('http://localhost:8080/area/create', {
+      method: 'POST',
+      headers: {
+        Accept: 'application/json',
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        'action': {
+          'service': 'Twitter',
+          'name': 'OnTweet',
+          'config': {
+            'match': 'yeet',
+            'with image': false,
+          }
+        },
+        'reaction':  {
+          'service': 'Twitter',
+          'name': 'Direct_message',
+          'config': {
+            'userId': 'yolo'
+          }
+        },
+      'token': this.state.token}),
+    }).then((response) => response.json()).then((json) => {
+      console.log(json);
+      return json.result;
+    })
+    .catch((error) => {
+      console.error(error)
+      return null;
+    })
+  }
+
   render() {
        if (this.state.loading) {
         this.listElem()
@@ -208,17 +259,6 @@ export default class MyApps extends Component<{}, any> {
            </View>
         );
        }
-       if (Platform.OS == "web")
-        return (
-            <Container>
-                <ImageBackground source={require('../../assets/login.png')} style={{ width: '100%', height: '100%' }} >
-            <Content>
-                
-            </Content>
-            </ImageBackground>
-          </Container>
-        );        
-
         return (
             <Container style= {{ position: "relative"}}>
             <Header>
@@ -251,4 +291,3 @@ export default class MyApps extends Component<{}, any> {
                 )
    }
 }
-

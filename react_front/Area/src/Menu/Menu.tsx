@@ -3,13 +3,13 @@ import { ImageBackground, Platform, View } from "react-native";
 import { Footer, FooterTab, Text, Container, Header, Content, Form, Item, Input, Label, Title, Icon, Button, Left, Right } from 'native-base';
 import * as Font from 'expo-font';
 import { Ionicons } from '@expo/vector-icons';
-import LoginComponent from './Login';
+import LoginComponent from '../Login/Login';
 import { NavigationContainer } from '@react-navigation/native';
 import { createStackNavigator } from '@react-navigation/stack';
-import MyArea from './src/MyArea/MyArea';
-import MyApps from './src/MyApps/MyApps';
-import CreateArea from './src/CreateArea/CreateArea';
-import ConfigComponent from './src/Configfield/Configfield';
+import MyArea from '../MyArea/MyArea';
+import MyApps from '../MyApps/MyApps';
+import CreateArea from '../CreateArea/CreateArea';
+import ConfigComponent from '../Configfield/Configfield'
 
 const Stack = createStackNavigator();
 export default class MenuComponent extends Component {
@@ -43,11 +43,11 @@ export default class MenuComponent extends Component {
             <Stack.Navigator>
               <Stack.Screen name="LoginComponent" component={LoginComponent}
               options={{headerShown: false}}/>
+              <Stack.Screen name="CreateArea" component={CreateArea}
+              options={{headerShown: false}}/>
               <Stack.Screen name="MyArea" component={MyArea}
               options={{headerShown: false}}/>
               <Stack.Screen name="MyApps" component={MyApps}
-              options={{headerShown: false}}/>
-              <Stack.Screen name="CreateArea" component={CreateArea}
               options={{headerShown: false}}/>
               <Stack.Screen name="Config" component={ConfigComponent}
               options={{headerShown: false}}/>
