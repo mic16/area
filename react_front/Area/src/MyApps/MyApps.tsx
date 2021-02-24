@@ -45,7 +45,7 @@ export default class MyApps extends Component<{}, any> {
       })
       .catch((error) => {
         console.error(error)
-        alert("I GET DON'T IT, ITS " + error)
+        
       })
     }
 
@@ -67,7 +67,7 @@ export default class MyApps extends Component<{}, any> {
         })
         .catch((error) => {
           console.error(error)
-          alert("I GET DON'T IT, ITS " + error)
+          
         })
       }
 

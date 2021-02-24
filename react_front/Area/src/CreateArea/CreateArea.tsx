@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import { ImageBackground, Platform, View, } from "react-native";
-import { Footer, FooterTab, Text, Button, Container, Header, Content, Form, Item, Input, Label, Title, Icon, Picker, Spinner } from 'native-base';
+import { Footer, FooterTab, Text, Button, Container, Header, Content, Form, Item, Input, Label, Title, Icon, Picker, Spinner, Toast } from 'native-base';
 import * as Font from 'expo-font';
 import { Ionicons } from '@expo/vector-icons';
 import { mobileIP } from '../../Login';
@@ -22,7 +22,9 @@ export default class CreateArea extends Component<{}, any> {
       rreact: [],
       actionApp: "",
       action: "",
-      reaction: ""
+      reaction: "",
+      mapAction: [],
+      mapReaction: []
     }
   }
 
@@ -43,7 +45,7 @@ export default class CreateArea extends Component<{}, any> {
       })
       .catch((error) => {
         console.error(error)
-        alert("I GET DON'T IT, ITS " + error)
+        
       })
     }
 
@@ -64,7 +66,7 @@ export default class CreateArea extends Component<{}, any> {
         })
         .catch((error) => {
           console.error(error)
-          alert("I GET DON'T IT, ITS " + error)
+          
         })
       }
 
@@ -100,34 +102,40 @@ export default class CreateArea extends Component<{}, any> {
         })
         .catch((error) => {
           console.error(error)
-          alert("I GET DON'T IT, ITS " + error)
+          
         })
       }
 
     public pickerAction(service:String) {
       let reactAction = new Array()
+      let mapAction:Map<String, any> = new Map()
       this.getAction(service)
       .then((_) => {
       this.state.actionReact.get("Action").forEach((obj:any) => {
         console.log(obj)
+        mapAction.set(obj["name"], obj)
         reactAction.push(
           <Picker.Item label={obj["description"]} value={obj["name"]} key={obj["name"]}/>
         )
       });
       this.setState({areact:reactAction})
+      this.setState({mapAction:mapAction})
     });
     }
 
     public pickerReaction(service:string) {
       let reactReaction = new Array()
+      let mapReaction:Map<String, any> = new Map()
       this.getAction(service)
       .then((_) => {
         this.state.reactionReact.get(service).forEach((objs:any) => {
+          mapReaction.set(objs["name"], objs)
           reactReaction.push(
             <Picker.Item label={objs["description"]} value={objs["name"]} key={objs["name"]}/>
           )
           });
       this.setState({rreact:reactReaction})
+      this.setState({mapReaction:mapReaction})
     });
     }
 
@@ -194,6 +202,42 @@ export default class CreateArea extends Component<{}, any> {
     }
   }
 
+  public createArea() {
+    let params = this.props.route.params
+    let jsonSerial = {}
+    let actionSerial = {}
+    let reactionSerial = {}
+    if (params) {
+      console.log("PARAMETTERS ARE")
+      console.log(params)
+
+      params["action"].forEach((value:any, key:string) => {  
+        actionSerial[key] = value
+      });
+
+      // params["reaction"].forEach((value:any, key:string) => {  
+      //   reactionSerial[key] = value
+      // });
+
+      jsonSerial = {
+        "action": {
+          "service": this.state.selectedAppOne,
+          "name": this.state.selectedAction,
+          "config": actionSerial
+        },
+        "reaction": {
+          "service": this.state.selectedAppTwo,
+          "name": this.state.selectedReaction,
+          "config": ""
+        }
+      }
+
+      console.log(JSON.stringify(jsonSerial))
+
+    } else
+      alert("Please have a look to the config before creating an Area")
+  }
+
   async componentDidMount() {
       await Font.loadAsync({
           Roboto: require('native-base/Fonts/Roboto.ttf'),
@@ -204,6 +248,8 @@ export default class CreateArea extends Component<{}, any> {
   }
 
   render() {
+      // console.log("LES PROPS :")
+      // console.log(this.props.route)
        if (this.state.loading) {
           this.listElem()
          return (
@@ -273,7 +319,7 @@ export default class CreateArea extends Component<{}, any> {
                   }
                 </Picker>
                 {
-                  this.state.areact.length != 0 ? <Button icon style={{ marginRight:10 }} onPress={() => this.state.navigation.navigate("Config", this.state.action)} ><Icon name='settings-outline' /></Button>: <Text></Text>
+                  this.state.areact.length != 0 ? <Button icon style={{ marginRight:10 }} onPress={() => this.state.navigation.navigate("Config", {data: this.state.mapAction.get(this.state.selectedAction), type:"action"})} ><Icon name='settings-outline' /></Button>: <Text></Text>
                 }
               </Item>
               <Icon name="arrow-down-outline" style={{ alignSelf:'center' }} />
@@ -310,10 +356,10 @@ export default class CreateArea extends Component<{}, any> {
                   }
                 </Picker>
                 {
-                  this.state.rreact.length != 0 ? <Button icon style={{ marginRight:10 }} ><Icon name='settings-outline' /></Button>: <Text></Text>
+                  this.state.rreact.length != 0 ? <Button icon style={{ marginRight:10 }} onPress={() => this.state.navigation.navigate("Config", {data:this.state.mapReaction.get(this.state.selectedReaction), type:"reaction"})}><Icon name='settings-outline' /></Button>: <Text></Text>
                 }
               </Item>
-            <Button style={{ alignSelf:'center', marginTop:"40%" }}>
+            <Button style={{ alignSelf:'center', marginTop:"40%" }} onPress={() => this.createArea()} >
               <Text>
               Create the AREA !
               </Text>
