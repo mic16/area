@@ -22,13 +22,13 @@ export default class CreateArea extends Component<{}, any> {
       drawer: any,
       drawerState: false,
       actionList: [],
-      reactionList: [],
-      service: '',
+      reactionList: {['']: any},
+      actionService: '',
+      reactionService: '',
       serviceAction: '',
       serviceReaction: '',
       actionNameList: [],
       reactionNameList: [],
-      serviceValue: '',
       confirmButton: true,
       actionFieldList: [],
       isChecked: false,
@@ -44,7 +44,9 @@ export default class CreateArea extends Component<{}, any> {
       actionApp: "",
       action: "",
       reactionApp: "",
-      reaction: ""
+      reaction: "",
+      actionValue: '',
+      reactionValue: '',
     }
 
     let reactList: Array<any> = [<Picker.Item label={''} value={0} key={0}/>];
@@ -298,14 +300,14 @@ export default class CreateArea extends Component<{}, any> {
   createArea = async () => {
     let test = {
       action: {
-        service: this.state.service,
+        service: this.state.actionService,
         name: this.state.serviceAction,
         config: {
 
         }
       },
       reaction:  {
-        service: this.state.service,
+        service: this.state.reactionService,
         name: this.state.serviceReaction,
         config: {
           
@@ -345,47 +347,40 @@ export default class CreateArea extends Component<{}, any> {
     })
   }
 
-  changeService = async (value: any) => {
-    enum services {
-      EMPTY = '0',
-      TWITTER = '1',
-      GITHUB = '2'
-    }
+  changeService = async (value: any, type: string) => {
     let service = '';
 
-    switch (value) {
-      case services.EMPTY:
-        this.setState({actionList: []});
-        return;
-      case services.TWITTER:
-        service = 'Twitter'
-        break;
-      case services.GITHUB:
-        service = 'Github'
-        break;
-    }
-
-    this.setState({service: service, serviceValue: value});
-
-    await fetch('http://localhost:8080/services/' + service, {
-      method: 'GET',
-      headers: {
-        Accept: 'application/json',
-        'Content-Type': 'application/json',
-      },
-    }).then((response) => response.json()).then((json) => {
-      let tmpActionList: Array<any> = [<Picker.Item label={''} value={0} key={0}/>];
-      let tmpActionNameList: Array<any> = [];
-      json.result.actions.forEach((elem: any, key: number) => {
-        tmpActionList.push(
-          <Picker.Item label={elem.description} value={key + 1} key={key + 1}/>
-        )
-        tmpActionNameList.push(json.result.actions[key])
+    if (type === 'action') {
+      this.setState({actionValue: 0, actionFieldList: [], reactionServiceList: [], actionList: [], reactionList: []});
+      service = this.state.actionServiceList[value].props.label;
+      this.setState({actionService: service});
+      await fetch('http://localhost:8080/services/' + service, {
+        method: 'GET',
+        headers: {
+          Accept: 'application/json',
+          'Content-Type': 'application/json',
+        },
+      }).then((response) => response.json()).then((json) => {
+        console.log(json.result)
+        let tmpActionList: Array<any> = [<Picker.Item label={''} value={0} key={0}/>];
+        let tmpActionNameList: Array<any> = [];
+        json.result.actions.forEach((elem: any, key: number) => {
+          tmpActionList.push(
+            <Picker.Item label={elem.description} value={key + 1} key={key + 1}/>
+          )
+          tmpActionNameList.push(json.result.actions[key])
+        })
+        this.setState({actionList: tmpActionList, actionNameList: tmpActionNameList});
+      }).catch((error) => {
+        console.error(error)
       })
-      this.setState({actionList: tmpActionList, actionNameList: tmpActionNameList});
-    }).catch((error) => {
-      console.error(error)
-    })
+    } else if (type === 'reaction') {
+      service = this.state.reactionServiceList[value].props.label;
+      this.setState({reactionService: service, reactionValue: 0});
+      if (value === '0') {
+        this.setState({reactionService: ''});
+      }
+    }
   }
 
   updateField = (key: number) => {
@@ -417,8 +412,12 @@ export default class CreateArea extends Component<{}, any> {
   }
   
   changeAction = async (value: number) => {
-    this.setState({serviceAction: this.state.actionNameList[value].name})
-    await fetch('http://localhost:8080/services/' + this.state.service + '/' + this.state.actionNameList[value].name, {
+    this.setState({actionFieldList: [], actionValue: value, reactionServiceList: [], reactionList: []})
+    if (value === '0') {
+      return;
+    }
+    this.setState({serviceAction: this.state.actionNameList[value - 1].name})
+    await fetch('http://localhost:8080/services/' + this.state.actionService + '/' + this.state.actionNameList[value - 1].name, {
       method: 'POST',
       headers: {
         Accept: 'application/json',
@@ -429,22 +428,31 @@ export default class CreateArea extends Component<{}, any> {
         'string': '',
       })
     }).then((response) => response.json()).then((json) => {
-      let tmpReactionList: Array<any> = [<Picker.Item label={''} value={0} key={0}/>];
+      console.log(json.result)
+      let tmpReactionList: {[k: string]: any} = {};
       let tmpReactionNameList = '';
-      for (var service in json.result) {
+      let tmpReactionServiceList = [<Picker.Item label={''} value={0} key={0}/>];
+      let serviceKey = 1;
+      
+      for (let service in json.result) {
         if (json.result.hasOwnProperty(service)) {
+          tmpReactionList[service] = [<Picker.Item label={''} value={0} key={0}/>];
+          tmpReactionServiceList.push(
+            <Picker.Item label={service} value={serviceKey} key={serviceKey}/>
+          )
           json.result[service].forEach((reaction: any, key: number) => {
-            tmpReactionList.push(
+            tmpReactionList[service].push(
               <Picker.Item label={reaction.description} value={key + 1} key={key + 1}/>
             )
             tmpReactionNameList = reaction.name;
           })
+          serviceKey += 1;
         }
       }
+      this.setState({actionFieldName: this.state.actionNameList[value - 1].fields, reactionServiceList: tmpReactionServiceList})
       let tmpActionFieldList: Array<any> = [<View key={0}></View>];
 
-      this.setState({actionFieldName: this.state.actionNameList[value].fields})
-      this.state.actionNameList[value].fields.forEach((element: any, key: number) => {
+      this.state.actionNameList[value - 1].fields.forEach((element: any, key: number) => {
         this.generateField(element, key);
         tmpActionFieldList.push(
           <View key={key + 1}>
@@ -477,7 +485,7 @@ export default class CreateArea extends Component<{}, any> {
       this.setState({confirmButton: false})
     else
       this.setState({confirmButton: true});
-    this.setState({serviceReaction: this.state.reactionNameList[value].name})
+    this.setState({serviceReaction: this.state.reactionNameList, reactionValue: value})
   }
 
   render() {
@@ -518,34 +526,37 @@ export default class CreateArea extends Component<{}, any> {
                           <View style={{display: 'flex', flexDirection: 'row', height: '100%'}}>
                             <View style={{width: '50%', left: 0, backgroundColor: 'rgba(255, 255, 255, 0.5)', height: '100%', borderRadius: 20 }}>
                               <Form style={{ width: '90%', alignSelf:'center', marginTop: 10, height: '25%' }}>
-                                <Picker style={{borderRadius: 5}} onValueChange={(value) => this.changeService(value)}>
-                                    {
-                                      this.state.actionServiceList
-                                    }
-                                </Picker>
-                                <Picker style={{borderRadius: 5, marginTop: 10}} onValueChange={(value) => this.changeAction(value)}>
-                                    {
-                                      this.state.actionList
-                                    }
-                                </Picker>
+                                <Picker style={{borderRadius: 5}} onValueChange={(value) => this.changeService(value, 'action')}>
                                   {
-                                    this.state.actionFieldList
+                                    this.state.actionServiceList
                                   }
+                                </Picker>
+                                <Picker style={{borderRadius: 5, marginTop: 10}} selectedValue={this.state.actionValue} onValueChange={(value) => this.changeAction(value)}>
+                                  {
+                                    this.state.actionList
+                                  }
+                                </Picker>
+                                {
+                                  this.state.actionFieldList
+                                }
                               </Form>
                             </View>
                             <Icon style={{marginTop: 10, }} name="arrow-forward-sharp"/>
                             <View style={{width: '50%', right: 0, backgroundColor: 'rgba(255, 255, 255, 0.5)', height: '100%', borderRadius: 20 }}>
                               <Form style={{ width: '90%', alignSelf:'center', marginTop: 10, height: '25%' }}>
-                                <Picker enabled={false} style={{borderRadius: 5}} selectedValue={this.state.serviceValue}>
-                                    {
-                                      this.state.reactionServiceList
-                                    }
+                                <Picker style={{borderRadius: 5}} onValueChange={(value) => this.changeService(value, 'reaction')}>
+                                  {
+                                    this.state.reactionServiceList
+                                  }
                                 </Picker>
-                                <Picker style={{borderRadius: 5, marginTop: 10}} onValueChange={(value) => this.changeReaction(value)}>
-                                    {
-                                      this.state.reactionList
-                                    }
+                                <Picker style={{borderRadius: 5, marginTop: 10}} selectedValue={this.state.reactionValue} onValueChange={(value) => this.changeReaction(value)}>
+                                  {
+                                    this.state.reactionList[this.state.reactionService]
+                                  }
                                 </Picker>
+                                {
+                                  this.state.reactionFieldList
+                                }
                               </Form>
                             </View>
                           </View>
