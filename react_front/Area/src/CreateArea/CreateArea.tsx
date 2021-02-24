@@ -31,6 +31,7 @@ export default class CreateArea extends Component<{}, any> {
       reactionNameList: [],
       confirmButton: true,
       actionFieldList: [],
+      reactionFieldList: [],
       isChecked: false,
       field: [],
       fieldText: '',
@@ -314,6 +315,7 @@ export default class CreateArea extends Component<{}, any> {
         }
       },
     token: this.state.token};
+    console.log(this.state.actionFieldName)
     this.state.actionFieldName.forEach(element => {
       if (element.type === 'string')
         test.action.config[element.name] = this.state.fieldText;
@@ -433,6 +435,7 @@ export default class CreateArea extends Component<{}, any> {
       let tmpReactionNameList = '';
       let tmpReactionServiceList = [<Picker.Item label={''} value={0} key={0}/>];
       let serviceKey = 1;
+      let tmpReactionFieldList = [];
       
       for (let service in json.result) {
         if (json.result.hasOwnProperty(service)) {
@@ -445,6 +448,7 @@ export default class CreateArea extends Component<{}, any> {
               <Picker.Item label={reaction.description} value={key + 1} key={key + 1}/>
             )
             tmpReactionNameList = reaction.name;
+            tmpReactionFieldList.push(reaction)
           })
           serviceKey += 1;
         }
