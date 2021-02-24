@@ -1,13 +1,14 @@
 import React, { Component } from 'react';
+import { any } from 'prop-types';
 import { ImageBackground, Platform, View, StyleSheet} from "react-native";
-import { Footer, FooterTab, Text, Button, Container, Header, Content, Form, Item, Input, Title, Icon, Picker, Drawer, ListItem, CheckBox, Spinner } from 'native-base';
+import { Footer, FooterTab, Text, Button, Container, Header, Content, Form, Item, Input, Label, Title, Icon, Picker, Spinner, Toast, Drawer, ListItem, CheckBox } from 'native-base';
 import * as Font from 'expo-font';
 import { Ionicons } from '@expo/vector-icons';
-import MyApps from '../MyApps/MyApps';
+import { mobileIP } from '../Login/Login';
+import ConfigComponent from '../Configfield/Configfield';
 import Navigation from '../Navigation/Navigation';
 import CustomHeader from '../CustomHeader/CustomHeader';
-import { any } from 'prop-types';
-import { mobileIP } from '../Login/Login';
+import { userToken } from '../Login/Login';
 
 export default class CreateArea extends Component<{}, any> {
 
@@ -35,19 +36,23 @@ export default class CreateArea extends Component<{}, any> {
       isChecked: false,
       field: [],
       fieldText: '',
-      token: this.props.route.params.token,
       actionFieldName: [],
       reactionFieldName: [],
       reactListData: [],
       reactListDataSecond: [],
-      actionReaction: [],
+      actionReact: [],
+      reactionReact: [],
       areact: [],
+      rreact: [],
       actionApp: "",
       action: "",
       reactionApp: "",
       reaction: "",
       actionValue: '',
       reactionValue: '',
+      mreaction: "",
+      mapAction: [],
+      mapReaction: []
     }
 
     let reactList: Array<any> = [<Picker.Item label={''} value={0} key={0}/>];
@@ -70,7 +75,7 @@ export default class CreateArea extends Component<{}, any> {
       })
       this.setState({actionServiceList: reactList});
     }
-    console.log(this.state.token)
+    console.log(userToken)
   }
 
   public getServices() {
@@ -118,117 +123,99 @@ export default class CreateArea extends Component<{}, any> {
     }
     return reactList;
   }
-    
-  public listApp():Array<any> {
-    let reactList:Array<any> = []
-    if (this.state.servicesData.length === 0) {
-      this.getServices()
-      .then((_) => {
-        this.state.servicesData.forEach((elem:string, key:number) => {
-          reactList.push(
-            <Picker.Item label={elem} value={elem} key={key}/>
-          )
+
+    public getReaction(service:String, action:String, config:Object) {
+      return fetch('http://' + mobileIP + ':8080/services/' + service + '/' + action, {
+          method: 'POST',
+          headers: {
+            Accept: 'application/json',
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify({
+            config
+          })
+        })
+        .then((response) => response.json()).then((json) => {
+          let mapAREA:Map<String, Array<Object>> = new Map(Object.entries(json.result))
+          this.setState({reactionReact:mapAREA})
+        })
+        .catch((error) => {
+          console.error(error)
+          
         })
         this.setState({reactListDataSecond:reactList})
+    }
+
+    public pickerReactionService(action:String) {
+      let reactReaction = new Array()
+      let config:Object = new Object()
+      this.getReaction(this.state.actionApp, action, config)
+      .then((_) => {
+      this.state.reactionReact.forEach((obj:any, name:string) => {
+        obj.forEach((objs:any) => {
+          this.setState({action:objs})
+          reactReaction.push(
+            <Picker.Item label={name} value={name} key={name}/>
+          )
       });
-      return reactList
-      }
-    return reactList;
-  }
-
-  public getReaction(service:String, action:String, config:Object) {
-    return fetch('http://' + mobileIP + ':8080/services/' + service + '/' + action, {
-        method: 'POST',
-        headers: {
-          Accept: 'application/json',
-          'Content-Type': 'application/json'
-        },
-        body: JSON.stringify({
-          config
-        })
-      })
-      .then((response) => response.json()).then((json) => {
-        let mapAREA:Map<String, Array<Object>> = new Map()
-        console.log(json)
-        Array(json.result).forEach((obj:any) => {
-          console.log(obj)
-        });
-        // mapAREA.set("ServicesReaction", json.result)
-        // mapAREA.set("Reaction", json.result.reactions)
-        // this.setState({actionReaction:mapAREA})
-      })
-      .catch((error) => {
-        console.error(error)
-        alert("I GET DON'T IT, ITS " + error)
-      })
-    }
-
-  public pickerReaction(action:String) {
-    let reactReaction = new Array()
-    let config:Object = new Object()
-    // if (this.state.actionReaction.length === 0) {
-    this.getReaction(this.state.actionApp, action, config)
-    .then((_) => {
-    // this.state.actionReaction.get("Action").forEach((obj:any) => {
-    //   reactAction.push(
-    //     <Picker.Item label={obj["description"]} value={obj["name"]} key={obj["name"]}/>
-    //   )
-    // });
-    this.state.actionReaction.get("Reaction").forEach((obj:any) => {
-      reactReaction.push(
-        <Picker.Item label={obj["description"]} value={obj["name"]} key={obj["name"]}/>
-      )
+      });
+      this.setState({reactListDataSecond:reactReaction})
     });
-    // this.setState({areact:reactAction})
-    this.setState({rreact:reactReaction})
-  });
-  // }
-  }
-
-  public getAction(service:String) {
-    return fetch('http://' + mobileIP + ':8080/services/' + service, {
-        method: 'GET',
-        headers: {
-          Accept: 'application/json',
-          'Content-Type': 'application/json'
-        },
-      })
-      .then((response) => response.json()).then((json) => {
-        let mapAREA:Map<String, Array<Object>> = new Map()
-        mapAREA.set("Action", json.result.actions)
-        // mapAREA.set("Reaction", json.result.reactions)
-        this.setState({actionReaction:mapAREA})
-      })
-      .catch((error) => {
-        console.error(error)
-        alert("I GET DON'T IT, ITS " + error)
-      })
     }
+
+    public getAction(service:String) {
+      return fetch('http://' + mobileIP + ':8080/services/' + service, {
+          method: 'GET',
+          headers: {
+            Accept: 'application/json',
+            'Content-Type': 'application/json'
+          },
+        })
+        .then((response) => response.json()).then((json) => {
+          let mapAREA:Map<String, Array<Object>> = new Map()
+          mapAREA.set("Action", json.result.actions)
+          this.setState({actionReact:mapAREA})
+        })
+        .catch((error) => {
+          console.error(error)
+          
+        })
+      }
 
     public pickerAction(service:String) {
       let reactAction = new Array()
-      let reactReaction = new Array()
-      // if (this.state.actionReaction.length === 0) {
+      let mapAction:Map<String, any> = new Map()
       this.getAction(service)
       .then((_) => {
-      this.state.actionReaction.get("Action").forEach((obj:any) => {
+      this.state.actionReact.get("Action").forEach((obj:any) => {
+        console.log(obj)
+        mapAction.set(obj["name"], obj)
         reactAction.push(
           <Picker.Item label={obj["description"]} value={obj["name"]} key={obj["name"]}/>
         )
       });
-      // this.state.actionReaction.get("Reaction").forEach((obj:any) => {
-      //   reactReaction.push(
-      //     <Picker.Item label={obj["description"]} value={obj["name"]} key={obj["name"]}/>
-      //   )
-      // });
       this.setState({areact:reactAction})
-      // this.setState({rreact:reactReaction})
+      this.setState({mapAction:mapAction})
     });
-    // }
+    }
+
+    public pickerReaction(service:string) {
+      let reactReaction = new Array()
+      let mapReaction:Map<String, any> = new Map()
+      this.getAction(service)
+      .then((_) => {
+        this.state.reactionReact.get(service).forEach((objs:any) => {
+          mapReaction.set(objs["name"], objs)
+          reactReaction.push(
+            <Picker.Item label={objs["description"]} value={objs["name"]} key={objs["name"]}/>
+          )
+          });
+      this.setState({rreact:reactReaction})
+      this.setState({mapReaction:mapReaction})
+    });
     }
 
     public listElem():Array<any> {
-      this.listApp()
       let reactList:Array<any> = []
       if (this.state.servicesData.length === 0) {
         this.getServices()
@@ -264,8 +251,7 @@ export default class CreateArea extends Component<{}, any> {
     });
     console.log("Action of the service selected is " + value)
     if (value.length != 0) {
-      this.setState({action:value})
-      this.pickerReaction(value)
+      this.pickerReactionService(value)
     }
   }
 
@@ -274,8 +260,11 @@ export default class CreateArea extends Component<{}, any> {
       selectedAppTwo: value
     });
     console.log("The other service selected is " + value)
+    if (value === undefined)
+      return
     if (value.length != 0) {
       this.setState({reactionApp:value})
+      this.pickerReaction(value)
     }
   }
 
@@ -287,6 +276,42 @@ export default class CreateArea extends Component<{}, any> {
     if (value.length != 0) {
       this.setState({reaction:value})
     }
+  }
+
+  public createArea() {
+    let params = this.props.route.params
+    let jsonSerial = {}
+    let actionSerial = {}
+    let reactionSerial = {}
+    if (params) {
+      console.log("PARAMETTERS ARE")
+      console.log(params)
+
+      params["action"].forEach((value:any, key:string) => {  
+        actionSerial[key] = value
+      });
+
+      // params["reaction"].forEach((value:any, key:string) => {  
+      //   reactionSerial[key] = value
+      // });
+
+      jsonSerial = {
+        "action": {
+          "service": this.state.selectedAppOne,
+          "name": this.state.selectedAction,
+          "config": actionSerial
+        },
+        "reaction": {
+          "service": this.state.selectedAppTwo,
+          "name": this.state.selectedReaction,
+          "config": ""
+        }
+      }
+
+      console.log(JSON.stringify(jsonSerial))
+
+    } else
+      alert("Please have a look to the config before creating an Area")
   }
 
   async componentDidMount() {
@@ -314,7 +339,7 @@ export default class CreateArea extends Component<{}, any> {
           
         }
       },
-    token: this.state.token};
+    token: userToken};
     console.log(this.state.actionFieldName)
     this.state.actionFieldName.forEach(element => {
       if (element.type === 'string')
@@ -493,6 +518,8 @@ export default class CreateArea extends Component<{}, any> {
   }
 
   render() {
+      // console.log("LES PROPS :")
+      // console.log(this.props.route)
        if (this.state.loading) {
           this.listElem()
          return (
@@ -576,149 +603,112 @@ export default class CreateArea extends Component<{}, any> {
         );
 
         return (
-            <Container style= {{ position: "relative"}}>
-            <Header>
-            <Text style={{ color: "white", fontSize:22, alignSelf:"center" }}>
-                My Apps Page
-            </Text>
-            </Header>
-            <Content style= {{ position: "relative" }}>
-            </Content>
-            <Footer>
-            <FooterTab>
-              <Button vertical onPress={ () =>  this.state.navigation.navigate('MyApps')}>
-                <Icon name="apps" />
-                <Text>Apps</Text>
-              </Button>
-              <Button vertical onPress={ () =>  this.state.navigation.navigate('CreateArea')}>
-                <Icon name="add-outline" />
-                <Text>Create Area</Text>
-              </Button>
-              <Button vertical onPress={ () =>  this.state.navigation.navigate('MyArea')}>
-                <Icon name="person" />
-                <Text>My Area</Text>
-              </Button>
-            </FooterTab>
-          </Footer>
-          </Container>
-          //   <Container>
-          //       <ImageBackground source={require('../../assets/login.png')} style={{ width: '100%', height: '100%' }} >
-          //   <Content>
-
-          //   <Item onPress={ () => this.listElem()} style={{ alignSelf:'center', justifyContent:'center', flex: 1 }} picker>
-          //     <Picker placeholder="Select your Service for the Action" placeholderStyle={{ color: "#bfc6ea" }} placeholderIconColor="#007aff" iosIcon={<Icon name="arrow-down" />}>
-          //       {
-          //         this.state.actionServiceList || <Picker.Item label="No Service Available now" value="None" />
-          //       }
-          //     </Picker>
-          //   </Item>
-
-          //   </Content>
-          //   </ImageBackground>
-          // </Container>
-        );
-
-        return (
-            <Container style= {{ position: "relative"}}>
-            <Header>
-            <Text style={{ color: "white", fontSize:22, alignSelf:"center" }}>
-                My Create Area Page
-            </Text>
-            </Header>
-            <Content style= {{ position: "relative" }}>
-              <Text style= {{ alignSelf:'center', color:'rgba(0, 0, 0, 0.5)', marginTop:5 }} >Select the Service you want to use as Action:</Text>
+          <Container style= {{ position: "relative"}}>
+          <Header>
+          <Text style={{ color: "white", fontSize:22, alignSelf:"center" }}>
+              My Create Area Page
+          </Text>
+          </Header>
+          <Content style= {{ position: "relative" }}>
+            <Text style= {{ alignSelf:'center', color:'rgba(0, 0, 0, 0.5)', marginTop:5 }} >Select the Service you want to use as Action:</Text>
+          <Item style= {{ marginBottom: 10 }} >
+            <Picker
+              mode="dropdown"
+              iosIcon={<Icon name="arrow-down" />}
+              placeholder="Select your SIM"
+              placeholderStyle={{ color: "#bfc6ea" }}
+              placeholderIconColor="#007aff"
+              style={{ width: undefined }}
+              selectedValue={this.state.selectedAppOne}
+              onValueChange={this.onValueChangeAppOne.bind(this)}
+            >
+                {
+                  this.state.reactListData || <Picker.Item label="Loading, please wait" value="None" color="grey" />
+                }
+              </Picker>
+            </Item>
+            <Text style= {{ alignSelf:'center', color:'rgba(0, 0, 0, 0.5)', marginTop:5 }} >Then select the action:</Text>
             <Item style= {{ marginBottom: 10 }} >
-              <Picker
-                mode="dropdown"
-                iosIcon={<Icon name="arrow-down" />}
-                placeholder="Select your SIM"
-                placeholderStyle={{ color: "#bfc6ea" }}
-                placeholderIconColor="#007aff"
-                style={{ width: undefined }}
-                selectedValue={this.state.selectedAppOne}
-                onValueChange={this.onValueChangeAppOne.bind(this)}
-              >
-                  {
-                    this.state.reactListData || <Picker.Item label="No Service Available now" value="None" />
-                  }
-                </Picker>
-              </Item>
-              <Text style= {{ alignSelf:'center', color:'rgba(0, 0, 0, 0.5)', marginTop:5 }} >Then select the action:</Text>
-              <Item style= {{ marginBottom: 10 }} >
-              <Picker
-                mode="dropdown"
-                iosIcon={<Icon name="arrow-down" />}
-                placeholder="Select your SIM"
-                placeholderStyle={{ color: "#bfc6ea" }}
-                placeholderIconColor="#007aff"
-                style={{ width: undefined }}
-                selectedValue={this.state.selectedAction}
-                onValueChange={this.onValueChangeAction.bind(this)}
-              >
-                  {
-                    this.state.areact || <Picker.Item label="No Service Available now" value="None" />
-                  }
-                </Picker>
-              </Item>
-              <Icon name="arrow-down-outline" style={{ alignSelf:'center' }} />
-              <Text style= {{ alignSelf:'center', color:'rgba(0, 0, 0, 0.5)', marginTop:5 }} >Select the Service to use as Reaction:</Text>
-              <Item style= {{ marginBottom: 10 }} >
-              <Picker
-                mode="dropdown"
-                iosIcon={<Icon name="arrow-down" />}
-                placeholder="Select your SIM"
-                placeholderStyle={{ color: "#bfc6ea" }}
-                placeholderIconColor="#007aff"
-                style={{ width: undefined }}
-                selectedValue={this.state.selectedAppTwo}
-                onValueChange={this.onValueChangeAppTwo.bind(this)}
-              >
-                  {
-                    this.state.reactListDataSecond || <Picker.Item label="No Service Available now" value="None" />
-                  }
-                </Picker>
-              </Item>
-              <Text style= {{ alignSelf:'center', color:'rgba(0, 0, 0, 0.5)', marginTop:5 }} >Then select the reaction:</Text>
-              <Item style= {{ marginBottom: 10 }} >
-              <Picker
-                mode="dropdown"
-                iosIcon={<Icon name="arrow-down" />}
-                placeholder="Select your SIM"
-                placeholderStyle={{ color: "#bfc6ea" }}
-                placeholderIconColor="#007aff"
-                selectedValue={this.state.selectedReaction}
-                onValueChange={this.onValueChangeReaction.bind(this)}
-              >
-                  {
-                    this.state.rreact || <Picker.Item label="No Service Available now" value="None" />
-                  }
-                </Picker>
-              </Item>
-            <Button style={{ alignSelf:'center', marginTop:"40%" }}>
-              <Text>
-              Create the AREA !
-              </Text>
+            <Picker
+              mode="dropdown"
+              iosIcon={<Icon name="arrow-down" />}
+              placeholder="Select your SIM"
+              placeholderStyle={{ color: "#bfc6ea" }}
+              placeholderIconColor="#007aff"
+              style={{ width: undefined }}
+              selectedValue={this.state.selectedAction}
+              onValueChange={this.onValueChangeAction.bind(this)}
+            >
+                {
+                  this.state.areact || <Picker.Item label="Loading, please wait" value="None" color="grey" />
+                }
+              </Picker>
+              {
+                this.state.areact.length != 0 ? <Button icon style={{ marginRight:10 }} onPress={() => this.state.navigation.navigate("Config", {data: this.state.mapAction.get(this.state.selectedAction), type:"action"})} ><Icon name='settings-outline' /></Button>: <Text></Text>
+              }
+            </Item>
+            <Icon name="arrow-down-outline" style={{ alignSelf:'center' }} />
+            <Text style= {{ alignSelf:'center', color:'rgba(0, 0, 0, 0.5)', marginTop:5 }} >Select the Service to use as Reaction:</Text>
+            <Item style= {{ marginBottom: 10 }} >
+            <Picker
+              mode="dropdown"
+              iosIcon={<Icon name="arrow-down" />}
+              placeholder="Select your SIM"
+              placeholderStyle={{ color: "#bfc6ea" }}
+              placeholderIconColor="#007aff"
+              style={{ width: undefined }}
+              selectedValue={this.state.selectedAppTwo}
+              onValueChange={this.onValueChangeAppTwo.bind(this)}
+            >
+                {
+                  this.state.reactListDataSecond || <Picker.Item label="Loading, please wait" value="None" color="grey" />
+                }
+              </Picker>
+            </Item>
+            <Text style= {{ alignSelf:'center', color:'rgba(0, 0, 0, 0.5)', marginTop:5 }} >Then select the reaction:</Text>
+            <Item style= {{ marginBottom: 10 }} >
+            <Picker
+              mode="dropdown"
+              iosIcon={<Icon name="arrow-down" />}
+              placeholder="Select your SIM"
+              placeholderStyle={{ color: "#bfc6ea" }}
+              placeholderIconColor="#007aff"
+              selectedValue={this.state.selectedReaction}
+              onValueChange={this.onValueChangeReaction.bind(this)}
+            >
+                {
+                  this.state.rreact || <Picker.Item label="Loading, please wait" value="None" color="grey" />
+                }
+              </Picker>
+              {
+                this.state.rreact.length != 0 ? <Button icon style={{ marginRight:10 }} onPress={() => this.state.navigation.navigate("Config", {data:this.state.mapReaction.get(this.state.selectedReaction), type:"reaction"})}><Icon name='settings-outline' /></Button>: <Text></Text>
+              }
+            </Item>
+          <Button style={{ alignSelf:'center', marginTop:"40%" }} onPress={() => this.createArea()} >
+            <Text>
+            Create the AREA !
+            </Text>
+          </Button>
+          </Content>
+          <Footer>
+          <FooterTab>
+            <Button vertical onPress={ () =>  this.state.navigation.navigate('MyApps')}>
+              <Icon name="apps" />
+              <Text>Apps</Text>
             </Button>
-            </Content>
-            <Footer>
-            <FooterTab>
-              <Button vertical onPress={ () =>  this.state.navigation.navigate('MyApps')}>
-                <Icon name="apps" />
-                <Text>Apps</Text>
-              </Button>
-              <Button vertical onPress={ () =>  this.state.navigation.navigate('CreateArea')}>
-                <Icon name="add-outline" />
-                <Text>Create Area</Text>
-              </Button>
-              <Button vertical onPress={ () =>  this.state.navigation.navigate('MyArea')}>
-                <Icon name="person" />
-                <Text>My Area</Text>
-              </Button>
-            </FooterTab>
-          </Footer>
-            </Container>
-                )
-   }
+            <Button vertical onPress={ () =>  this.state.navigation.navigate('CreateArea')}>
+              <Icon name="add-outline" />
+              <Text>Create Area</Text>
+            </Button>
+            <Button vertical onPress={ () =>  this.state.navigation.navigate('MyArea')}>
+              <Icon name="person" />
+              <Text>My Area</Text>
+            </Button>
+          </FooterTab>
+        </Footer>
+          </Container>
+              )
+ }
 }
 
 const styles = StyleSheet.create({
