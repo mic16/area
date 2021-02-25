@@ -41,7 +41,7 @@ class Imgur():
                 area.newReaction()
                 area.ret(img['album']['title'])
                 area.ret(img['album']['description'])
-                area.ret(img['imgs'])
+                area.ret(Imgs(img['imgs']))
 
         return trig.setAction(func)
 
