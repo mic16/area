@@ -6,6 +6,7 @@ from requests_oauthlib.oauth1_auth import Client
 from flask_restful import Resource, reqparse
 from TokenManager import TokenManager
 from github import Github
+from utils import diffFirstSecond
 import json
 
 import sys
@@ -42,42 +43,62 @@ def oauthAuthorizedGithub():
 def Diff(li1, li2):
     return (list(list(set(li1)-set(li2)) + list(set(li2)-set(li1))))
 
-def getLastStar(user, repoLink):
+
+def getLastStar(user):
     git = Github(user.get("github.token"))
-    repoLinkSplited = repoLink.rsplit('/', 1)
-    repo = git.get_repo(repoLinkSplited[-2] + '/' + repoLinkSplited[-1])
-    lastStargazers = repo.get_stargazers_with_dates()
-
+    lastStarred = git.get_user().get_starred().reversed
+    count = 0
     lastStarsTab = []
-    for lastStar in lastStargazers:
-        lastStarsTab.append(json.dumps(lastStar.__dict__))
-
-    if (user.get("github.lastStars") == None):
-        user.set("github.lastStars", lastStarsTab)
+    for star in lastStarred:
+        lastStarsTab.append({'name':star.full_name, 'description': star.description, 'starNb': star.get_stargazers().totalCount})
+        if (count == 20):
+            break
+        count += 1
+    if user.get("github") == None:
+        user.set("github", {'lastStars':lastStarsTab})
         return (None)
-    oldStars = user.get("github.lastStars")
-    diff = Diff(lastStarsTab, oldStars)
+    oldGithub = user.get("github")
+    if oldGithub.get('lastStars') == None:
+        oldGithub['lastStars'] = lastStarsTab
+        user.set("github", oldGithub)
+        return (None)
+    oldStars = oldGithub['lastStars']
+    diff = diffFirstSecond(lastStarsTab, oldStars)
     if (len(diff) == 0):
+        oldGithub['lastStars'] = lastStarsTab
+        user.set("github", oldGithub)
         return (None)
     else:
-        user.set("github.lastStars", lastStarsTab)
+        oldGithub['lastStars'] = lastStarsTab
+        user.set("github", oldGithub)
         return (diff)
+
 
 def getNewFollower(user):
     git = Github(user.get("github.token"))
     lastFollowers = git.get_user().get_followers()
-
+    count = 0
     lastFollowersTab = []
-    for lastFollower in lastFollowers:
-        lastFollowersTab.append(json.dumps(lastFollower.__dict__))
-
-    if (user.get("github.lastFollowers") == None):
-        user.set("github.lastFollowers", lastFollowersTab)
+    for follower in lastFollowers:
+        lastFollowersTab.append({'name':follower.full_name, 'avatarUrl': follower.avatar_url, 'bio': follower.bio})
+        if (count == 20):
+            break
+        count += 1
+    if user.get("github") == None:
+        user.set("github", {'lastFollowers':lastFollowersTab})
         return (None)
-    oldFollowers = user.get("github.lastFollowers")
-    diff = Diff(lastFollowersTab, oldFollowers)
+    oldGithub = user.get("github")
+    if oldGithub.get('lastFollowers') == None:
+        oldGithub['lastFollowers'] = lastFollowersTab
+        user.set("github", oldGithub)
+        return (None)
+    oldFollowers = oldGithub['lastFollowers']
+    diff = diffFirstSecond(lastFollowersTab, oldFollowers)
     if (len(diff) == 0):
+        oldGithub['lastFollowers'] = lastFollowersTab
+        user.set("github", oldGithub)
         return (None)
     else:
-        user.set("github.lastFollowers", lastFollowersTab)
+        oldGithub['lastFollowers'] = lastFollowersTab
+        user.set("github", oldGithub)
         return (diff)

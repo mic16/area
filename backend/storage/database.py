@@ -60,7 +60,7 @@ class DataBase:
         return (False)
     
     def updateUser(self, mail, json):
-        user = self.getuser(mail)
+        user = self.getUser(mail)
         if (user == None):
             return (False)
         else:
