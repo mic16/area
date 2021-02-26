@@ -3,7 +3,6 @@ import { ImageBackground, Platform, View, StyleSheet} from "react-native";
 import { Footer, FooterTab, Text, Button, Container, Header, Content, Form, Item, Input, Title, Icon, Picker, Drawer, ListItem, CheckBox, Spinner } from 'native-base';
 import * as Font from 'expo-font';
 import { Ionicons } from '@expo/vector-icons';
-import MyApps from '../MyApps/MyApps';
 import Navigation from '../Navigation/Navigation';
 import CustomHeader from '../CustomHeader/CustomHeader';
 import { any } from 'prop-types';
@@ -32,9 +31,10 @@ export default class CreateArea extends Component<{}, any> {
       confirmButton: true,
       actionFieldList: [],
       reactionFieldList: [],
-      isChecked: false,
-      field: [],
-      fieldText: '',
+      responseActionField: [],
+      responseReactionField: [],
+      actionField: [],
+      reactionField: [],
       token: this.props.route.params.token,
       actionFieldName: [],
       reactionFieldName: [],
@@ -315,14 +315,18 @@ export default class CreateArea extends Component<{}, any> {
         }
       },
     token: this.state.token};
-    console.log(this.state.actionFieldName)
-    this.state.actionFieldName.forEach(element => {
+    this.state.actionFieldName.forEach((element: any, key: number) => {
       if (element.type === 'string')
-        test.action.config[element.name] = this.state.fieldText;
+        test.action.config[element.name] = this.state.responseActionField[key];
       if (element.type === 'boolean')
-        test.action.config[element.name] = this.state.isChecked;
+        test.action.config[element.name] = this.state.responseActionField[key];
     });
-    // this.state.reactionFieldName
+    this.state.reactionFieldName[this.state.reactionService][this.state.reactionValue - 1].fields.forEach((element: any, key: number) => {
+      if (element.type === 'string')
+        test.reaction.config[element.name] = this.state.responseReactionField[key];
+      if (element.type === 'boolean')
+        test.reaction.config[element.name] = this.state.responseReactionField[key];
+    });
     console.log(test)
     // await fetch('http://localhost:8080/area/create', {
     //   method: 'POST',
@@ -363,7 +367,6 @@ export default class CreateArea extends Component<{}, any> {
           'Content-Type': 'application/json',
         },
       }).then((response) => response.json()).then((json) => {
-        console.log(json.result)
         let tmpActionList: Array<any> = [<Picker.Item label={''} value={0} key={0}/>];
         let tmpActionNameList: Array<any> = [];
         json.result.actions.forEach((elem: any, key: number) => {
@@ -385,31 +388,94 @@ export default class CreateArea extends Component<{}, any> {
     }
   }
 
-  updateField = (key: number) => {
-    this.setState({isChecked: !this.state.isChecked});
-    let tmpField = this.state.field;
+  updateFieldBoolean = (key: number, type: string) => {
+    if (type === 'action') {
+      let tmpResponseActionField = this.state.responseActionField;
 
-    tmpField[key] = <CheckBox checked={this.state.isChecked} onPress={() => this.updateField(key)}/>
-    this.setState({field: tmpField});
+      tmpResponseActionField[key] = !this.state.responseActionField[key];
+      this.setState({responseActionField: tmpResponseActionField});
+      let tmpField = this.state.actionField;
+
+      tmpField[key] = <CheckBox checked={this.state.responseActionField[key]} onPress={() => this.updateFieldBoolean(key, type)}/>
+      this.setState({actionField: tmpField});
+    } else if (type === 'reaction') {
+      let tmpResponseReactionField = this.state.responseReactionField;
+
+      tmpResponseReactionField[key] = !this.state.responseReactionField[key];
+      this.setState({responseReactionField: tmpResponseReactionField});
+      let tmpField = this.state.reactionField;
+
+      tmpField[key] = <CheckBox checked={this.state.responseReactionField[key]} onPress={() => this.updateFieldBoolean(key, type)}/>
+      this.setState({reactionField: tmpField});
+    }
   }
 
-  generateField = (element: any, key: number) => {
-    if (element.type === 'boolean') {
-      let tmpField = this.state.field;
+  updateFieldString = (text: string, key: number, type: string) => {
+    if (type === 'action') {
+      let tmpResponseActionField = this.state.responseActionField;
 
-      tmpField.push(
-        <CheckBox style={{marginTop: '10px'}} color='black' checked={this.state.isChecked} onPress={() => this.updateField(key)}/>
-      )
-      this.setState({field: tmpField});
+      tmpResponseActionField[key] = text;
+      this.setState({responseActionField: tmpResponseActionField});
+    } else if (type === 'reaction') {
+      let tmpResponseReactionField = this.state.responseReactionField;
+
+      tmpResponseReactionField[key] = text;
+      this.setState({responseReactionField: tmpResponseReactionField});
+    }
+  }
+
+  generateField = (element: any, key: number, type: string) => {
+    if (element.type === 'boolean') {
+      if (type === 'action') {
+        let tmpField = this.state.actionField;
+        let tmpResponseActionField = this.state.responseActionField;
+
+        tmpResponseActionField[key] = false;
+        this.setState({responseActionField: tmpResponseActionField});
+
+        tmpField.push(
+          <CheckBox style={{marginTop: '10px'}} color='black' checked={this.state.responseActionField[key]} onPress={() => this.updateFieldBoolean(key, type)}/>
+        )
+        this.setState({actionField: tmpField});
+      } else if (type === 'reaction') {
+        let tmpField = this.state.reactionField;
+        let tmpResponseReactionField = this.state.responseReactionField;
+
+        tmpResponseReactionField[key] = false;
+        this.setState({responseReactionField: tmpResponseReactionField});
+
+        tmpField.push(
+          <CheckBox style={{marginTop: '10px'}} color='black' checked={this.state.responseReactionField[key]} onPress={() => this.updateFieldBoolean(key, type)}/>
+        )
+        this.setState({reactionField: tmpField});
+      }
     }
     if (element.type === 'string') {
-      let tmpField = this.state.field;
+      let tmpField = [];
+      if (type === 'action') {
+        tmpField = this.state.actionField;
+        let tmpResponseActionField = this.state.responseActionField;
+    
+        tmpResponseActionField[key] = '';
+        this.setState({responseActionField: tmpResponseActionField});
+      } else if (type === 'reaction') {
+        tmpField = this.state.reactionField;
+        let tmpResponseReactionField = this.state.responseReactionField;
+    
+        tmpResponseReactionField[key] = '';
+        this.setState({responseReactionField: tmpResponseReactionField});
+      }
 
       tmpField.push(
         <Form style={{height: '25%', marginTop: '10px'}}>
-          <Input onChangeText={(text) => this.setState({fieldText: text})}/>
+          <Input onChangeText={(text) => this.updateFieldString(text, key, type)}/>
         </Form>
       )
+      if (type === 'action') {
+        this.setState({actionField: tmpField});
+      } else if (type === 'reaction') {
+        this.setState({reactionField: tmpField});
+      }
     }
   }
   
@@ -430,12 +496,10 @@ export default class CreateArea extends Component<{}, any> {
         'string': '',
       })
     }).then((response) => response.json()).then((json) => {
-      console.log(json.result)
       let tmpReactionList: {[k: string]: any} = {};
       let tmpReactionNameList = '';
       let tmpReactionServiceList = [<Picker.Item label={''} value={0} key={0}/>];
       let serviceKey = 1;
-      let tmpReactionFieldList = [];
       
       for (let service in json.result) {
         if (json.result.hasOwnProperty(service)) {
@@ -448,7 +512,6 @@ export default class CreateArea extends Component<{}, any> {
               <Picker.Item label={reaction.description} value={key + 1} key={key + 1}/>
             )
             tmpReactionNameList = reaction.name;
-            tmpReactionFieldList.push(reaction)
           })
           serviceKey += 1;
         }
@@ -457,19 +520,20 @@ export default class CreateArea extends Component<{}, any> {
       let tmpActionFieldList: Array<any> = [<View key={0}></View>];
 
       this.state.actionNameList[value - 1].fields.forEach((element: any, key: number) => {
-        this.generateField(element, key);
+        console.log(element)
+        this.generateField(element, key, 'action');
         tmpActionFieldList.push(
           <View key={key + 1}>
             {element.style === 'boolean' ?
               <View style={{flexDirection: "row"}}>
-                {this.state.field[key]}
+                {this.state.actionField[key]}
                 <Text>
                   {element.description}
                 </Text>
               </View>
             :
               <View>
-                {this.state.field[key]}
+                {this.state.actionField[key]}
                 <Text style={{fontSize: 12, marginTop: '10px'}}>
                   {element.description}
                 </Text>
@@ -478,7 +542,7 @@ export default class CreateArea extends Component<{}, any> {
           </View>
         )
       });
-      this.setState({reactionList: tmpReactionList, reactionNameList: tmpReactionNameList, actionFieldList: tmpActionFieldList});
+      this.setState({reactionList: tmpReactionList, reactionNameList: tmpReactionNameList, actionFieldList: tmpActionFieldList, reactionFieldName: json.result});
     }).catch((error) => {
       console.error(error)
     })
@@ -489,7 +553,34 @@ export default class CreateArea extends Component<{}, any> {
       this.setState({confirmButton: false})
     else
       this.setState({confirmButton: true});
-    this.setState({serviceReaction: this.state.reactionNameList, reactionValue: value})
+    this.setState({serviceReaction: this.state.reactionNameList, reactionValue: value});
+
+    let tmpReactionFieldList: Array<any> = [<View key={0}></View>];
+
+    this.state.reactionFieldName[this.state.reactionService][this.state.reactionValue].fields.forEach((element: any, key: number) => {
+      this.generateField(element, key, 'reaction');
+      console.log(element)
+      tmpReactionFieldList.push(
+        <View key={key + 1}>
+          {element.style === 'boolean' ?
+            <View style={{flexDirection: "row"}}>
+              {this.state.reactionField[key]}
+              <Text>
+                {element.description}
+              </Text>
+            </View>
+          :
+            <View>
+              {this.state.reactionField[key]}
+              <Text style={{fontSize: 12, marginTop: '10px'}}>
+                {element.description}
+              </Text>
+            </View>
+          }
+        </View>
+      )
+    });
+    this.setState({reactionFieldList: tmpReactionFieldList});
   }
 
   render() {
