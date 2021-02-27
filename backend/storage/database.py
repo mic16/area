@@ -13,6 +13,7 @@ class DataBase:
         self.users = {}
     
     def load(self):
+        print('Loading database')
         if areas := self.redis.jsonget('area_list'):
             for id in areas:
                 areaJson = self.redis.jsonget('area.%s' % id)
@@ -59,7 +60,7 @@ class DataBase:
         return (False)
     
     def updateUser(self, mail, json):
-        user = self.getuser(mail)
+        user = self.getUser(mail)
         if (user == None):
             return (False)
         else:

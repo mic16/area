@@ -5,6 +5,7 @@ import requests
 from requests_oauthlib.oauth1_auth import Client
 from flask_restful import Resource, reqparse
 import sys
+from utils import diffFirstSecond
 import json
 import tweepy
 from TokenManager import TokenManager
@@ -50,11 +51,7 @@ def oauthAuthorizedTwitter():
     oauth_secret = res_split[1].split('=')[1]
     userid = res_split[2].split('=')[1]
     username = res_split[3].split('=')[1]
-
     data.updateUser(tokenManager.getTokenUser(req_data.get("token")), {"twitter": {"token": oauth_token, "token_secret": oauth_secret}})
-    
-    print(oauth_token, file=sys.stderr)
-
     return {"message": "connected as " + username}
 
 def newTweet(user, text):
@@ -70,51 +67,60 @@ def sendDirectMessage(user, text, userId):
     api = tweepy.API(auth) 
     direct_message = api.send_direct_message(userId, text)
 
-
-def Diff(li1, li2):
-    return (list(list(set(li1)-set(li2)) + list(set(li2)-set(li1))))
-
-def getLastTweetTimeline(user):
+def getLastTweetUser(user):
     auth = tweepy.OAuthHandler(consumerKey, consumerSecretKey)     
     auth.set_access_token(user.get("twitter.token"), user.get("twitter.token_secret"))
     api = tweepy.API(auth) 
 
     lastTweets = api.user_timeline(include_entities=True, count = 50)
+    lastTweetTab = []
+    for tweet in lastTweets:
+        lastTweetTab.append({'text':tweet.text, 'entities':tweet.entities})
 
-    lastTweetsTab = []
-    for lastTweet in lastTweets:
-        lastTweetsTab.append(json.dumps(lastTweet.__dict__))
-
-    if (user.get("twitter.lastTweet") == None):
-        user.set("twitter.lastTweet", lastTweetsTab)
+    if user.get("twitter") == None:
+        user.set("twitter", {'lastTweet':lastTweetTab})
         return (None)
-    oldTweets = user.get("twitter.lastTweet")
-    diff = Diff(lastTweetsTab, oldTweets)
+    oldTwiiter = user.get("twitter")
+    if oldTwiiter.get('lastTweet') == None:
+        oldTwiiter['lastTweet'] = lastTweetTab
+        user.set("twitter", oldTwiiter)
+        return (None)
+    oldTweets = oldTwiiter['lastTweet']
+    diff = diffFirstSecond(lastTweetTab, oldTweets)
     if (len(diff) == 0):
+        oldTwiiter['lastTweet'] = lastTweetTab
+        user.set("twitter", oldTwiiter)
         return (None)
     else:
-        user.set("twitter.lastTweet", lastTweetsTab)
+        oldTwiiter['lastTweet'] = lastTweetTab
+        user.set("twitter", oldTwiiter)
         return (diff)
-
 
 def getLastLike(user):
     auth = tweepy.OAuthHandler(consumerKey, consumerSecretKey)     
     auth.set_access_token(user.get("twitter.token"), user.get("twitter.token_secret"))
     api = tweepy.API(auth) 
-
+    
     lastFavs = api.favorites(include_entities=True, count = 50)
+    lastFavTab = []
+    for tweet in lastFavs:
+        lastFavTab.append(json.dumps({'text':tweet.text, 'entities':tweet.entities}))
 
-    lastTweetsTab = []
-    for lastTweet in lastFavs:
-        lastTweetsTab.append(json.dumps(lastTweet.__dict__))
-
-    if (user.get("twitter.lastLike") == None):
-        user.set("twitter.lastLike", lastTweetsTab)
+    if user.get("twitter") == None:
+        user.set("twitter", json.dumps({'lastFav':lastFavTab}))
         return (None)
-    oldTweets = user.get("twitter.lastLike")
-    diff = Diff(lastTweetsTab, oldTweets)
+    oldTwiiter = user.get("twitter")
+    if oldTwiiter.get('lastFav') == None:
+        oldTwiiter['lastFav'] = lastFavTab
+        user.set("twitter", oldTwiiter)
+        return (None)
+    oldFavs = oldTwiiter['lastFav']
+    diff = diffFirstSecond(lastFavTab, oldFavs)
     if (len(diff) == 0):
+        oldTwiiter['lastFav'] = lastFavTab
+        user.set("twitter", oldTwiiter)
         return (None)
     else:
-        user.set("twitter.lastLike", lastTweetsTab)
+        oldTwiiter['lastFav'] = lastFavTab
+        user.set("twitter", oldTwiiter)
         return (diff)

@@ -15,6 +15,7 @@ def login():
         if (user["password"] == hashlib.sha256(req_data.get("password").encode()).hexdigest()):
             tokenManager = TokenManager()
             token = tokenManager.generateNewToken(req_data.get("mail"))
+            print('User %s logged in' % req_data.get("mail"))
             return {"result": token}
         else:
             return {"error": "bad password"}
@@ -30,6 +31,7 @@ def register():
         if (data.createUser(req_data.get("mail"), hashlib.sha256(req_data.get("password").encode()).hexdigest())):
             tokenManager = TokenManager()
             token = tokenManager.generateNewToken(req_data.get("mail"))
+            print('User %s registered' % req_data.get("mail"))
             return {"result": token}
         else:
             return {"error": "user already exist"}
@@ -44,6 +46,7 @@ def logout():
     if (req_data.get("token") != None):
         tokenManager = TokenManager()
         if (tokenManager.deleteTokenUser(req_data.get("token"))):
+            print('User %s logged out' % req_data.get("mail"))
             return {"result": "you are disconnected"}
         return {"error": "you are not connected"}
     return {"error": "logout need a token"}
