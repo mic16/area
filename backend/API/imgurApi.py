@@ -12,12 +12,6 @@ client_id = '0beee62c1273552'
 client_secret = '1d2a939c474367667bdd4de55ede8b67b633694a'
 
 def loginImgur():
-    tokenManager = TokenManager()
-    req_data = request.get_json()
-    if (req_data.get("token") == None):
-        return ({"error": "no token"})
-    if (tokenManager.getTokenUser(req_data.get("token")) == None):
-        return ({"error": "bad token"})
     client = ImgurClient(client_id, client_secret)
     return redirect(client.get_auth_url('token'))
 
@@ -31,6 +25,8 @@ def callbackParser():
 def oauthAuthorizedImgur():
     tokenManager = TokenManager()
     req_data = request.get_json()
+    if not req_data:
+        return {"error": "Missing JSON body"}
     if (req_data.get("token") == None):
         return ({"error": "no token"})
     if (tokenManager.getTokenUser(req_data.get("token")) == None):

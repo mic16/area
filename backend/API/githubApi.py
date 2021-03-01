@@ -18,11 +18,6 @@ consumerSecretKey = "20239e2887de5e83479d17c8ae6fb440af515483"
 oauth = Client(consumerKey, client_secret=consumerSecretKey)
 
 def loginGithub():
-    req_data = request.get_json()
-    if (req_data.get("token") == None):
-        return ({"error": "no token"})
-    if (TokenManager.getTokenUser(req_data.get("token")) == None):
-        return ({"error": "bad token"})
     return redirect('https://github.com/login/oauth/authorize?client_id=' + consumerKey)
 
 def callbackParser():
@@ -32,6 +27,8 @@ def callbackParser():
     
 def oauthAuthorizedGithub():
     req_data = request.get_json()
+    if not req_data:
+        return {"error": "Missing JSON body"}
     if (req_data.get("token") == None):
         return ({"error": "no token"})
     if (TokenManager.getTokenUser(req_data.get("token")) == None):

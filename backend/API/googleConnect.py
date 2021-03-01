@@ -14,12 +14,6 @@ SCOPES = ['https://www.googleapis.com/auth/youtube.force-ssl',
           'https://www.googleapis.com/auth/gmail.compose']
 
 def loginGoogle():
-    tokenManager = TokenManager()
-    req_data = flask.request.get_json()
-    if (req_data.get("token") == None):
-        return ({"error": "no token"})
-    if (tokenManager.getTokenUser(req_data.get("token")) == None):
-        return ({"error": "bad token"})
     flow = google_auth_oauthlib.flow.Flow.from_client_secrets_file(
         CLIENT_SECRETS_FILE, scopes=SCOPES)
     flow.redirect_uri = 'http://localhost:8081/oauth/Google'
@@ -34,6 +28,8 @@ def loginGoogle():
 def oauthAuthorizedGoogle():
     tokenManager = TokenManager()
     req_data = flask.request.get_json()
+    if not req_data:
+        return {"error": "Missing JSON body"}
     if (req_data.get("token") == None):
         return ({"error": "no token"})
     if (tokenManager.getTokenUser(req_data.get("token")) == None):

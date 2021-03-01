@@ -17,12 +17,6 @@ consumerSecretKey = "4JyPpImRxcoxSi3acwVkMZAK1tgghpKpPsrFddETgXYNhKDSt9"
 oauth = Client(consumerKey, client_secret=consumerSecretKey)
 
 def loginTwitter():
-    tokenManager = TokenManager()
-    req_data = request.get_json()
-    if (req_data.get("token") == None):
-        return ({"error": "no token"})
-    if (tokenManager.getTokenUser(req_data.get("token")) == None):
-        return ({"error": "bad token"})
     uri, headers, body = oauth.sign('https://twitter.com/oauth/request_token')
     res = requests.get(uri, headers=headers, data=body)
     res_split = res.text.split('&')
@@ -38,6 +32,8 @@ def callbackParser():
 def oauthAuthorizedTwitter():
     tokenManager = TokenManager()
     req_data = request.get_json()
+    if not req_data:
+        return {"error": "Missing JSON body"}
     if (req_data.get("token") == None):
         return ({"error": "no token"})
     if (tokenManager.getTokenUser(req_data.get("token")) == None):
