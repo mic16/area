@@ -38,7 +38,6 @@ def oauthAuthorizedGoogle():
         return ({"error": "no token"})
     if (tokenManager.getTokenUser(req_data.get("token")) == None):
         return ({"error": "bad token"})
-
     state = flask.session['state']
 
     flow = google_auth_oauthlib.flow.Flow.from_client_secrets_file(
@@ -49,7 +48,9 @@ def oauthAuthorizedGoogle():
     flow.fetch_token(authorization_response=authorization_response)
 
     credentials = flow.credentials
-
+    
+    data.updateUser(TokenManager.getTokenUser(req_data.get("token")), {"gmail": None})
+    data.updateUser(TokenManager.getTokenUser(req_data.get("token")), {"youtube": None})
     data.updateUser(tokenManager.getTokenUser(req_data.get("token")), {"Google": {"credential":  credentials_to_dict(credentials)}})
 
     return {"message": "user connected"}
