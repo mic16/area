@@ -175,6 +175,13 @@ export default class LoginComponent extends Component<{}, any> {
         return (
             <Container>
                 <ImageBackground source={require('../../assets/login.png')} style={{ width: '100%', height: '100%' }} >
+                  {/*  */}
+                <Header>
+                <Button iconRight transparent style={{ position:"absolute", paddingLeft:320 }} onPress={() => this.state.navigation.navigate("Connection")}>
+                  <Icon name="globe-outline" />
+                </Button>
+                {/*  */}
+                </Header>
             <Content>
               <Text style={{ paddingTop:'10%', fontSize:48, alignSelf:"center" }}>
               Welcome to the Area !

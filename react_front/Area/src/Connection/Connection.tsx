@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import { ImageBackground, Platform, View, StyleSheet } from "react-native";
-import { Footer, FooterTab, Text, Button, Container, Content, Form, Item, Input, Label, Title, Icon, Drawer, Accordion, Spinner, Picker, Header, Card, CardItem, Body, Left, Right, Thumbnail } from 'native-base';
+import { Footer, FooterTab, Text, Button, Container, Content, Form, Item, Input, Label, Title, Icon, Drawer, Accordion, Spinner, Picker, Header, Card, CardItem, Body, Left, Right, Thumbnail, Toast } from 'native-base';
 import * as Font from 'expo-font';
 import { Ionicons } from '@expo/vector-icons';
 import { any } from 'prop-types';
@@ -16,6 +16,7 @@ import {
     useLocation,
     StaticRouter,
   } from "react-router-dom";
+  import { WebView } from 'react-native-webview';
 
 
 // function AppRouter(service:string, data:JSON) {
@@ -29,12 +30,10 @@ import {
 //     );
 // }
 
-export function myRoute() {
-
-}
-
 
 export default class MyApps extends Component<{}, any> {
+
+    webview = null
 
   constructor(props:any) {
     super(props);
@@ -50,12 +49,13 @@ export default class MyApps extends Component<{}, any> {
       actionReaction: [],
       arrayAREA: new Map(),
       connectMap: new Map(),
+      urlRed: "",
+      set: false
     }
-    this.getServices();
   }
 
   public getServices() {
-    return fetch('http://' + mobileIP + ':8080/services/', {
+    return fetch('http://' + mobileIP + ':8080/oauth/list', {
         method: 'GET',
         headers: {
           Accept: 'application/json',
@@ -66,7 +66,6 @@ export default class MyApps extends Component<{}, any> {
         let varaa:Map<number, String> = new Map()
         let i:number = 0
         let arrayBool:Array<Boolean> = []
-        console.log(json.result);
         json.result.forEach((element:String) => {
           varaa.set(i, element)
           arrayBool.push(false)
@@ -83,14 +82,24 @@ export default class MyApps extends Component<{}, any> {
 
     public serviceLogin(service:string) {
         return fetch('http://' + mobileIP + ':8080/oauth/login/' + service, {
-            method: 'POST',
+            method: 'GET',
             headers: {
-              Accept: 'application/json',
-              'Content-Type': 'application/json'
-            },
+                Accept: 'application/json',
+                'Content-Type': 'application/json',
+              },
+            redirect: "follow"
           })
-          .then(() => {
-              console.log("DONE ?")
+          .then((response) => response.json()).then((json) => {
+            console.log(json)
+            if (json.result != undefined && Platform.OS === "web") {
+                window.location.replace(json.result)
+            } else {
+                Toast.show({
+                    text: json.error,
+                    buttonText:"ok"
+                })
+            }
+            return json
         })
           .catch((error) => {
             console.error(error)
@@ -99,21 +108,14 @@ export default class MyApps extends Component<{}, any> {
         }
 
 
-    public myRoute(service:string) {
-
-    }
-
-    public sendCallBack(service:string, data:any) {
-        console.log("JE LUI ENVOI DONC")
-        console.log(data.concat({"token":userToken}))
-        console.log("ET JE RECOIS: ")
-        return fetch('http://' + mobileIP + ':8080/oauth/callback/' + service, {
+    public getLinks() {
+        return fetch('http://' + mobileIP + ':8080/oauth/links/', {
             method: 'POST',
             headers: {
                 Accept: 'application/json',
                 'Content-Type': 'application/json'
             },
-            body: JSON.stringify(data.concat({"token":userToken}))
+            body: JSON.stringify({"token":userToken})
             })
             .then((response) => response.json()).then((json) => {
             console.log(json)
@@ -123,24 +125,54 @@ export default class MyApps extends Component<{}, any> {
             })
         }
 
-    public useQuery() {
-        return new URLSearchParams(useLocation().search);
+    public sendCallBack(service:string, data:any) {
+        console.log("J'ENVOI DONC AU TRUC ")
+        console.log(data)
+        console.log(service)
+        return fetch('http://' + mobileIP + ':8080/oauth/callback/' + service, {
+            method: 'POST',
+            headers: {
+                Accept: 'application/json',
+                'Content-Type': 'application/json'
+            },
+            body: data
+            })
+            .then((response) => response.json()).then((json) => {
+            console.log("C4EST GOOD")
+            console.log(json)
+        })
+            .catch((error) => {
+            console.log("C4EST PAS GOOD")
+            console.error(error)
+            })
         }
     
     public connect(service:string) {
+        console.log("START TO CONNECT")
+        this.setState({set:false})
         let routetmp = <Route exact={true} path={"/oauth/" + service} component={ServiceRoute}/>
         this.setState({route:routetmp})
-        this.serviceLogin(service).then(() => {
+        this.serviceLogin(service).then((response) => {
             console.log("CALL TO URL DONE")
-        })
-        // let query = this.useQuery()
-        // query.forEach((obj:any) => {
-        //     console.log(obj)
-        // })
-        return
-        // this.myRoute(service)
-        this.serviceLogin(service).then(() => {
-            console.log("CALL TO URL DONE")
+            if (Platform.OS === "web") {
+                let params = window.location.pathname.match('^https?://[^:]+:[0-9]+/oauth/([^/#?]+)[/#?](.+)$')
+                if (params?.length !== 2) {
+                    return
+                }
+                let good_params = params[1] + window.location.search
+                console.log("QUERY IS")
+                console.log(good_params)
+                this.setState({query:good_params})
+                let json = JSON.stringify({
+                    data:good_params,
+                    token: userToken
+                })
+                this.sendCallBack(service, json).then(() => {
+                    console.log("SEND DATA TO URL DONE")
+                })
+            } else if (Platform.OS === "android") {
+                this.state.navigation.navigate("ServiceRoute", {data:response, service:service})
+            }
         })
     }
 
@@ -153,8 +185,7 @@ export default class MyApps extends Component<{}, any> {
           let mapStyle = new Map()
           let connectMap = new Map()
           mapStyle.set("Twitter", { backgroundColor:"#1da1f2" })
-          mapStyle.set("Youtube", { backgroundColor:"#FF0000" })
-          mapStyle.set("Gmail", { backgroundColor:"#F4B400" })
+          mapStyle.set("Google", { backgroundColor:"#FF0000" })
           mapStyle.set("Github", { backgroundColor:"black" })
           mapStyle.set("Imgur", { backgroundColor:"#89c623" })
           this.state.servicesData.forEach((elem:string, key:number) => {
@@ -187,51 +218,31 @@ export default class MyApps extends Component<{}, any> {
       this.setState({ loading: false });
   }
 
-  openCloseDrawer = () => {
-    if (!this.state.drawerState)
-      this.state.drawer._root.open();
-    else
-      this.state.drawer._root.close();
-    this.setState({
-      drawerState: !this.state.drawerState,
-    })
-  }
+  public sendToBack(data:string) {
+    data = data.replace("http://localhost:8081/oauth/", "")
+    data = data.replace("#", "?")
 
-  createArea = async () => {
-    await fetch('http://localhost:8080/area/create', {
-      method: 'POST',
-      headers: {
-        Accept: 'application/json',
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({
-        'action': {
-          'service': 'Twitter',
-          'name': 'OnTweet',
-          'config': {
-            'match': 'yeet',
-            'with image': false,
-          }
-        },
-        'reaction':  {
-          'service': 'Twitter',
-          'name': 'Direct_message',
-          'config': {
-            'userId': 'yolo'
-          }
-        },
-      'token': this.state.token}),
-    }).then((response) => response.json()).then((json) => {
-      console.log(json);
-      return json.result;
+    let params = data.split("?")
+
+    if (params.length !== 2) {
+        return
+    }
+    console.log("CE QUE J4ENVOI")
+    console.log(params)
+    let json = JSON.stringify({
+        data: params[1],
+        token: userToken
     })
-    .catch((error) => {
-      console.error(error)
-      return null;
+    this.sendCallBack(params[0], json).then(() => {
+        console.log("SEND DATA TO URL DONE")
     })
   }
 
   render() {
+      if (this.props.route.params !== undefined && this.state.set === false) {
+          this.setState({set:true})
+          this.sendToBack(this.props.route.params.data)
+      }
        if (this.state.loading) {
         this.listElem()
         return (
@@ -255,9 +266,9 @@ export default class MyApps extends Component<{}, any> {
                 this.state.reactListData || <Card style={{ borderColor:"red", borderWidth:2 }} ><CardItem header>HEADER</CardItem></Card>
               }
             </Content>
-          <StaticRouter>
+          {/* <StaticRouter>
             { this.state.route }
-          </StaticRouter>
+          </StaticRouter> */}
           </Container>
                 )
    }

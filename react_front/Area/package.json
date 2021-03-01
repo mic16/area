@@ -33,6 +33,7 @@
     "react-native-keyboard-aware-scroll-view": "^0.9.3",
     "react-native-screens": "^2.15.2",
     "react-native-web": "~0.13.12",
+    "react-native-webview": "11.0.0",
     "react-navigation": "^4.4.3",
     "react-router-dom": "^5.2.0",
     "ts-node": "^9.1.1"
