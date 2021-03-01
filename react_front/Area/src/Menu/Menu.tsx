@@ -10,6 +10,7 @@ import MyArea from '../MyArea/MyArea';
 import MyApps from '../MyApps/MyApps';
 import CreateArea from '../CreateArea/CreateArea';
 import ConfigComponent from '../Configfield/Configfield'
+import Connection from '../Connection/Connection';
 
 const Stack = createStackNavigator();
 export default class MenuComponent extends Component {
@@ -50,6 +51,8 @@ export default class MenuComponent extends Component {
               <Stack.Screen name="MyApps" component={MyApps}
               options={{headerShown: false}}/>
               <Stack.Screen name="Config" component={ConfigComponent}
+              options={{headerShown: false}}/>
+              <Stack.Screen name="Connection" component={Connection}
               options={{headerShown: false}}/>
             </Stack.Navigator>
           </NavigationContainer>

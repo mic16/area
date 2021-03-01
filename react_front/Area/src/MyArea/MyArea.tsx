@@ -133,10 +133,13 @@ export default class MyArea extends Component {
         return (
             <Container style= {{ position: "relative"}}>
             <Header >
-                <Button iconLeft transparent style={{ position:"absolute", paddingRight:340 }} onPress={() => this.logout()}>
+                <Button iconLeft transparent style={{ position:"absolute", paddingRight:320 }} onPress={() => this.logout()}>
                   <Icon name="log-out-outline" />
                 </Button>
               <Title style={{  marginRight:0, color: "white", fontSize:22, alignSelf:"center" }} >My Area Page</Title>
+              <Button iconRight transparent style={{ position:"absolute", paddingLeft:320 }} onPress={() => this.state.navigation.navigate("Connection")}>
+                  <Icon name="globe-outline" />
+                </Button>
             </Header>
             <Content style= {{ position: "relative" }}>
             </Content>

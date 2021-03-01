@@ -114,7 +114,7 @@ export default class ConfigComponent extends Component<{}, any> {
         if (element["type"] === "boolean") {
           arrayField.push(
             <ListItem key={element["name"]}>
-            <CheckBox onPress={(_) => this.onPressedCheckBox(element["name"])} checked={this.state.arrayValues.get(element["name"])}/>
+            <CheckBox onPress={() => this.onPressedCheckBox(element["name"])} checked={this.state.arrayValues.get(element["name"])}/>
             <Body><Text>{element["description"]}</Text></Body>
             </ListItem>
           )
@@ -159,6 +159,8 @@ export default class ConfigComponent extends Component<{}, any> {
   }
 
   render() {
+    if (this.props.route.params.data === undefined)
+      console.log(this.props.route)
     this.createFields(this.props.route.params.data)
     if (this.state.loading) {
         console.log("JE SUIS DANS LA CONFIG")

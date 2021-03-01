@@ -87,6 +87,13 @@ export default class CreateArea extends Component<{}, any> {
         },
       })
       .then((response) => response.json()).then((json) => {
+        if (json.error != undefined) {
+          Toast.show({
+            text:json.error,
+            buttonText:"ok"
+          })
+          return
+        }
         let var_tmp:Array<String> = []
 
         json.result.forEach((element:String) => {
@@ -182,6 +189,33 @@ export default class CreateArea extends Component<{}, any> {
         })
       }
 
+      public createAreaFetch(json:any) {
+        return fetch('http://' + mobileIP + ':8080/area/create', {
+            method: 'POST',
+            headers: {
+              Accept: 'application/json',
+              'Content-Type': 'application/json'
+            },
+            body: json
+          })
+          .then((response) => response.json()).then((json) => {
+            if (json.result != undefined) {
+            console.log("LE UUID DE L'AREA CREATED IS " + json.result)
+            } else if (json.error != undefined) {
+              console.log(json)
+              // Toast.show({
+              //   text: json.error,
+              //   buttonText: 'Ok'
+              // })
+            } else 
+              console.log(json)
+          })
+          .catch((error) => {
+            console.error(error)
+            
+          })
+        }
+
     public pickerAction(service:String) {
       let reactAction = new Array()
       let mapAction:Map<String, any> = new Map()
@@ -206,12 +240,20 @@ export default class CreateArea extends Component<{}, any> {
       .then((_) => {
         this.state.reactionReact.get(service).forEach((objs:any) => {
           mapReaction.set(objs["name"], objs)
+          // console.log("HERRRE IS THE SERVICE DATA:")
+          // console.log(objs["name"])
+          // console.log(objs["description"])
           reactReaction.push(
             <Picker.Item label={objs["description"]} value={objs["name"]} key={objs["name"]}/>
           )
           });
       this.setState({rreact:reactReaction})
       this.setState({mapReaction:mapReaction})
+
+      console.log("LES DATA:::")
+      console.log(mapReaction)
+      console.log("ET LE SELECTED IS")
+      console.log(this.state.selectedReaction)
     });
     }
 
@@ -263,22 +305,26 @@ export default class CreateArea extends Component<{}, any> {
     if (value === undefined)
       return
     if (value.length != 0) {
+      this.setState({rreact:[]})
       this.setState({reactionApp:value})
       this.pickerReaction(value)
     }
   }
 
-  onValueChangeReaction(value: string) {
+  onValueChangeReaction(valuee: string) {
+    if (valuee === null)
+      return
     this.setState({
-      selectedReaction: value
+      selectedReaction: valuee
     });
-    console.log("Reaction of the other service selected is " + value)
-    if (value.length != 0) {
-      this.setState({reaction:value})
+    console.log("Reaction of the other service selected is " + valuee)
+    if (valuee.length != 0) {
+      this.setState({reaction:valuee})
     }
   }
 
-  public createArea() {
+
+  public createAreaMobile() {
     let params = this.props.route.params
     let jsonSerial = {}
     let actionSerial = {}
@@ -291,9 +337,9 @@ export default class CreateArea extends Component<{}, any> {
         actionSerial[key] = value
       });
 
-      // params["reaction"].forEach((value:any, key:string) => {  
-      //   reactionSerial[key] = value
-      // });
+      params["reaction"].forEach((value:any, key:string) => {  
+        reactionSerial[key] = value
+      });
 
       jsonSerial = {
         "action": {
@@ -304,11 +350,14 @@ export default class CreateArea extends Component<{}, any> {
         "reaction": {
           "service": this.state.selectedAppTwo,
           "name": this.state.selectedReaction,
-          "config": ""
-        }
+          "config": reactionSerial
+        },
+        "token":userToken
       }
 
+      
       console.log(JSON.stringify(jsonSerial))
+      this.createAreaFetch(JSON.stringify(jsonSerial))
 
     } else
       alert("Please have a look to the config before creating an Area")
@@ -615,7 +664,6 @@ export default class CreateArea extends Component<{}, any> {
             <Picker
               mode="dropdown"
               iosIcon={<Icon name="arrow-down" />}
-              placeholder="Select your SIM"
               placeholderStyle={{ color: "#bfc6ea" }}
               placeholderIconColor="#007aff"
               style={{ width: undefined }}
@@ -632,7 +680,6 @@ export default class CreateArea extends Component<{}, any> {
             <Picker
               mode="dropdown"
               iosIcon={<Icon name="arrow-down" />}
-              placeholder="Select your SIM"
               placeholderStyle={{ color: "#bfc6ea" }}
               placeholderIconColor="#007aff"
               style={{ width: undefined }}
@@ -653,7 +700,6 @@ export default class CreateArea extends Component<{}, any> {
             <Picker
               mode="dropdown"
               iosIcon={<Icon name="arrow-down" />}
-              placeholder="Select your SIM"
               placeholderStyle={{ color: "#bfc6ea" }}
               placeholderIconColor="#007aff"
               style={{ width: undefined }}
@@ -670,11 +716,12 @@ export default class CreateArea extends Component<{}, any> {
             <Picker
               mode="dropdown"
               iosIcon={<Icon name="arrow-down" />}
-              placeholder="Select your SIM"
               placeholderStyle={{ color: "#bfc6ea" }}
               placeholderIconColor="#007aff"
+              style={{ width: undefined }}
               selectedValue={this.state.selectedReaction}
               onValueChange={this.onValueChangeReaction.bind(this)}
+              key="reactionID"
             >
                 {
                   this.state.rreact || <Picker.Item label="Loading, please wait" value="None" color="grey" />
@@ -684,7 +731,7 @@ export default class CreateArea extends Component<{}, any> {
                 this.state.rreact.length != 0 ? <Button icon style={{ marginRight:10 }} onPress={() => this.state.navigation.navigate("Config", {data:this.state.mapReaction.get(this.state.selectedReaction), type:"reaction"})}><Icon name='settings-outline' /></Button>: <Text></Text>
               }
             </Item>
-          <Button style={{ alignSelf:'center', marginTop:"40%" }} onPress={() => this.createArea()} >
+          <Button style={{ alignSelf:'center', marginTop:"40%" }} onPress={() => this.createAreaMobile()} >
             <Text>
             Create the AREA !
             </Text>
