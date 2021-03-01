@@ -54,7 +54,7 @@ export default class Connection extends Component<{}, any> {
                     <Icon name="chevron-back-outline" />
                   </Button>
                 }
-              <Title style={{  marginRight:0, color: "white", fontSize:22, alignSelf:"center" }} >{ this.state.headerReact + " configuration"}</Title>
+              <Title style={{  marginRight:0, color: "white", fontSize:22, alignSelf:"center" }} >Service Connection</Title>
             </Header>
             <Content style= {{ position: "relative" }}>
              {
