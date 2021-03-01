@@ -25,11 +25,18 @@ class Twitter(oauth='Twitter'):
             if (favs == None):
                 return
             for fav in favs:
+
+                if (fields.getBool('with image') == True and not 'media' in fav["entities"]):
+                    continue
+                if (fields.getString('match') != '' and not fields.getString('match') in fav.text):
+                    continue
+                
                 area.newReaction()
                 if fields.getBool('with image') == True:
-                    if 'media' in fav["entities"]:
-                        area.ret(Imgs([fav["entities"]['media']['media_url']]))
-                        area.ret(fav.text)
+                    area.ret(Imgs([fav["entities"]['media']['media_url']]))
+                area.ret(fav.text)
+
+
         return trig.setAction(func)
 
     @Action('When the user tweet something')
@@ -45,20 +52,28 @@ class Twitter(oauth='Twitter'):
             if (tweets == None):
                 return
             for tweet in tweets:
+
+                if (fields.getBool('with image') == True and not 'media' in tweet["entities"]):
+                    continue
+                if (fields.getString('match') != '' and not fields.getString('match') in tweet.text):
+                    continue
+
                 area.newReaction()
                 if fields.getBool('with image') == True:
-                    if 'media' in tweet["entities"]:
-                        area.ret(Imgs([tweet["entities"]['media']['media_url']]))
-                        area.ret(tweet['text'])
+                    area.ret(Imgs([tweet["entities"]['media']['media_url']]))
+                area.ret(tweet.text)
 
         return trig.setAction(func)      
 
     @Reaction(
         'Post a new tweet',
-        int,
+        str,
     )
     def tweet(self, area, fields):
-        twitterApi.newTweet(area.getUser(), area.get(str)[0])
+        txt = area.get(str)[0]
+        if len(txt) > 280:
+            txt = txt[0:279]
+        twitterApi.newTweet(area.getUser(), txt)
 
     @Reaction(
         'Send a direct message',
