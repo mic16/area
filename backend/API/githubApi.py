@@ -18,6 +18,11 @@ oauth = Client(consumerKey, client_secret=consumerSecretKey)
 
 @app.route('/loginGithub', methods = [ 'GET', 'POST' ])
 def loginGithub():
+    req_data = request.get_json()
+    if (req_data.get("token") == None):
+        return ({"error": "no token"})
+    if (TokenManager.getTokenUser(req_data.get("token")) == None):
+        return ({"error": "bad token"})
     return redirect('https://github.com/login/oauth/authorize?client_id=' + consumerKey)
 
 def callbackParser():
