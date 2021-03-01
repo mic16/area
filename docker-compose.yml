@@ -24,7 +24,7 @@ services:
     build: ./backend/
     volumes:
       - "./logs/backend:/var/logs"
-      # - "./backend:/var/app"
+      - "./backend:/var/app"
     ports:
       - "8080:5000"
     depends_on:

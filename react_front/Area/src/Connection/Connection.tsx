@@ -1,22 +1,163 @@
 import React, { Component } from 'react';
-import { Alert, ImageBackground, Platform, View } from "react-native";
-import { Spinner, Root, Text, Accordion, FooterTab, Footer, Button, Container, Header, Content, Form, Item, Input, Label, Title, Icon, Grid, Col, Left, Right, Body, Toast, CheckBox, ListItem, List } from 'native-base';
+import { ImageBackground, Platform, View, StyleSheet } from "react-native";
+import { Footer, FooterTab, Text, Button, Container, Content, Form, Item, Input, Label, Title, Icon, Drawer, Accordion, Spinner, Picker, Header, Card, CardItem, Body, Left, Right, Thumbnail } from 'native-base';
 import * as Font from 'expo-font';
 import { Ionicons } from '@expo/vector-icons';
-import { NavigationContainer } from "react-navigation";
-import { TextInput } from 'react-native-gesture-handler';
+import { any } from 'prop-types';
+import Navigation from '../Navigation/Navigation';
+import CustomHeader from '../CustomHeader/CustomHeader';
+import { mobileIP, userToken } from '../Login/Login';
+import * as express from "express";
 
-export default class Connection extends Component<{}, any> {
+const app = express();
+
+
+// function AppRouter(service:string, data:JSON) {
+//     return (
+//         <Router>
+//             <View>
+//                 { data }
+//             </View>
+//             <Route path={"/oauth/" + service}/>
+//         </Router>
+//     );
+// }
+
+
+export default class MyApps extends Component<{}, any> {
 
   constructor(props:any) {
     super(props);
     this.state = {
       navigation: this.props.navigation,
       loading: true,
-      connections: new Map()
+      drawer: any,
+      drawerState: false,
+      token: '',
+      servicesData: [],
+      reactListData: [],
+      showState: [],
+      actionReaction: [],
+      arrayAREA: new Map(),
+      connectMap: new Map(),
+      dataraw: ""
     }
+    this.getServices();
   }
-  
+
+  public getServices() {
+    return fetch('http://' + mobileIP + ':8080/services/', {
+        method: 'GET',
+        headers: {
+          Accept: 'application/json',
+          'Content-Type': 'application/json'
+        },
+      })
+      .then((response) => response.json()).then((json) => {
+        let varaa:Map<number, String> = new Map()
+        let i:number = 0
+        let arrayBool:Array<Boolean> = []
+        console.log(json.result);
+        json.result.forEach((element:String) => {
+          varaa.set(i, element)
+          arrayBool.push(false)
+          i += 1
+        });
+        this.setState({showState:arrayBool})
+        this.setState({servicesData:varaa})
+      })
+      .catch((error) => {
+        console.error(error)
+        
+      })
+    }
+
+    public serviceLogin(service:string) {
+        return fetch('http://' + mobileIP + ':8080/oauth/login/' + service, {
+            method: 'POST',
+            headers: {
+              Accept: 'application/json',
+              'Content-Type': 'application/json'
+            },
+          })
+          .then((response) => response.json()).then((json) => {
+              this.setState({dataraw:json})
+        })
+          .catch((error) => {
+            console.error(error)
+            
+          })
+        }
+
+
+    public myRoute(service:string) {
+        app.get('/oauth/' + service, (request, response) => {
+            this.setState({dataRaw:request.body})
+
+            this.sendCallBack(service, request.body)
+            });
+        app.listen(8081);
+    }
+
+    public sendCallBack(service:string, data:any) {
+        return fetch('http://' + mobileIP + ':8080/oauth/callback/' + service, {
+            method: 'POST',
+            headers: {
+                Accept: 'application/json',
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(data.concat({"token":userToken}))
+            })
+            .then((response) => response.json()).then((json) => {
+
+        })
+            .catch((error) => {
+            console.error(error)
+            
+            })
+        }
+    
+    public connect(service:string) {
+        this.myRoute(service)
+        this.serviceLogin(service).then(() => {
+            console.log("CALL TO URL DONE")
+        })
+    }
+
+    public listElem() {
+      let reactList:Array<any> = []
+      let i = 0
+      if (this.state.servicesData.length === 0) {
+        this.getServices()
+        .then((_) => {
+          let mapStyle = new Map()
+          let connectMap = new Map()
+          mapStyle.set("Twitter", { backgroundColor:"#1da1f2" })
+          mapStyle.set("Youtube", { backgroundColor:"#FF0000" })
+          mapStyle.set("Gmail", { backgroundColor:"#F4B400" })
+          mapStyle.set("Github", { backgroundColor:"black" })
+          mapStyle.set("Imgur", { backgroundColor:"#89c623" })
+          this.state.servicesData.forEach((elem:string, key:number) => {
+            connectMap.set(elem, "Press to connect")
+            if (this.state.connectMap.get(elem) === undefined)
+                this.setState({connectMap:connectMap})
+            reactList.push(
+              <Card style={mapStyle.get(elem)} key={key}>
+                <CardItem style={ mapStyle.get(elem)} header button onPress={ () => this.connect(elem)}>
+                  <Text style={{ color:"white" }}>{elem}</Text>
+                </CardItem>
+                <CardItem style={ mapStyle.get(elem)} header button onPress={ () => this.connect(elem)}>
+                  <Text style={{ color:"white" }}>{this.state.connectMap.get(elem)}</Text>
+                </CardItem>
+              </Card>
+            )
+            i += 1
+          })
+          this.setState({reactListData:reactList})
+        });
+        }
+      }
+
   async componentDidMount() {
       await Font.loadAsync({
           Roboto: require('native-base/Fonts/Roboto.ttf'),
@@ -26,44 +167,75 @@ export default class Connection extends Component<{}, any> {
       this.setState({ loading: false });
   }
 
-  public fillDataConnection() {
-      let array:Array<String> = []
-      let mapTmp = new Map()
-
-      array.forEach((string:String) => {
-        mapTmp.set(string, "TOKEN")
-      })
+  openCloseDrawer = () => {
+    if (!this.state.drawerState)
+      this.state.drawer._root.open();
+    else
+      this.state.drawer._root.close();
+    this.setState({
+      drawerState: !this.state.drawerState,
+    })
   }
 
+  createArea = async () => {
+    await fetch('http://localhost:8080/area/create', {
+      method: 'POST',
+      headers: {
+        Accept: 'application/json',
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        'action': {
+          'service': 'Twitter',
+          'name': 'OnTweet',
+          'config': {
+            'match': 'yeet',
+            'with image': false,
+          }
+        },
+        'reaction':  {
+          'service': 'Twitter',
+          'name': 'Direct_message',
+          'config': {
+            'userId': 'yolo'
+          }
+        },
+      'token': this.state.token}),
+    }).then((response) => response.json()).then((json) => {
+      console.log(json);
+      return json.result;
+    })
+    .catch((error) => {
+      console.error(error)
+      return null;
+    })
+  }
 
   render() {
-    if (this.state.loading) {
-         return (
-          <View>
-            <Spinner color="blue" />
-          </View>
-         );
-       }
-
+       if (this.state.loading) {
+        this.listElem()
         return (
-            <Root>
+          <View>
+             <Spinner color="blue" />
+           </View>
+        );
+       }
+        return (
             <Container style= {{ position: "relative"}}>
-            <Header >
-                {
-                  <Button iconLeft transparent style={{ position:"absolute", paddingRight:340 }} onPress={() => this.state.navigation.navigate("MyArea", { action: this.state.connections})}>
-                    <Icon name="chevron-back-outline" />
-                  </Button>
-                }
-              <Title style={{  marginRight:0, color: "white", fontSize:22, alignSelf:"center" }} >Service Connection</Title>
+            <Header>
+                <Button iconLeft transparent style={{ position:"absolute", paddingRight:340 }} onPress={() => this.state.navigation.navigate("MyArea", { action: this.state.connections})}>
+                <Icon name="chevron-back-outline" />
+                </Button>
+            <Text style={{ color: "white", fontSize:22, alignSelf:"center" }}>
+                Services Connection
+            </Text>
             </Header>
             <Content style= {{ position: "relative" }}>
-             {
-             this.state.reactData
-             }
+              {
+                this.state.reactListData || <Card style={{ borderColor:"red", borderWidth:2 }} ><CardItem header>HEADER</CardItem></Card>
+              }
             </Content>
           </Container>
-          </Root>
                 )
    }
 }
-

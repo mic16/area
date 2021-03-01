@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import { ImageBackground, Platform, View, StyleSheet } from "react-native";
-import { Footer, FooterTab, Text, Button, Container, Content, Form, Item, Input, Label, Title, Icon, Drawer, Accordion, Spinner, Picker, Header, Card, CardItem, Body, Left, Right } from 'native-base';
+import { Footer, FooterTab, Text, Button, Container, Content, Form, Item, Input, Label, Title, Icon, Drawer, Accordion, Spinner, Picker, Header, Card, CardItem, Body, Left, Right, Thumbnail } from 'native-base';
 import * as Font from 'expo-font';
 import { Ionicons } from '@expo/vector-icons';
 import { any } from 'prop-types';
@@ -164,7 +164,7 @@ export default class MyApps extends Component<{}, any> {
 
     public listElem() {
       let reactList:Array<any> = []
-      let iconList:Array<any> = [<Icon name="logo-twitter" style={{color:"#1da1f2"}}/>, <Icon name="logo-github" />, <Icon name="logo-youtube" style={{color:"#FF0000"}}/>]
+      let iconList:Array<any> = [<Icon name="logo-twitter" style={{color:"#1da1f2"}}/>, <Icon name="logo-github" />, <Icon name="logo-youtube" style={{color:"#FF0000"}}/>, <Thumbnail square small source= {require('../../assets/gmail.png')} />, <Thumbnail square small source= {require("../../assets/imgur.jpg")} />]
       let i = 0
       if (this.state.servicesData.length === 0) {
         this.getServices()
@@ -181,7 +181,7 @@ export default class MyApps extends Component<{}, any> {
                 {
                   this.state.showState[i] ?
                   <CardItem button onPress={() => this.update(key)}>
-                  <Body>{ this.state.arrayAREA.get(elem) || <Text> NADAAAA FRERITO </Text> }</Body>
+                  <Body>{ this.state.arrayAREA.get(elem) || <Text></Text> }</Body>
                   </CardItem>
                   :
                   <CardItem button onPress={() => this.update(key)}>
@@ -195,7 +195,7 @@ export default class MyApps extends Component<{}, any> {
           this.setState({logoArray:iconList})
         });
         }
-    }
+      }
 
   async componentDidMount() {
       await Font.loadAsync({
