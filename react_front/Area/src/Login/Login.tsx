@@ -8,6 +8,7 @@ import { navigate } from '@react-navigation/routers/lib/typescript/src/CommonAct
 import { TextInput } from 'react-native-gesture-handler';
 
 export let mobileIP = ""
+export let userToken = ""
 
 export default class LoginComponent extends Component<{}, any> {
 
@@ -64,13 +65,22 @@ export default class LoginComponent extends Component<{}, any> {
       })
     }).then((response) => response.json()).then((json) => {
       this.setState({ loading: false });
-      console.log(json.result)
-      this.state.navigation.navigate('CreateArea', {token: json.result});
+      if (json.result === undefined) {
+        Toast.show({
+          text: 'Bad user info, please Create you account below',
+          buttonText: 'Soooorryy'
+        })
+        return
+      }
+      console.log("CONNECTED WITH TOKEN:")
+      console.log(json)
+      userToken = json.result
+      this.state.navigation.navigate('CreateArea')
     })
     .catch((error) => {
       this.setState({ loading: false });
       console.error(error)
-      alert("I GET DON'T IT, ITS " + error)
+      
       return error;
     })
   }
@@ -115,17 +125,22 @@ export default class LoginComponent extends Component<{}, any> {
         this.setState({ loading: false });
         if (json.error != undefined) {
           console.error(json.error)
+          Toast.show({
+            text:json.error,
+            buttonText: "Ok"
+          })
           return null
         }
         console.log(json.result);
         alert("Connection Sucessfull = " + json.result)
+        userToken = json.result
         this.state.navigation.navigate('CreateArea')
         return json.result;
       })
       .catch((error) => {
         this.setState({ loading: false });
         console.error(error)
-        alert("I GET DON'T IT, ITS " + error)
+        
         return error;
       })
     } else {
