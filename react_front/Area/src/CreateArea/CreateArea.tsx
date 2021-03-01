@@ -323,7 +323,7 @@ export default class CreateArea extends Component<{}, any> {
       this.setState({ loading: false });
   }
 
-  createArea = async () => {
+  public createAreaWeb = async () => {
     let test = {
       action: {
         service: this.state.actionService,
@@ -352,7 +352,6 @@ export default class CreateArea extends Component<{}, any> {
       if (element.type === 'boolean')
         test.reaction.config[element.name] = this.state.responseReactionField[key];
     });
-    console.log(test)
     await fetch('http://localhost:8080/area/create', {
       method: 'POST',
       headers: {
@@ -522,7 +521,7 @@ export default class CreateArea extends Component<{}, any> {
       })
     }).then((response) => response.json()).then((json) => {
       let tmpReactionList: {[k: string]: any} = {};
-      let tmpReactionNameList = '';
+      let tmpReactionNameList: {[k: string]: any} = {};
       let tmpReactionServiceList = [<Picker.Item label={''} value={0} key={0}/>];
       let serviceKey = 1;
       
@@ -536,7 +535,9 @@ export default class CreateArea extends Component<{}, any> {
             tmpReactionList[service].push(
               <Picker.Item label={reaction.description} value={key + 1} key={key + 1}/>
             )
-            tmpReactionNameList = reaction.name;
+            if (!tmpReactionNameList[service])
+              tmpReactionNameList[service] = [''];
+            tmpReactionNameList[service].push(reaction.name);
           })
           serviceKey += 1;
         }
@@ -545,7 +546,6 @@ export default class CreateArea extends Component<{}, any> {
       let tmpActionFieldList: Array<any> = [<View key={0}></View>];
 
       this.state.actionNameList[value - 1].fields.forEach((element: any, key: number) => {
-        console.log(element)
         this.generateField(element, key, 'action');
         tmpActionFieldList.push(
           <View key={key + 1}>
@@ -578,13 +578,12 @@ export default class CreateArea extends Component<{}, any> {
       this.setState({confirmButton: false})
     else
       this.setState({confirmButton: true});
-    this.setState({serviceReaction: this.state.reactionNameList, reactionValue: value});
+    this.setState({serviceReaction: this.state.reactionNameList[this.state.reactionService][value], reactionValue: value});
 
     let tmpReactionFieldList: Array<any> = [<View key={0}></View>];
 
     this.state.reactionFieldName[this.state.reactionService][this.state.reactionValue].fields.forEach((element: any, key: number) => {
       this.generateField(element, key, 'reaction');
-      console.log(element)
       tmpReactionFieldList.push(
         <View key={key + 1}>
           {element.style === 'boolean' ?
@@ -624,11 +623,12 @@ export default class CreateArea extends Component<{}, any> {
           <Container>
             <CustomHeader onPressButton={() => this.openCloseDrawer()}/>
             <ImageBackground source={require('../../assets/login.png')} style={{ width: '100%', height: '100%' }} >
-              <View style={styles.navigation}>
+              <View style={{height: '100%'}}>
                 <View style={{flexDirection: 'row', height: '100%'}}>
-                  <Drawer
+                  {/* <Drawer
                     ref={(ref) => { this.state.drawer = ref }}
-                    content={<Navigation navigation={this.state.navigation}/>}>
+                    content={<Navigation navigation={this.state.navigation}/>}> */}
+                    <Navigation navigation={this.state.navigation}/>
                     <View style={{height: '90%', width: '78%', right: 0, position: 'absolute'}}>
                       <View style={styles.container}>
                         <Text style={{
@@ -682,11 +682,11 @@ export default class CreateArea extends Component<{}, any> {
                               </Form>
                             </View>
                           </View>
-                          <Button disabled={this.state.confirmButton} onPress={() => this.createArea()}><Text>Confirm</Text></Button>
+                          <Button style={{marginLeft: 'auto',  marginTop: 10}} disabled={this.state.confirmButton} onPress={() => this.createAreaWeb()}><Text>Confirm</Text></Button>
                         </View>
                       </View>
                     </View>
-                  </Drawer>
+                  {/* </Drawer> */}
                 </View>
               </View>
             </ImageBackground>
@@ -803,9 +803,6 @@ export default class CreateArea extends Component<{}, any> {
 }
 
 const styles = StyleSheet.create({
-  navigation: {
-    height: '100%',
-  },
   container: {
     width: '100%',
     margin: 5,

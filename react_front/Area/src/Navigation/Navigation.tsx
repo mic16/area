@@ -8,21 +8,27 @@ import { relative } from 'path';
 
 export default function Navigation({ navigation }) {
   return (
-    <View style={{height: '93%', width: '20%'}}>
+    <View style={{height: '90%', width: '18%'}}>
       <View style={styles.container}>
         <Button
           style={styles.button}
-          // onPress={() => navigation.navigate('Home')}
+          onPress={() => navigation.navigate('CreateArea')}
           transparent={true}
           full={true}
         >
+          <Text>
+            Create Area
+          </Text>
         </Button>
         <Button
           style={styles.button}
-          // onPress={() => navigation.navigate('LinkedApps')}
+          onPress={() => navigation.navigate('MyArea')}
           transparent={true}
           full={true}
         >
+          <Text>
+            My Areas
+          </Text>
         </Button>
       </View>
     </View>
@@ -31,15 +37,14 @@ export default function Navigation({ navigation }) {
 
 const styles = StyleSheet.create({
   container: {
-    borderWidth: 0.5,
     margin: 5,
     borderRadius: 25,
     height: '100%',
     width: '100%',
-    shadowOffset:{  width: 5,  height: 5,  },
-    shadowColor: 'black',
-    shadowOpacity: 0.5,
     position: 'absolute',
+    marginLeft: 10,
+    left: 0,
+    backgroundColor: 'rgba(255, 255, 255, 0.5)'
   },
   button: {
     width: '100%',
