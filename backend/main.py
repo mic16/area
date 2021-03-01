@@ -35,6 +35,8 @@ import Service
 import Twitter
 import Github
 import Youtube
+import Gmail
+import Imgur
 
 tokenManager = TokenManager()
 data.load()
