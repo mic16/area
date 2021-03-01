@@ -37,7 +37,9 @@ def oauthAuthorizedGithub():
     res = requests.post(' https://github.com/login/oauth/access_token?code=' + args['code'] + '&client_id=' + consumerKey + '&client_secret=' + consumerSecretKey)
     res_split = res.text.split('&')
     oauth_token = res_split[0].split('=')[1]
+    data.updateUser(TokenManager.getTokenUser(req_data.get("token")), {"github": None})
     data.updateUser(TokenManager.getTokenUser(req_data.get("token")), {"github": {"token": oauth_token}})
+
     return {"message": "connected as " + oauth_token}
 
 def Diff(li1, li2):

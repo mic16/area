@@ -40,6 +40,7 @@ def oauthAuthorizedImgur():
 
     parser = callbackParser()
     args = parser.parse_args()
+    data.updateUser(tokenManager.getTokenUser(req_data.get("token")), {"imgur": None})
     data.updateUser(tokenManager.getTokenUser(req_data.get("token")), {"imgur": {"token": args['access_token'], "refresh_token": args['refresh_token'], "username":args['account_username']}})
     return {"message": "connected as " + args['account_username']}
 

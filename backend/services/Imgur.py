@@ -3,7 +3,7 @@ from Service import Service
 from Reaction import Reaction
 from Field import Field, FTYPE
 from Trigger import Trigger
-import Imgs
+from Imgs import Imgs
 import imgurApi
 
 @Service()
