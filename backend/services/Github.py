@@ -6,7 +6,7 @@ from Trigger import Trigger
 import githubApi
 
 @Service()
-class Github():
+class Github(oauth='Github'):
     def __init__(self):
         pass
 

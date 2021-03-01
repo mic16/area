@@ -17,6 +17,7 @@ class Area():
         self.returns = {}
         self.returnStates = []
         self.lastTrigger = 0
+        self.state = {}
 
         self.user = user
 
@@ -108,6 +109,12 @@ class Area():
             array = self.returns.get(ttype) or []
             array.append(value)
             self.returns[ttype] = array
+
+    def setValue(self, key, value):
+        self.state[key] = value
+    
+    def getValue(self, key):
+        return self.state.get(key)
     
     def newReaction(self):
         self.returns = {}

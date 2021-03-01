@@ -7,6 +7,7 @@ from flask_restful import Resource, reqparse
 from TokenManager import TokenManager
 from github import Github
 import json
+import OAuthManager
 
 import sys
 
@@ -15,7 +16,6 @@ consumerSecretKey = "20239e2887de5e83479d17c8ae6fb440af515483"
 
 oauth = Client(consumerKey, client_secret=consumerSecretKey)
 
-@app.route('/loginGithub', methods = [ 'GET', 'POST' ])
 def loginGithub():
     return redirect('https://github.com/login/oauth/authorize?client_id=' + consumerKey)
 
@@ -24,7 +24,6 @@ def callbackParser():
     parser.add_argument('code')
     return parser
     
-@app.route('/oauthAuthorizedGithub')
 def oauthAuthorizedGithub():
     req_data = request.get_json()
     if (req_data.get("token") == None):
@@ -38,6 +37,12 @@ def oauthAuthorizedGithub():
     oauth_token = res_split[0].split('=')[1]
     data.updateUser(TokenManager.getTokenUser(req_data.get("token")), {"github": {"token": oauth_token}})
     return {"message": "connected as " + oauth_token}
+
+
+
+OAuthManager.addManager('Github', loginGithub, oauthAuthorizedGithub, githubConnected)
+
+
 
 def Diff(li1, li2):
     return (list(list(set(li1)-set(li2)) + list(set(li2)-set(li1))))

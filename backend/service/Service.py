@@ -6,7 +6,7 @@ from Config import Config
 
 services = {}
 
-def Service():
+def Service(oauth=None):
     def decorator(clazz):
         assert inspect.isclass(clazz), 'Service must be applied to a class'
         className = clazz.__name__[0].upper() + clazz.__name__[1:]
@@ -16,6 +16,7 @@ def Service():
             if hasattr(method, '__service__'):
                 methodName = name[0].upper() + name[1:]
                 info = method.__service__
+                info['oauth'] = oauth
                 if info['type'] == 'action':
                     service['actions'][methodName] = {
                         'method': method,
@@ -126,3 +127,8 @@ def listCompatibleReactions(serviceName, actionName, config={}):
 
     return compatibleReactions
     
+def getOAuth(serviceName):
+    service = services.get(serviceName)
+    if service:
+        return service['oauth']
+    return None

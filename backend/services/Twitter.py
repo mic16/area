@@ -6,7 +6,7 @@ from Trigger import Trigger
 import twitterApi
 
 @Service()
-class Twitter():
+class Twitter(oauth='Twitter'):
     def __init__(self):
         pass
 

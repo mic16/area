@@ -8,13 +8,13 @@ import sys
 import json
 import tweepy
 from TokenManager import TokenManager
+import OAuthManager
 
 consumerKey = "DTGYoaM8PlsMw6Zf42dhor8Rj"
 consumerSecretKey = "4JyPpImRxcoxSi3acwVkMZAK1tgghpKpPsrFddETgXYNhKDSt9"
 
 oauth = Client(consumerKey, client_secret=consumerSecretKey)
 
-@app.route('/loginTwitter', methods = [ 'GET', 'POST' ])
 def loginTwitter():
     tokenManager = TokenManager()
     req_data = request.get_json()
@@ -34,7 +34,6 @@ def callbackParser():
     parser.add_argument('oauth_verifier')
     return parser
 
-@app.route('/oauthAuthorizedTwitter')
 def oauthAuthorizedTwitter():
     tokenManager = TokenManager()
     req_data = request.get_json()
@@ -56,6 +55,10 @@ def oauthAuthorizedTwitter():
     print(oauth_token, file=sys.stderr)
 
     return {"message": "connected as " + username}
+
+
+OAuthManager.addManager('Twitter', loginTwitter, oauthAuthorizedTwitter, twitterConnected)
+
 
 def newTweet(user, text):
     auth=tweepy.OAuthHandler(consumerKey,consumerSecretKey)

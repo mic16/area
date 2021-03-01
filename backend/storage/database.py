@@ -27,6 +27,7 @@ class DataBase:
         return (self.redis)
 
     def userExist(self, mail):
+        print('User exists %s' % mail)
         res = self.redis.jsonget("user.%s"%mail)
         if (res == None):
             return (False)
@@ -34,6 +35,7 @@ class DataBase:
             return (True)
 
     def getUser(self, mail):
+        print('Get user %s' % mail)
         return (self.redis.jsonget("user.%s"%mail))
 
     def constructUser(self, mail):
@@ -47,12 +49,14 @@ class DataBase:
         return None
 
     def createUser(self, mail, password):
+        print('Create user %s' % mail)
         if (self.userExist(mail)):
             return (False)
         self.redis.jsonset("user.%s"%mail, ".", {"mail": mail, "password" : password})
         return (True)
 
     def deleteUser(self, mail):
+        print('Delete user %s' % mail)
         if (self.userExist(mail)):
             self.redis.jsondel("user.%s"%mail)
             self.users.pop(mail)
@@ -60,6 +64,7 @@ class DataBase:
         return (False)
     
     def updateUser(self, mail, json):
+        print('Update user %s' % mail)
         user = self.getuser(mail)
         if (user == None):
             return (False)
@@ -68,6 +73,7 @@ class DataBase:
             return (True)
     
     def createArea(self, mail, uuid, json):
+        print('Create area for user %s' % mail)
         key = '%s.%s' % (mail, uuid)
         json['user'] = mail
         json['uuid'] = uuid
@@ -80,6 +86,7 @@ class DataBase:
         return True
     
     def updateArea(self, mail, uuid, json):
+        print('Update area for user %s' % mail)
         key = '%s.%s' % (mail, uuid)
         json['user'] = mail
         json['uuid'] = uuid
@@ -90,6 +97,7 @@ class DataBase:
         return False
     
     def deleteArea(self, mail, uuid):
+        print('Delete area for user %s' % mail)
         key = '%s.%s' % (mail, uuid)
         if self.redis.jsonget("area.%s" % key):
             self.redis.jsondel("area.%s" % key, ".")
@@ -101,6 +109,7 @@ class DataBase:
         return False
     
     def listArea(self, mail):
+        print('List area for user %s' % mail)
         userAreas = []
         if areas := self.redis.jsonget('area_list'):
             for id in areas:

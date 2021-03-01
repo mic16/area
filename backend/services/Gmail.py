@@ -6,7 +6,7 @@ from Trigger import Trigger
 import gmailApi
 
 @Service()
-class Gmail():
+class Gmail(oauth='Google'):
     def __init__(self):
         pass
 
