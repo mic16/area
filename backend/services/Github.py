@@ -6,8 +6,8 @@ from Trigger import Trigger
 from Imgs import Imgs
 import githubApi
 
-@Service()
-class Github(oauth='Github'):
+@Service(oauth='Github')
+class Github():
     def __init__(self):
         pass
 

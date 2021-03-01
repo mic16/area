@@ -5,8 +5,8 @@ from Field import Field, FTYPE
 from Trigger import Trigger
 import gmailApi
 
-@Service()
-class Gmail(oauth='Google'):
+@Service(oauth='Google')
+class Gmail():
     def __init__(self):
         pass
 

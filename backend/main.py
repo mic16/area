@@ -20,6 +20,7 @@ import time
 from TokenManager import TokenManager
 from Area import Area
 from didyoumean import DidYouMean
+import OAuthManager
 
 import twitterApi
 import githubApi
@@ -139,5 +140,36 @@ def listArea():
                 })
             return {'result': userAreas}
     return {'error': 'Invalid Token'}
+
+@app.route('/oauth/list')
+def oauthList():
+    return {'result': OAuthManager.listServices()}
+
+@app.route('/oauth/links', methods = [ 'POST' ])
+def oauthLinks():
+    data = {}
+    json = request.get_json()
+    if json is None:
+        return {"error": "Expected json body, got nothing"}
+    if token := json.get('token'):
+        if mail := tokenManager.getTokenUser(token):
+            if user := data.constructUser(mail):
+                return {'result': OAuthManager.userLinks(user)}
+    return {'error': 'Invalid Token'}
+
+@app.route('/oauth/login/<string:manager>')
+def oauthLogin(manager):
+    if oauth := OAuthManager.getManager(manager):
+        oauth[0]()
+        return {'result': True}
+    return {"error": "Unkonwn oauth service '%s'" % manager}
+
+@app.route('/oauth/callback/<string:manager>', methods = [ 'POST' ])
+def oauthCallback(manager):
+    if oauth := OAuthManager.getManager(manager):
+        oauth[1]()
+        return {'result': True}
+    return {"error": "Unkonwn oauth service '%s'" % manager}
+
 
 print('started')
