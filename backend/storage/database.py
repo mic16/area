@@ -16,12 +16,11 @@ class DataBase:
         print('Loading database')
         if areas := self.redis.jsonget('area_list'):
             for id in areas:
-                areaJson = self.redis.jsonget('area.%s' % id)
-                user = self.constructUser(areaJson.get('user'))
-                if user:
-                    area = Area(areaJson, user, areaJson.get('uuid'))
-                    if not area.isErrored():
-                        areaManager.append(area)
+                if areaJson := self.redis.jsonget('area.%s' % id):
+                    if user := self.constructUser(areaJson.get('user')):
+                        area = Area(areaJson, user, areaJson.get('uuid'))
+                        if not area.isErrored():
+                            areaManager.append(area)
     
     def getRedis(self):
         return (self.redis)
@@ -106,7 +105,7 @@ class DataBase:
             area = self.redis.jsonget("area.%s" % key)
             if area:
                 filtered = [i for i in area if i != key]
-                self.redis.jsonset("area_list", ".", area)
+                self.redis.jsonset("area_list", ".", filtered)
             return True
         return False
     
