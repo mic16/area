@@ -6,11 +6,11 @@ from Config import Config
 
 services = {}
 
-def Service():
+def Service(oauth=None):
     def decorator(clazz):
         assert inspect.isclass(clazz), 'Service must be applied to a class'
         className = clazz.__name__[0].upper() + clazz.__name__[1:]
-        service = {"actions": {}, "reactions": {}, 'instance': clazz()}
+        service = {"actions": {}, "reactions": {}, 'instance': clazz(), 'oauth': oauth}
         methods = inspect.getmembers(clazz, predicate=inspect.isfunction)
         for name, method in methods:
             if hasattr(method, '__service__'):
@@ -126,3 +126,7 @@ def listCompatibleReactions(serviceName, actionName, config={}):
 
     return compatibleReactions
     
+def getOAuth(serviceName):
+    if service := services.get(serviceName):
+        return service.get('oauth')
+    return None

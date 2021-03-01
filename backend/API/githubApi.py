@@ -8,6 +8,7 @@ from TokenManager import TokenManager
 from github import Github
 from utils import diffFirstSecond
 import json
+import OAuthManager
 
 import sys
 
@@ -16,7 +17,6 @@ consumerSecretKey = "20239e2887de5e83479d17c8ae6fb440af515483"
 
 oauth = Client(consumerKey, client_secret=consumerSecretKey)
 
-@app.route('/loginGithub', methods = [ 'GET', 'POST' ])
 def loginGithub():
     req_data = request.get_json()
     if (req_data.get("token") == None):
@@ -30,7 +30,6 @@ def callbackParser():
     parser.add_argument('code')
     return parser
     
-@app.route('/oauthAuthorizedGithub')
 def oauthAuthorizedGithub():
     req_data = request.get_json()
     if (req_data.get("token") == None):
@@ -46,6 +45,15 @@ def oauthAuthorizedGithub():
     data.updateUser(TokenManager.getTokenUser(req_data.get("token")), {"github": {"token": oauth_token}})
 
     return {"message": "connected as " + oauth_token}
+
+def githubConnected(user):
+    if user.get("github") != None and user.get("github.token") != None:
+        return (True)
+    return (False)
+
+OAuthManager.addManager('Github', loginGithub, oauthAuthorizedGithub, githubConnected)
+
+
 
 def Diff(li1, li2):
     return (list(list(set(li1)-set(li2)) + list(set(li2)-set(li1))))

@@ -7,7 +7,7 @@ from Imgs import Imgs
 
 import youtubeApi
 
-@Service()
+@Service(oauth='Google')
 class Youtube():
     def __init__(self):
         pass
