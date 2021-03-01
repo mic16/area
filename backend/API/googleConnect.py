@@ -4,6 +4,7 @@ import flask
 import requests
 import sys
 from TokenManager import TokenManager
+import OAuthManager
 
 import google.oauth2.credentials
 import google_auth_oauthlib.flow
@@ -12,7 +13,6 @@ CLIENT_SECRETS_FILE = "API/code_secret_client_108810952137-1tic3bntk3p466t851t1c
 SCOPES = ['https://www.googleapis.com/auth/youtube.force-ssl',
           'https://www.googleapis.com/auth/gmail.compose']
 
-@app.route('/loginGoogle')
 def loginGoogle():
     tokenManager = TokenManager()
     req_data = flask.request.get_json()
@@ -22,7 +22,7 @@ def loginGoogle():
         return ({"error": "bad token"})
     flow = google_auth_oauthlib.flow.Flow.from_client_secrets_file(
         CLIENT_SECRETS_FILE, scopes=SCOPES)
-    flow.redirect_uri = flask.url_for('oauthAuthorizedGoogle', _external=True)
+    flow.redirect_uri = 'http://localhost:8081/oauth/Google'
 
     authorization_url, state = flow.authorization_url(
         access_type='offline',
@@ -49,9 +49,19 @@ def oauthAuthorizedGoogle():
 
     credentials = flow.credentials
     
+    data.updateUser(TokenManager.getTokenUser(req_data.get("token")), {"gmail": None})
+    data.updateUser(TokenManager.getTokenUser(req_data.get("token")), {"youtube": None})
     data.updateUser(tokenManager.getTokenUser(req_data.get("token")), {"Google": {"credential":  credentials_to_dict(credentials)}})
 
     return {"message": "user connected"}
+
+def googleConnected(user):
+    if user.get("Google") != None and user.get("Google.credential") != None:
+        return (True)
+    return (False)
+
+OAuthManager.addManager('Google', loginGoogle, oauthAuthorizedGoogle, googleConnected)
+
 
 def credentials_to_dict(credentials):
     return {'token': credentials.token,

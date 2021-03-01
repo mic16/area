@@ -3,7 +3,7 @@ import inspect
 def Reaction(desc, inputType=None):
     def decorator(func):
         assert inspect.isfunction(func), 'Reaction should be applied to a method'
-        assert type(inputType) == type, 'Expected a class'
+        assert inspect.isclass(inputType), 'Expected a class'
 
         func.__service__ = {
             'type': 'reaction',

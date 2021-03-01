@@ -7,7 +7,7 @@ from Imgs import Imgs
 
 import youtubeApi
 
-@Service()
+@Service(oauth='Google')
 class Youtube():
     def __init__(self):
         pass
@@ -49,5 +49,5 @@ class Youtube():
         str,
     )
     @Field('videoId', 'string', 'videoId of the youtube video')
-    def direct_message(self, area, fields):
+    def sendCommentOnVideo(self, area, fields):
         youtubeApi.sendNewComment(area.getUser(), fields.get(str)['userId'], area.get(str)[0])

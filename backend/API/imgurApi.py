@@ -5,13 +5,12 @@ import requests
 import json
 from utils import diffFirstSecond
 from TokenManager import TokenManager
-
+import OAuthManager
 from imgurpython import ImgurClient
 
 client_id = '0beee62c1273552'
 client_secret = '1d2a939c474367667bdd4de55ede8b67b633694a'
 
-@app.route('/loginImgur', methods = [ 'GET', 'POST' ])
 def loginImgur():
     tokenManager = TokenManager()
     req_data = request.get_json()
@@ -29,7 +28,6 @@ def callbackParser():
     parser.add_argument('account_username')
     return parser
 
-@app.route('/oauthAuthorizedImgur')
 def oauthAuthorizedImgur():
     tokenManager = TokenManager()
     req_data = request.get_json()
@@ -40,8 +38,17 @@ def oauthAuthorizedImgur():
 
     parser = callbackParser()
     args = parser.parse_args()
+    data.updateUser(tokenManager.getTokenUser(req_data.get("token")), {"imgur": None})
     data.updateUser(tokenManager.getTokenUser(req_data.get("token")), {"imgur": {"token": args['access_token'], "refresh_token": args['refresh_token'], "username":args['account_username']}})
     return {"message": "connected as " + args['account_username']}
+
+def imgurConnected(user):
+    if user.get("imgur") != None and user.get("imgur.token") != None and user.get("imgur.refresh_token") != None and user.get("imgur.username") != None:
+        return (True)
+    return (False)
+
+OAuthManager.addManager('Imgur', loginImgur, oauthAuthorizedImgur, imgurConnected)
+
 
 def getLastFav(user):
     client = ImgurClient(client_id, client_secret, user.get("imgur.token"), user.get("imgur.refresh_token"))

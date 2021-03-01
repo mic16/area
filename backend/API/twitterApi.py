@@ -9,13 +9,13 @@ from utils import diffFirstSecond
 import json
 import tweepy
 from TokenManager import TokenManager
+import OAuthManager
 
 consumerKey = "DTGYoaM8PlsMw6Zf42dhor8Rj"
 consumerSecretKey = "4JyPpImRxcoxSi3acwVkMZAK1tgghpKpPsrFddETgXYNhKDSt9"
 
 oauth = Client(consumerKey, client_secret=consumerSecretKey)
 
-@app.route('/loginTwitter', methods = [ 'GET', 'POST' ])
 def loginTwitter():
     tokenManager = TokenManager()
     req_data = request.get_json()
@@ -35,7 +35,6 @@ def callbackParser():
     parser.add_argument('oauth_verifier')
     return parser
 
-@app.route('/oauthAuthorizedTwitter')
 def oauthAuthorizedTwitter():
     tokenManager = TokenManager()
     req_data = request.get_json()
@@ -51,8 +50,18 @@ def oauthAuthorizedTwitter():
     oauth_secret = res_split[1].split('=')[1]
     userid = res_split[2].split('=')[1]
     username = res_split[3].split('=')[1]
+    
+    data.updateUser(tokenManager.getTokenUser(req_data.get("token")), {"twitter": None})
     data.updateUser(tokenManager.getTokenUser(req_data.get("token")), {"twitter": {"token": oauth_token, "token_secret": oauth_secret}})
     return {"message": "connected as " + username}
+
+def twitterConnected(user):
+    if user.get("twitter") != None and user.get("twitter.token") != None and user.get("twitter.token_secret") != None:
+        return (True)
+    return (False)
+
+OAuthManager.addManager('Twitter', loginTwitter, oauthAuthorizedTwitter, twitterConnected)
+
 
 def newTweet(user, text):
     auth=tweepy.OAuthHandler(consumerKey,consumerSecretKey)
