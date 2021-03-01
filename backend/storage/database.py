@@ -113,8 +113,8 @@ class DataBase:
         userAreas = []
         if areas := self.redis.jsonget('area_list'):
             for id in areas:
-                areaJson = self.redis.jsonget('area.%s' % id)
-                user = self.constructUser(areaJson.get('user'))
-                if user.mail == mail:
-                    userAreas.append(areaJson)
+                if areaJson := self.redis.jsonget('area.%s' % id):    
+                    user = self.constructUser(areaJson.get('user'))
+                    if user.mail == mail:
+                        userAreas.append(areaJson)
         return userAreas
