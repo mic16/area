@@ -6,6 +6,7 @@ from TokenManager import TokenManager
 import time
 from User import User
 from didyoumean import DidYouMean
+import OAuthManager
 
 tokenManager = TokenManager()
 
@@ -88,6 +89,14 @@ class Area():
 
         self.action = actionInfos['method'](self.actionInstance, self.actionConfig)
         self.reaction = reactionInfos['method']
+
+        if actionOAuth := Service.getOAuth(actionService):
+            if not OAuthManager.isConnected(actionOAuth, user):
+                return self.error("You cannot create an Area with the service '%s' since your '%s' account isn't linked" % (actionService, actionOAuth))
+        
+        if reactionOAuth := Service.getOAuth(reactionService):
+            if not OAuthManager.isConnected(reactionOAuth, user):
+                return self.error("You cannot create an Area with the service '%s' since your '%s' account isn't linked" % (reactionService, reactionOAuth))
 
         if not Service.isReactionCompatibleWithAction(reactionInfos, self.action):
             return self.error('Action %s.%s and Reaction %s.%s are incompatible with their configuration' % (actionService, actionName, reactionService, reactionName))
