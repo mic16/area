@@ -6,7 +6,7 @@ from Trigger import Trigger
 from Imgs import Imgs
 import imgurApi
 
-@Service()
+@Service(oauth='Imgur')
 class Imgur():
     def __init__(self):
         pass

@@ -4,6 +4,7 @@ import flask
 import requests
 import sys
 from TokenManager import TokenManager
+import OAuthManager
 
 import google.oauth2.credentials
 import google_auth_oauthlib.flow
@@ -12,7 +13,6 @@ CLIENT_SECRETS_FILE = "API/code_secret_client_108810952137-1tic3bntk3p466t851t1c
 SCOPES = ['https://www.googleapis.com/auth/youtube.force-ssl',
           'https://www.googleapis.com/auth/gmail.compose']
 
-@app.route('/loginGoogle')
 def loginGoogle():
     tokenManager = TokenManager()
     req_data = flask.request.get_json()
@@ -54,6 +54,10 @@ def oauthAuthorizedGoogle():
     data.updateUser(tokenManager.getTokenUser(req_data.get("token")), {"Google": {"credential":  credentials_to_dict(credentials)}})
 
     return {"message": "user connected"}
+
+
+OAuthManager.addManager('Google', loginGoogle, oauthAuthorizedGoogle, googleConnected)
+
 
 def credentials_to_dict(credentials):
     return {'token': credentials.token,
