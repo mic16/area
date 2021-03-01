@@ -6,10 +6,16 @@ import { Ionicons } from '@expo/vector-icons';
 import { any } from 'prop-types';
 import Navigation from '../Navigation/Navigation';
 import CustomHeader from '../CustomHeader/CustomHeader';
+import ServiceRoute from "../ServiceRoute/ServiceRoute";
 import { mobileIP, userToken } from '../Login/Login';
-import * as express from "express";
-
-const app = express();
+import {
+    BrowserRouter as Router,
+    Switch,
+    Route,
+    Link,
+    useLocation,
+    StaticRouter,
+  } from "react-router-dom";
 
 
 // function AppRouter(service:string, data:JSON) {
@@ -22,6 +28,10 @@ const app = express();
 //         </Router>
 //     );
 // }
+
+export function myRoute() {
+
+}
 
 
 export default class MyApps extends Component<{}, any> {
@@ -40,7 +50,6 @@ export default class MyApps extends Component<{}, any> {
       actionReaction: [],
       arrayAREA: new Map(),
       connectMap: new Map(),
-      dataraw: ""
     }
     this.getServices();
   }
@@ -80,8 +89,8 @@ export default class MyApps extends Component<{}, any> {
               'Content-Type': 'application/json'
             },
           })
-          .then((response) => response.json()).then((json) => {
-              this.setState({dataraw:json})
+          .then(() => {
+              console.log("DONE ?")
         })
           .catch((error) => {
             console.error(error)
@@ -91,15 +100,13 @@ export default class MyApps extends Component<{}, any> {
 
 
     public myRoute(service:string) {
-        app.get('/oauth/' + service, (request, response) => {
-            this.setState({dataRaw:request.body})
 
-            this.sendCallBack(service, request.body)
-            });
-        app.listen(8081);
     }
 
     public sendCallBack(service:string, data:any) {
+        console.log("JE LUI ENVOI DONC")
+        console.log(data.concat({"token":userToken}))
+        console.log("ET JE RECOIS: ")
         return fetch('http://' + mobileIP + ':8080/oauth/callback/' + service, {
             method: 'POST',
             headers: {
@@ -109,16 +116,29 @@ export default class MyApps extends Component<{}, any> {
             body: JSON.stringify(data.concat({"token":userToken}))
             })
             .then((response) => response.json()).then((json) => {
-
+            console.log(json)
         })
             .catch((error) => {
             console.error(error)
-            
             })
+        }
+
+    public useQuery() {
+        return new URLSearchParams(useLocation().search);
         }
     
     public connect(service:string) {
-        this.myRoute(service)
+        let routetmp = <Route exact={true} path={"/oauth/" + service} component={ServiceRoute}/>
+        this.setState({route:routetmp})
+        this.serviceLogin(service).then(() => {
+            console.log("CALL TO URL DONE")
+        })
+        // let query = this.useQuery()
+        // query.forEach((obj:any) => {
+        //     console.log(obj)
+        // })
+        return
+        // this.myRoute(service)
         this.serviceLogin(service).then(() => {
             console.log("CALL TO URL DONE")
         })
@@ -235,6 +255,9 @@ export default class MyApps extends Component<{}, any> {
                 this.state.reactListData || <Card style={{ borderColor:"red", borderWidth:2 }} ><CardItem header>HEADER</CardItem></Card>
               }
             </Content>
+          <StaticRouter>
+            { this.state.route }
+          </StaticRouter>
           </Container>
                 )
    }
