@@ -37,7 +37,6 @@ export default class CreateArea extends Component<{}, any> {
       responseReactionField: [],
       actionField: [],
       reactionField: [],
-      token: this.props.route.params.token,
       actionFieldName: [],
       reactionFieldName: [],
       reactListData: [],
@@ -77,7 +76,6 @@ export default class CreateArea extends Component<{}, any> {
       })
       this.setState({actionServiceList: reactList});
     }
-    console.log(userToken)
   }
 
   public getServices() {
@@ -355,19 +353,19 @@ export default class CreateArea extends Component<{}, any> {
         test.reaction.config[element.name] = this.state.responseReactionField[key];
     });
     console.log(test)
-    // await fetch('http://localhost:8080/area/create', {
-    //   method: 'POST',
-    //   headers: {
-    //     Accept: 'application/json',
-    //     'Content-Type': 'application/json',
-    //   },
-    //   body: JSON.stringify(test),
-    // }).then((response) => response.json()).then((json) => {
-    //   console.log(json.result);
-    // })
-    // .catch((error) => {
-    //   console.error(error);
-    // })
+    await fetch('http://localhost:8080/area/create', {
+      method: 'POST',
+      headers: {
+        Accept: 'application/json',
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify(test),
+    }).then((response) => response.json()).then((json) => {
+      console.log(json);
+    })
+    .catch((error) => {
+      console.error(error);
+    })
   }
 
   openCloseDrawer = () => {
