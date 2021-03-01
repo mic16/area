@@ -21,7 +21,7 @@ def loginTwitter():
     res = requests.get(uri, headers=headers, data=body)
     res_split = res.text.split('&')
     oauth_token = res_split[0].split('=')[1]
-    return redirect('https://api.twitter.com/oauth/authenticate?oauth_token=' + oauth_token, 302)
+    return 'https://api.twitter.com/oauth/authenticate?oauth_token=' + oauth_token
 
 def callbackParser():
     parser = reqparse.RequestParser()

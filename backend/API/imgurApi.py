@@ -13,7 +13,7 @@ client_secret = '1d2a939c474367667bdd4de55ede8b67b633694a'
 
 def loginImgur():
     client = ImgurClient(client_id, client_secret)
-    return redirect(client.get_auth_url('token'))
+    return client.get_auth_url('token')
 
 def callbackParser():
     parser = reqparse.RequestParser()

@@ -18,7 +18,7 @@ consumerSecretKey = "20239e2887de5e83479d17c8ae6fb440af515483"
 oauth = Client(consumerKey, client_secret=consumerSecretKey)
 
 def loginGithub():
-    return redirect('https://github.com/login/oauth/authorize?client_id=' + consumerKey)
+    return 'https://github.com/login/oauth/authorize?client_id=' + consumerKey
 
 def callbackParser():
     parser = reqparse.RequestParser()
