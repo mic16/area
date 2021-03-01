@@ -3,6 +3,8 @@ import os
 import flask
 import requests
 import sys
+import json
+from utils import diffFirstSecond
 
 import google.oauth2.credentials
 import google_auth_oauthlib.flow
@@ -15,7 +17,6 @@ def Diff(li1, li2):
     return (list(list(set(li1)-set(li2)) + list(set(li2)-set(li1))))
 
 def getLastSubscriber(user):
-
     c = google.oauth2.credentials.Credentials(**user.get("Google.credential"))
 
     youtube = googleapiclient.discovery.build(
@@ -26,25 +27,28 @@ def getLastSubscriber(user):
         maxResults=50,
         mySubscribers=True
     )
-    response = request.execute()
-
-    if (user.get("youtube.subscriber") == None):
-        user.set("youtube.subscriber", response['items'])
+    lastSubscriber = request.execute()
+    lastSubscriberTab = []
+    for subscriber in lastSubscriber.get('items'):
+        lastSubscriberTab.append(subscriber)
+    if user.get("youtube") == None:
+        user.set("youtube", {'lastSubscriber':lastSubscriberTab})
         return (None)
-    oldSubscriber = user.get("youtube.subscriber")
-    if (len(oldSubscriber) != len(response['items'])):
-        diff = Diff(response['items'], oldSubscriber)
-
-        if (len(diff) == 0):
-            return (None)
-        else:
-            user.set("youtube.subscriber", response['items'])
-            tab = []
-            for u in diff:
-                tab.append(u["subscriberSnippet"]["title"])
-            return (tab)
+    oldSubscriber = user.get("youtube")
+    if oldSubscriber.get('lastSubscriber') == None:
+        oldSubscriber['lastSubscriber'] = lastSubscriberTab
+        user.set("youtube", oldSubscriber)
+        return (None)
+    oldSub = oldSubscriber['lastSubscriber']
+    diff = diffFirstSecond(lastSubscriberTab, oldSub)
+    if (len(diff) == 0):
+        oldSubscriber['lastSubscriber'] = lastSubscriberTab
+        user.set("youtube", oldSubscriber)
+        return (None)
     else:
-        return (None)
+        oldSubscriber['lastSubscriber'] = lastSubscriberTab
+        user.set("youtube", oldSubscriber)
+        return (diff)
 
 
 def getLastLikedVideo(user):
@@ -58,29 +62,30 @@ def getLastLikedVideo(user):
         maxResults=50,
         myRating="like"
     )
-
-    response = request.execute()
-
-    if (user.get("youtube.likes") == None):
-        user.set("youtube.likes", response['items'])
+    lastSubscriber = request.execute()
+    lastLikeTab = []
+    for subscriber in lastSubscriber.get('items'):
+        lastLikeTab.append(subscriber)
+    if user.get("youtube") == None:
+        user.set("youtube", {'lastLike':lastLikeTab})
         return (None)
-    oldlikes = user.get("youtube.likes")
-    if (len(oldlikes) != len(response['items'])):
-        diff = Diff(response['items'], oldlikes)
-
-        if (len(diff) == 0):
-            return (None)
-        else:
-            user.set("youtube.likes", response['items'])
-            tab = []
-            for u in diff:
-                tab.append(u["subscriberSnippet"]["title"])
-            return (tab)
+    oldLike = user.get("youtube")
+    if oldLike.get('lastLike') == None:
+        oldLike['lastLike'] = lastLikeTab
+        user.set("youtube", oldLike)
+        return (None)
+    oldSub = oldLike['lastLike']
+    diff = diffFirstSecond(lastLikeTab, oldSub)
+    if (len(diff) == 0):
+        oldLike['lastLike'] = lastLikeTab
+        user.set("youtube", oldLike)
+        return (None)
     else:
-        return (None)
+        oldLike['lastLike'] = lastLikeTab
+        user.set("youtube", oldLike)
+        return (diff)
 
 def sendNewComment(user, videoId, text):
-
     c = google.oauth2.credentials.Credentials(**user.get("Google.credential"))
 
     youtube = googleapiclient.discovery.build(

@@ -8,6 +8,7 @@ sys.path.append('./service/')
 sys.path.append('./types/')
 sys.path.append('./storage/')
 sys.path.append('./API/')
+sys.path.append('./models/')
 
 # Imports
 from markupsafe import escape
@@ -25,6 +26,7 @@ import githubApi
 import youtubeApi
 import gmailApi
 import googleConnect
+import imgurApi
 
 
 # Import Services
