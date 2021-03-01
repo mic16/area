@@ -22,7 +22,7 @@ def loginGoogle():
         access_type='offline',
         include_granted_scopes='true')
     flask.session['state'] = state
-    return flask.redirect(authorization_url)
+    return authorization_url
 
 @app.route('/oauthAuthorizedGoogle')
 def oauthAuthorizedGoogle():
