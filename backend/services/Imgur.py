@@ -6,12 +6,13 @@ from Trigger import Trigger
 from Imgs import Imgs
 import imgurApi
 
-@Service()
+@Service(oauth='Imgur')
 class Imgur():
     def __init__(self):
         pass
 
     @Action('When the user post something')
+    @Field('match', FTYPE.STRING, 'String that should be matched in title or description')
     def onPost(self, fields):
 
         trig = Trigger(types=[str, Imgs])
@@ -21,6 +22,10 @@ class Imgur():
             if (imgs == None):
                 return
             for img in imgs:
+
+                if (fields.getString('match') != '' and not fields.getString('match') in area.ret(img['album']['title']) and not area.ret(img['album']['description'])):
+                    continue
+
                 area.newReaction()
                 area.ret(img['album']['title'])
                 area.ret(img['album']['description'])
@@ -29,6 +34,7 @@ class Imgur():
         return trig.setAction(func)
 
     @Action('When the user fav a post')
+    @Field('match', FTYPE.STRING, 'String that should be matched in title or description')
     def onFav(self, fields):
 
         trig = Trigger(types=[str])
@@ -38,6 +44,10 @@ class Imgur():
             if (imgs == None):
                 return
             for img in imgs:
+
+                if (fields.getString('match') != '' and not fields.getString('match') in area.ret(img['album']['title']) and not area.ret(img['album']['description'])):
+                    continue
+
                 area.newReaction()
                 area.ret(img['album']['title'])
                 area.ret(img['album']['description'])

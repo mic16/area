@@ -6,13 +6,13 @@ from Trigger import Trigger
 from Imgs import Imgs
 import githubApi
 
-@Service()
+@Service(oauth='Github')
 class Github():
     def __init__(self):
         pass
 
-    @Action('When the user star a Repo')
-    @Field('url', FTYPE.STRING, 'url of the repository')
+    @Action('When the connected user star a Repo')
+    @Field('match', FTYPE.STRING, 'String that should be matched in name or description of the repo')
     def onStar(self, fields):
 
         trig = Trigger(types=[str])
@@ -22,6 +22,10 @@ class Github():
             if stars == None:
                 return
             for star in stars:
+
+                if (fields.getString('match') != '' and not fields.getString('match') in area.ret(star['name']) and not area.ret(star['description'])):
+                    continue
+
                 area.newReaction()
                 area.ret(star["name"])
                 area.ret(star["description"])
@@ -30,6 +34,7 @@ class Github():
         return trig.setAction(func)
 
     @Action('When a user follow the connected user')
+    @Field('match', FTYPE.STRING, 'String that should be matched in the new follower user bio')
     def onFolow(self, fields):
 
         trig = Trigger(types=[str, Imgs])
@@ -39,6 +44,10 @@ class Github():
             if (followers == None):
                 return
             for follower in followers:
+
+                if (fields.getString('match') != '' and not fields.getString('match') in area.ret(follower['bio'])):
+                    continue
+                
                 area.newReaction()
                 area.ret(follower["name"])
                 area.ret(follower["bio"])

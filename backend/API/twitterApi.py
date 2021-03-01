@@ -9,20 +9,14 @@ from utils import diffFirstSecond
 import json
 import tweepy
 from TokenManager import TokenManager
+import OAuthManager
 
 consumerKey = "DTGYoaM8PlsMw6Zf42dhor8Rj"
 consumerSecretKey = "4JyPpImRxcoxSi3acwVkMZAK1tgghpKpPsrFddETgXYNhKDSt9"
 
 oauth = Client(consumerKey, client_secret=consumerSecretKey)
 
-@app.route('/loginTwitter', methods = [ 'GET', 'POST' ])
 def loginTwitter():
-    tokenManager = TokenManager()
-    req_data = request.get_json()
-    if (req_data.get("token") == None):
-        return ({"error": "no token"})
-    if (tokenManager.getTokenUser(req_data.get("token")) == None):
-        return ({"error": "bad token"})
     uri, headers, body = oauth.sign('https://twitter.com/oauth/request_token')
     res = requests.get(uri, headers=headers, data=body)
     res_split = res.text.split('&')
@@ -35,10 +29,11 @@ def callbackParser():
     parser.add_argument('oauth_verifier')
     return parser
 
-@app.route('/oauthAuthorizedTwitter')
 def oauthAuthorizedTwitter():
     tokenManager = TokenManager()
     req_data = request.get_json()
+    if not req_data:
+        return {"error": "Missing JSON body"}
     if (req_data.get("token") == None):
         return ({"error": "no token"})
     if (tokenManager.getTokenUser(req_data.get("token")) == None):
@@ -55,6 +50,14 @@ def oauthAuthorizedTwitter():
     data.updateUser(tokenManager.getTokenUser(req_data.get("token")), {"twitter": None})
     data.updateUser(tokenManager.getTokenUser(req_data.get("token")), {"twitter": {"token": oauth_token, "token_secret": oauth_secret}})
     return {"message": "connected as " + username}
+
+def twitterConnected(user):
+    if user.get("twitter") != None and user.get("twitter.token") != None and user.get("twitter.token_secret") != None:
+        return (True)
+    return (False)
+
+OAuthManager.addManager('Twitter', loginTwitter, oauthAuthorizedTwitter, twitterConnected)
+
 
 def newTweet(user, text):
     auth=tweepy.OAuthHandler(consumerKey,consumerSecretKey)

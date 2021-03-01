@@ -37,6 +37,10 @@ Liste de toutes les routes de l'area
 | `/services`                             | **GET**  | Liste les services                                           |
 | `/services/<serviceNames>`              | **GET**  | Liste les actions et reactions des services avec les configs |
 | `/services/<serviceNames>/<actionName>` | **POST** | Liste toutes les reactions compatibles avec l'action         |
+| `/oauth/list`                           | **GET**  | Liste tous les services OAuth disponibles                    |
+| `/oauth/login/<oauthService>`           | **GET**  | Redirige vers l'URL de connection OAuth d'un service OAuth   |
+| `/oauth/callback/<oauthService>`        | **POST** | Finalise le processus de connection OAuth                    |
+| `/oauth/links`                          | **POST** | Liste tous les services OAuth link ou non                    |
 | `/area/create`                          | **POST** | Crée une area                                                |
 | `/area/list`                            | **POST** | Liste les areas déjà crée                                    |
 | `/area/delete`                          | **POST** | Supprime une area                                            |
@@ -186,6 +190,67 @@ et interagir avec des widget différent
             ...
         ]
     }
+```
+
+<hr>
+
+## **[`GET`]** /oauth/list
+Retourne une liste de tout les services OAuth disponible pour la connection
+
+### Response
+
+```json
+    "result": [
+        "<oauth service name>",
+        "<oauth service name>",
+        "<oauth service name>",
+        ...
+        ]
+    }
+```
+
+<hr>
+
+## **[`GET`]** /oauth/login/\<oauth service>
+Redirige automatique sur la page de connection OAuth du service
+
+<hr>
+
+## **[`POST`]** /oauth/callback/\<oauth service>
+Finalise la connection OAuth
+
+### Request Body
+
+
+```json
+<OAuth response>
+```
+
+<hr>
+
+## **[`POST`]** /oauth/links
+Retourne une liste des services OAuth avec l'information de si ils ont été link ou non
+pour un user donné
+
+### Request Body
+
+```json
+{
+  "token": <user token>,
+}
+```
+
+### Response
+
+```json
+{
+  "result": [
+      "<oauth service name>": true,
+      "<oauth service name>": false,
+      ...
+    ]
+  ]
+}
 ```
 
 <hr>
