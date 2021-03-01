@@ -51,6 +51,8 @@ def oauthAuthorizedTwitter():
     oauth_secret = res_split[1].split('=')[1]
     userid = res_split[2].split('=')[1]
     username = res_split[3].split('=')[1]
+    
+    data.updateUser(tokenManager.getTokenUser(req_data.get("token")), {"twitter": None})
     data.updateUser(tokenManager.getTokenUser(req_data.get("token")), {"twitter": {"token": oauth_token, "token_secret": oauth_secret}})
     return {"message": "connected as " + username}
 
