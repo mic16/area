@@ -55,6 +55,10 @@ def oauthAuthorizedGoogle():
 
     return {"message": "user connected"}
 
+def googleConnected(user):
+    if user.get("Google") != None and user.get("Google.credential") != None:
+        return (True)
+    return (False)
 
 OAuthManager.addManager('Google', loginGoogle, oauthAuthorizedGoogle, googleConnected)
 

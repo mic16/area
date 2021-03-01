@@ -42,6 +42,10 @@ def oauthAuthorizedImgur():
     data.updateUser(tokenManager.getTokenUser(req_data.get("token")), {"imgur": {"token": args['access_token'], "refresh_token": args['refresh_token'], "username":args['account_username']}})
     return {"message": "connected as " + args['account_username']}
 
+def imgurConnected(user):
+    if user.get("imgur") != None and user.get("imgur.token") != None and user.get("imgur.refresh_token") != None and user.get("imgur.username") != None:
+        return (True)
+    return (False)
 
 OAuthManager.addManager('Imgur', loginImgur, oauthAuthorizedImgur, imgurConnected)
 
