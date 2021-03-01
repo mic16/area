@@ -11,8 +11,7 @@ class Github(oauth='Github'):
     def __init__(self):
         pass
 
-    @Action('When the user star a Repo')
-    @Field('url', FTYPE.STRING, 'url of the repository')
+    @Action('When the connected user star a Repo')
     def onStar(self, fields):
 
         trig = Trigger(types=[str])

@@ -55,6 +55,10 @@ def oauthAuthorizedTwitter():
     data.updateUser(tokenManager.getTokenUser(req_data.get("token")), {"twitter": {"token": oauth_token, "token_secret": oauth_secret}})
     return {"message": "connected as " + username}
 
+def twitterConnected(user):
+    if user.get("twitter") != None and user.get("twitter.token") != None and user.get("twitter.token_secret") != None:
+        return (True)
+    return (False)
 
 OAuthManager.addManager('Twitter', loginTwitter, oauthAuthorizedTwitter, twitterConnected)
 

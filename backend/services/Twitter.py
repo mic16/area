@@ -29,8 +29,7 @@ class Twitter(oauth='Twitter'):
                 if fields.getBool('with image') == True:
                     if 'media' in fav["entities"]:
                         area.ret(Imgs([fav["entities"]['media']['media_url']]))
-                area.ret(fav.text)
-
+                        area.ret(fav.text)
         return trig.setAction(func)
 
     @Action('When the user tweet something')
@@ -50,7 +49,7 @@ class Twitter(oauth='Twitter'):
                 if fields.getBool('with image') == True:
                     if 'media' in tweet["entities"]:
                         area.ret(Imgs([tweet["entities"]['media']['media_url']]))
-                area.ret(tweet['text'])
+                        area.ret(tweet['text'])
 
         return trig.setAction(func)      
 
