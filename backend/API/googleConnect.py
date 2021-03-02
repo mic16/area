@@ -45,8 +45,6 @@ def oauthAuthorizedGoogle():
 
     credentials = flow.credentials
     
-    data.updateUser(TokenManager.getTokenUser(req_data.get("token")), {"gmail": None})
-    data.updateUser(TokenManager.getTokenUser(req_data.get("token")), {"youtube": None})
     data.updateUser(tokenManager.getTokenUser(req_data.get("token")), {"Google": {"credential":  credentials_to_dict(credentials)}})
 
     return {"message": "user connected"}
