@@ -144,7 +144,7 @@ class Area():
     def trigger(self):
         if (time.time() - self.lastTrigger)>= 60:
             print("Executing area %s" % self.getUUID())
-            print('Area Infos: %s' % self.debug)
+            print('    Area Infos: %s' % self.debug)
             try:
                 print('    Executing Action')
                 self.returns = {}
@@ -163,7 +163,7 @@ class Area():
                     except Exception as err:
                         print('    '*2 + ' REACTION ERROR '.center(50,'='))
                         print('    '*2 + ' Error '.center(50, '-'))
-                        print('    '*2 +err)
+                        print('    '*2 + str(err))
                         print('    '*2 + ' Traceback '.center(50, '-'))
                         for line in traceback.format_exc().split('\n'):
                             print('    '*2 + line)
@@ -172,7 +172,7 @@ class Area():
             except Exception as err:
                 print('    '*2 + ' ACTION ERROR '.center(50,'='))
                 print('    '*2 + ' Error '.center(50, '-'))
-                print('    '*2 + err)
+                print('    '*2 + str(err))
                 print('    '*2 + ' Traceback '.center(50, '-'))
                 for line in traceback.format_exc().split('\n'):
                     print('    '*2 + line)
