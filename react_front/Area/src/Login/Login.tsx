@@ -32,24 +32,27 @@ export default class LoginComponent extends Component<{}, any> {
 
   public postLog(mail:string, password:string) {
     if (mail.length === 0) {
-      Toast.show({
-        text: 'Please enter your Email',
-        buttonText: 'Yeeaaaaah'
-      })
+      this.popUpAlert('Please enter your Email', 'Yeeaaaaah');
+      // Toast.show({
+      //   text: 'Please enter your Email',
+      //   buttonText: 'Yeeaaaaah'
+      // })
       return;
     }
     if (password.length === 0) {
-      Toast.show({
-        text: 'Password need to be at least 4 character long',
-        buttonText: 'Oh okay'
-      })
+      this.popUpAlert('Password need to be at least 4 character long', 'Oh okay');
+      // Toast.show({
+      //   text: 'Password need to be at least 4 character long',
+      //   buttonText: 'Oh okay'
+      // })
       return;
     }
     if (mobileIP.length === 0 && Platform.OS == "android") {
-      Toast.show({
-        text: 'Please set the IP server',
-        buttonText: 'Ahah I forgot'
-      })
+      this.popUpAlert('Please set the IP server', 'Ahah I forgot');
+      // Toast.show({
+      //   text: 'Please set the IP server',
+      //   buttonText: 'Ahah I forgot'
+      // })
       return;
     }
     this.setState({ loading: true });
@@ -66,10 +69,11 @@ export default class LoginComponent extends Component<{}, any> {
     }).then((response) => response.json()).then((json) => {
       this.setState({ loading: false });
       if (json.result === undefined) {
-        Toast.show({
-          text: 'Bad user info, please Create you account below',
-          buttonText: 'Soooorryy'
-        })
+        this.popUpAlert('Bad user info, please Create you account below', 'Soooorryy');
+        // Toast.show({
+        //   text: 'Bad user info, please Create you account below',
+        //   buttonText: 'Soooorryy'
+        // })
         return
       }
       console.log("CONNECTED WITH TOKEN:")
@@ -84,30 +88,44 @@ export default class LoginComponent extends Component<{}, any> {
       return error;
     })
   }
+
+  public popUpAlert(text: string, buttonText: string) {
+    if (Platform.OS === "web") {
+      alert(text);
+      return;
+    }
+    Toast.show({
+      text: text,
+      buttonText: buttonText
+    })
+  }
   
-  public postRegister(mail:string, password:string, confPassword:string) {
+  public postRegister(mail: string, password: string, confPassword: string) {
     // if (mail.length === 0 || mail.includes("@") === false || mail.includes("."))
     //   return
     if (mail.length === 0) {
-      Toast.show({
-        text: 'Please enter your Email',
-        buttonText: 'Yeeaaaaah'
-      })
+      this.popUpAlert('Please enter your Email', 'Yeeaaaaah');
+      // Toast.show({
+      //   text: 'Please enter your Email',
+      //   buttonText: 'Yeeaaaaah'
+      // })
       return;
     }
     if (mobileIP.length === 0 && Platform.OS == "android") {
-      Toast.show({
-        text: 'Please set the IP server',
-        buttonText: 'Ahah I forgot'
-      })
+      this.popUpAlert('Please set the IP server', 'Ahah I forgot');
+      // Toast.show({
+      //   text: 'Please set the IP server',
+      //   buttonText: 'Ahah I forgot'
+      // })
       return;
     }
     if (password === confPassword) {
       if (password.length < 4) {
-        Toast.show({
-          text: 'Password need to be at least 4 character long',
-          buttonText: 'Oh okay'
-        })
+        this.popUpAlert('Password need to be at least 4 character long', 'Oh okay');
+        // Toast.show({
+        //   text: 'Password need to be at least 4 character long',
+        //   buttonText: 'Oh okay'
+        // })
         return;
       }
       this.setState({ loading: true });
@@ -125,10 +143,11 @@ export default class LoginComponent extends Component<{}, any> {
         this.setState({ loading: false });
         if (json.error != undefined) {
           console.error(json.error)
-          Toast.show({
-            text:json.error,
-            buttonText: "Ok"
-          })
+          this.popUpAlert(json.error, 'Ok');
+          // Toast.show({
+          //   text:json.error,
+          //   buttonText: "Ok"
+          // })
           return null
         }
         console.log(json.result);
@@ -144,10 +163,11 @@ export default class LoginComponent extends Component<{}, any> {
         return error;
       })
     } else {
-      Toast.show({
-        text: 'Passwords does not match',
-        buttonText: 'Sorry my bad'
-      })
+      this.popUpAlert('Passwords does not match', 'Sorry my bad');
+      // Toast.show({
+      //   text: 'Passwords does not match',
+      //   buttonText: 'Sorry my bad'
+      // })
       return;
     }
   }

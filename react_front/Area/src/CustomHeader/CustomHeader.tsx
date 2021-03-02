@@ -12,9 +12,9 @@ export default class CustomHeader extends Component {
     }
   }
 
-  openDrawer = () => {
-    this.props.onPressButton();
-  }
+  // openDrawer = () => {
+  //   this.props.onPressButton();
+  // }
 
   render() {
     return (
@@ -24,7 +24,7 @@ export default class CustomHeader extends Component {
             full={true}
             icon={true}
             style={{position: 'absolute', left: 0, marginLeft: 10}}
-            onPress={() => this.openDrawer()}
+            // onPress={() => this.openDrawer()}
           >
             <Icon size={25} name="list" style={{width: '100%', height: '100%'}}/>
           </Button>
