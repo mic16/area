@@ -5,6 +5,7 @@ from Field import Field, FTYPE
 from Trigger import Trigger
 from Imgs import Imgs
 import imgurApi
+import _
 
 @Service(oauth='Imgur')
 class Imgur():
@@ -23,13 +24,13 @@ class Imgur():
                 return
             for img in imgs:
 
-                if (fields.getString('match') != '' and not fields.getString('match') in area.ret(img['album']['title']) and not area.ret(img['album']['description'])):
+                if (fields.getString('match', '') != '' and not fields.getString('match', '') in _.get(img, 'album.title', '') and not fields.getString('match', '') in _.get(img, 'album.description', '')):
                     continue
 
                 area.newReaction()
-                area.ret(img['album']['title'])
-                area.ret(img['album']['description'])
-                area.ret(Imgs(img['imgs']))
+                area.ret(_.get(img, 'album.title'))
+                area.ret(_.get(img, 'album.description'))
+                area.ret(Imgs(img.get('imgs')))
 
         return trig.setAction(func)
 
@@ -45,13 +46,13 @@ class Imgur():
                 return
             for img in imgs:
 
-                if (fields.getString('match') != '' and not fields.getString('match') in area.ret(img['album']['title']) and not area.ret(img['album']['description'])):
+                if (fields.getString('match', '') != '' and not fields.getString('match', '') in _.get(img, 'album.title', '') and not fields.getString('match', '') in _.get(img, 'album.description', '')):
                     continue
 
                 area.newReaction()
-                area.ret(img['album']['title'])
-                area.ret(img['album']['description'])
-                area.ret(Imgs(img['imgs']))
+                area.ret(_.get(img, 'album.title'))
+                area.ret(_.get(img, 'album.description'))
+                area.ret(Imgs(img.get('imgs')))
 
         return trig.setAction(func)
 
