@@ -213,9 +213,11 @@ export default class MyApps extends Component<{}, any> {
                 this.sendCallBack(service, good_params).then(() => {
                     console.log("SEND DATA TO URL DONE")
                 })
+                this.setState({set:true})
             } else if (Platform.OS === "android") {
                 console.log("LE SERVICE QUI EST APPELER EST " + service)
                 this.state.navigation.navigate("ServiceRoute", {data:response, service:service})
+                this.setState({set:true})
             }
         })
     }
