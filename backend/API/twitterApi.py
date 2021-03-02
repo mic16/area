@@ -127,18 +127,18 @@ def getLastLike(user, area):
     if area.getValue("twitter") == None:
         area.setValue("twitter", json.dumps({'lastFav':lastFavTab}))
         return (None)
-    oldTwiiter = area.getValue("twitter")
-    if oldTwiiter.get('lastFav') == None:
-        oldTwiiter['lastFav'] = lastFavTab
-        area.setValue("twitter", oldTwiiter)
+    oldTwitter = area.getValue("twitter")
+    if oldTwitter.get('lastFav') == None:
+        oldTwitter['lastFav'] = lastFavTab
+        area.setValue("twitter", oldTwitter)
         return (None)
-    oldFavs = oldTwiiter['lastFav']
+    oldFavs = oldTwitter['lastFav']
     diff = diffFirstSecond(lastFavTab, oldFavs)
     if (len(diff) == 0):
-        oldTwiiter['lastFav'] = lastFavTab
-        area.setValue("twitter", oldTwiiter)
+        oldTwitter['lastFav'] = lastFavTab
+        area.setValue("twitter", oldTwitter)
         return (None)
     else:
-        oldTwiiter['lastFav'] = lastFavTab
-        area.setValue("twitter", oldTwiiter)
+        oldTwitter['lastFav'] = lastFavTab
+        area.setValue("twitter", oldTwitter)
         return (diff)
