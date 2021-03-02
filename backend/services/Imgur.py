@@ -18,7 +18,7 @@ class Imgur():
         trig = Trigger(types=[str, Imgs])
 
         def func(area, fields):
-            imgs = imgurApi.getLastPost(area.getUser())
+            imgs = imgurApi.getLastPost(area.getUser(), area)
             if (imgs == None):
                 return
             for img in imgs:
@@ -40,7 +40,7 @@ class Imgur():
         trig = Trigger(types=[str])
 
         def func(area, fields):
-            imgs = imgurApi.getLastFav(area.getUser())
+            imgs = imgurApi.getLastFav(area.getUser(), area)
             if (imgs == None):
                 return
             for img in imgs:

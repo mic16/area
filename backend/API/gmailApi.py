@@ -32,7 +32,7 @@ def sendMail(user, message, userId, obj):
     encodedMessage = create_message('me', userId, obj, message)
     res = gmail.users().messages().send(userId='me', body=encodedMessage).execute()
 
-def getLastMail(user):
+def getLastMail(user, area):
     c = google.oauth2.credentials.Credentials(**user.get("Google.credential"))
     gmail = googleapiclient.discovery.build(
         API_SERVICE_NAME, API_VERSION, credentials=c)
@@ -40,23 +40,23 @@ def getLastMail(user):
     lastMailTab = []
     for mail in lastMails.get('messages'):
         lastMailTab.append(mail)
-    if user.get("gmail") == None:
-        user.set("gmail", {'lastMail':lastMailTab})
+    if area.getValue("gmail") == None:
+        area.setValue("gmail", {'lastMail':lastMailTab})
         return (None)
-    oldGmail = user.get("gmail")
+    oldGmail = area.getValue("gmail")
     if oldGmail.get('lastMail') == None:
         oldGmail['lastMail'] = lastMailTab
-        user.set("gmail", oldGmail)
+        area.setValue("gmail", oldGmail)
         return (None)
     oldMails = oldGmail['lastMail']
     diff = diffFirstSecond(lastMailTab, oldMails)
     if (len(diff) == 0):
         oldGmail['lastMail'] = lastMailTab
-        user.set("gmail", oldGmail)
+        area.setValue("gmail", oldGmail)
         return (None)
     else:
         oldGmail['lastMail'] = lastMailTab
-        user.set("gmail", oldGmail)
+        area.setValue("gmail", oldGmail)
         resTab = []
         for d in diff:
             resTab.append(gmail.users().messages().get(id=d['id'], userId='me').execute())

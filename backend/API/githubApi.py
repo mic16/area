@@ -38,7 +38,6 @@ def oauthAuthorizedGithub():
     res = requests.post(' https://github.com/login/oauth/access_token?code=' + args['code'] + '&client_id=' + consumerKey + '&client_secret=' + consumerSecretKey)
     res_split = res.text.split('&')
     oauth_token = res_split[0].split('=')[1]
-    data.updateUser(TokenManager.getTokenUser(req_data.get("token")), {"github": None})
     data.updateUser(TokenManager.getTokenUser(req_data.get("token")), {"github": {"token": oauth_token}})
 
     return {"message": "connected as " + oauth_token}
@@ -56,7 +55,7 @@ def Diff(li1, li2):
     return (list(list(set(li1)-set(li2)) + list(set(li2)-set(li1))))
 
 
-def getLastStar(user):
+def getLastStar(user, area):
     git = Github(user.get("github.token"))
     lastStarred = git.get_user().get_starred().reversed
     count = 0
@@ -66,27 +65,27 @@ def getLastStar(user):
         if (count == 20):
             break
         count += 1
-    if user.get("github") == None:
-        user.set("github", {'lastStars':lastStarsTab})
+    if area.getValue("github") == None:
+        area.setValue("github", {'lastStars':lastStarsTab})
         return (None)
-    oldGithub = user.get("github")
+    oldGithub = area.getValue("github")
     if oldGithub.get('lastStars') == None:
         oldGithub['lastStars'] = lastStarsTab
-        user.set("github", oldGithub)
+        area.setValue("github", oldGithub)
         return (None)
     oldStars = oldGithub['lastStars']
     diff = diffFirstSecond(lastStarsTab, oldStars)
     if (len(diff) == 0):
         oldGithub['lastStars'] = lastStarsTab
-        user.set("github", oldGithub)
+        area.setValue("github", oldGithub)
         return (None)
     else:
         oldGithub['lastStars'] = lastStarsTab
-        user.set("github", oldGithub)
+        area.setValue("github", oldGithub)
         return (diff)
 
 
-def getNewFollower(user):
+def getNewFollower(user, area):
     git = Github(user.get("github.token"))
     lastFollowers = git.get_user().get_followers()
     count = 0
@@ -96,21 +95,21 @@ def getNewFollower(user):
         if (count == 20):
             break
         count += 1
-    if user.get("github") == None:
-        user.set("github", {'lastFollowers':lastFollowersTab})
+    if area.getValue("github") == None:
+        area.setValue("github", {'lastFollowers':lastFollowersTab})
         return (None)
-    oldGithub = user.get("github")
+    oldGithub = area.getValue("github")
     if oldGithub.get('lastFollowers') == None:
         oldGithub['lastFollowers'] = lastFollowersTab
-        user.set("github", oldGithub)
+        area.setValue("github", oldGithub)
         return (None)
     oldFollowers = oldGithub['lastFollowers']
     diff = diffFirstSecond(lastFollowersTab, oldFollowers)
     if (len(diff) == 0):
         oldGithub['lastFollowers'] = lastFollowersTab
-        user.set("github", oldGithub)
+        area.setValue("github", oldGithub)
         return (None)
     else:
         oldGithub['lastFollowers'] = lastFollowersTab
-        user.set("github", oldGithub)
+        area.setValue("github", oldGithub)
         return (diff)
