@@ -34,7 +34,7 @@ class Twitter():
                 area.newReaction()
                 if fields.getBool('with image') == True:
                     area.ret(Imgs([fav["entities"]['media']['media_url']]))
-                area.ret(fav.text)
+                area.ret(fav['text'])
 
 
         return trig.setAction(func)
@@ -61,7 +61,7 @@ class Twitter():
                 area.newReaction()
                 if fields.getBool('with image') == True:
                     area.ret(Imgs([tweet["entities"]['media']['media_url']]))
-                area.ret(tweet.text)
+                area.ret(tweet['text'])
 
         return trig.setAction(func)      
 
