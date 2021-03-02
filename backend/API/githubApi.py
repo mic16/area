@@ -43,7 +43,6 @@ def oauthAuthorizedGithub():
 
     try:
         res = requests.post('https://github.com/login/oauth/access_token?code=%s&client_id=%s&client_secret=%s' % (args['code'], consumerKey, consumerSecretKey))
-        print(res.text)
         options = qsparser.parse(res.text)
 
         if not options.get('access_token'):
