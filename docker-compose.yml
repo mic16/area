@@ -24,7 +24,7 @@ services:
     build: ./backend/
     volumes:
       - "./logs/backend:/var/logs"
-      # - "./backend:/var/app"
+      - "./backend:/var/app"
     ports:
       - "8080:5000"
     depends_on:
@@ -33,7 +33,7 @@ services:
       - redis-net
     environment:
       - FLASK_APP=main.py
-      - FLASK_ENV=development
+      - FLASK_ENV=production
 
   redis:
     image: redislabs/rejson:latest

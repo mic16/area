@@ -54,6 +54,7 @@ def oauthAuthorizedGithub():
 
     return {"result": "Github account linked to user '%s'" % (user)}
 
+
 def githubConnected(user):
     if user.get("github") != None and user.get("github.token") != None:
         return (True)

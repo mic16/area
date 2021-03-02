@@ -1,8 +1,7 @@
 import React, { Component } from 'react';
 import { Alert, ImageBackground, Platform, View } from "react-native";
 import { Spinner, Root, Text, Accordion, FooterTab, Footer, Button, Container, Header, Content, Form, Item, Input, Label, Title, Icon, Grid, Col, Left, Right, Body, Toast } from 'native-base';
-import * as Font from 'expo-font';
-import { Ionicons } from '@expo/vector-icons';
+import { Ionicons } from "react-icons/io"
 import { NavigationContainer } from "react-navigation";
 import { navigate } from '@react-navigation/routers/lib/typescript/src/CommonActions';
 import { TextInput } from 'react-native-gesture-handler';
@@ -27,32 +26,21 @@ export default class LoginComponent extends Component<{}, any> {
       RegMail: "",
       RegPassword: "",
       RegConfPassword: "",
+      firstLoad: true
     }
   }
 
   public postLog(mail:string, password:string) {
     if (mail.length === 0) {
       this.popUpAlert('Please enter your Email', 'Yeeaaaaah');
-      // Toast.show({
-      //   text: 'Please enter your Email',
-      //   buttonText: 'Yeeaaaaah'
-      // })
       return;
     }
     if (password.length === 0) {
       this.popUpAlert('Password need to be at least 4 character long', 'Oh okay');
-      // Toast.show({
-      //   text: 'Password need to be at least 4 character long',
-      //   buttonText: 'Oh okay'
-      // })
       return;
     }
     if (mobileIP.length === 0 && Platform.OS == "android") {
       this.popUpAlert('Please set the IP server', 'Ahah I forgot');
-      // Toast.show({
-      //   text: 'Please set the IP server',
-      //   buttonText: 'Ahah I forgot'
-      // })
       return;
     }
     this.setState({ loading: true });
@@ -69,16 +57,13 @@ export default class LoginComponent extends Component<{}, any> {
     }).then((response) => response.json()).then((json) => {
       this.setState({ loading: false });
       if (json.result === undefined) {
-        this.popUpAlert('Bad user info, please Create you account below', 'Soooorryy');
-        // Toast.show({
-        //   text: 'Bad user info, please Create you account below',
-        //   buttonText: 'Soooorryy'
-        // })
+        this.popUpAlert('Bad user info, please Create you account below', 'Ok');
         return
       }
       console.log("CONNECTED WITH TOKEN:")
       console.log(json)
       userToken = json.result
+      this.setState({firstLoad:true})
       this.state.navigation.navigate('CreateArea')
     })
     .catch((error) => {
@@ -153,6 +138,7 @@ export default class LoginComponent extends Component<{}, any> {
         console.log(json.result);
         alert("Connection Sucessfull = " + json.result)
         userToken = json.result
+        this.setState({firstLoad:true})
         this.state.navigation.navigate('CreateArea')
         return json.result;
       })
@@ -173,16 +159,33 @@ export default class LoginComponent extends Component<{}, any> {
   }
 
   async componentDidMount() {
-      await Font.loadAsync({
-          Roboto: require('native-base/Fonts/Roboto.ttf'),
-          Roboto_medium: require('native-base/Fonts/Roboto_medium.ttf'),
-          ...Ionicons.font,
-      });
+      // await Font.loadAsync({
+      //     Roboto: require('native-base/Fonts/Roboto.ttf'),
+      //     Roboto_medium: require('native-base/Fonts/Roboto_medium.ttf'),
+      //     ...Ionicons.font,
+      // });
       this.setState({ loading: false });
   }
 
   render() {
 
+    if (window.location.pathname.includes("/oauth/")) {
+      this.state.navigation.navigate("Connection")
+    }
+
+    if (this.state.firstLoad) {
+      this.setState({wMail:""})
+      this.setState({wPassword:""})
+      this.setState({wRegMail:""})
+      this.setState({wRegPassword:""})
+      this.setState({wRegConfPassword:""})
+      this.setState({Mail:""})
+      this.setState({Password:""})
+      this.setState({RegMail:""})
+      this.setState({RegPassword:""})
+      this.setState({RegConfPassword:""})
+      this.setState({firstLoad:false})
+    }
     if (this.state.loading) {
          return (
           <View>

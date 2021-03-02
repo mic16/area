@@ -13,7 +13,7 @@ class Youtube():
     def __init__(self):
         pass
 
-    @Action('When the connected user have a new subscriber')
+    @Action('When the connected user gets a new subscriber')
     def onSubscribe(self, fields):
 
         trig = Trigger(types=[str, Imgs])
@@ -29,7 +29,7 @@ class Youtube():
                 area.ret(Imgs([_.get(subscriber, 'subscriberSnippet.thumbnails.high.url')]))
         return trig.setAction(func)
 
-    @Action('When the connected user like a video')
+    @Action('When the connected user likes a video')
     def onLike(self, fields):
 
         trig = Trigger(types=[str, Imgs])
@@ -46,9 +46,9 @@ class Youtube():
         return trig.setAction(func)
 
     @Reaction(
-        'Send a comment on a vidéo',
+        'Send a comment on a video',
         str,
     )
-    @Field('videoId', FTYPE.STRING, 'videoId of the youtube video')
+    @Field('videoId', FTYPE.STRING, 'VideoId of the youtube video')
     def sendCommentOnVideo(self, area, fields):
         youtubeApi.sendNewComment(area.getUser(), fields.getString('userId'), area.get(str)[0])

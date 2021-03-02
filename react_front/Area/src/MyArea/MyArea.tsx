@@ -1,8 +1,9 @@
 import React, { Component } from 'react';
 import { ImageBackground, Platform, View, StyleSheet} from "react-native";
-import { Footer, FooterTab, Text, Button, Container, Header, Content, Form, Item, Input, Label, Title, Icon, Toast } from 'native-base';
-import * as Font from 'expo-font';
-import { Ionicons } from '@expo/vector-icons';
+import { Footer, FooterTab, Text, Button, Container, Header, Content, Form, Item, Input, Label, Title, Icon, Toast, Left, Body, Right } from 'native-base';
+// import * as Font from 'expo-font';
+// import { Ionicons } from '@expo/vector-icons';
+import { Ionicons } from "react-icons/io"
 import { mobileIP } from '../Login/Login';
 import { userToken } from '../Login/Login';
 import Navigation from '../Navigation/Navigation';
@@ -23,6 +24,7 @@ export default class MyArea extends Component {
   }
 
   public logout() {
+    console.log("Je vais me logout")
     return fetch('http://' + mobileIP + ':8080/logout', {
           method: 'POST',
           headers: {
@@ -43,13 +45,13 @@ export default class MyArea extends Component {
           if (json.result === undefined) {
             Toast.show({
               text: 'Logout failed',
-              buttonText: 'Sad'
+              buttonText: 'Ok'
             })
             return
           }
           Toast.show({
             text: 'Logout Success',
-            buttonText: 'Sad'
+            buttonText: 'Ok'
           })
           this.state.navigation.navigate("LoginComponent")
         })
@@ -59,6 +61,15 @@ export default class MyArea extends Component {
   }
 
   public deleteArea = (key: number) => {
+    let otherTmp:Array<Object> = []
+    let i = 0
+    this.state.displayAllAreas.forEach((obj:Object) => {
+      if (key !== i) {
+        otherTmp.push(obj)
+      }
+      i = i + 1
+    })
+    this.setState({displayAllAreas:otherTmp})
     fetch('http://' + mobileIP + ':8080/area/delete', {
       method: 'POST',
       headers: {
@@ -154,11 +165,11 @@ export default class MyArea extends Component {
   }
 
   async componentDidMount() {
-      await Font.loadAsync({
-          Roboto: require('native-base/Fonts/Roboto.ttf'),
-          Roboto_medium: require('native-base/Fonts/Roboto_medium.ttf'),
-          ...Ionicons.font,
-      });
+      // await Font.loadAsync({
+      //     Roboto: require('native-base/Fonts/Roboto.ttf'),
+      //     Roboto_medium: require('native-base/Fonts/Roboto_medium.ttf'),
+      //     ...Ionicons.font,
+      // });
       this.setState({ loading: false });
   }
 
@@ -187,6 +198,9 @@ export default class MyArea extends Component {
                     }}>
                       My Areas
                     </Text>
+                    <Button transparent onPress={() => this.state.navigation.navigate("Connection")}>
+                      <Icon name="globe-outline" />
+                    </Button>
                     <View>
                       {
                         this.state.displayAllAreas
@@ -202,12 +216,28 @@ export default class MyArea extends Component {
         return (
             <Container style= {{ position: "relative"}}>
             <Header >
-                <Button iconLeft transparent style={{ position:"absolute", paddingRight:340 }} onPress={() => this.logout()}>
+                <Button transparent style={{ width:85, marginLeft:-10 }} onPress={() => this.logout()}>
                   <Icon name="log-out-outline" />
                 </Button>
-              <Title style={{  marginRight:0, color: "white", fontSize:22, alignSelf:"center" }} >My Area Page</Title>
+              <Body>
+              <Title style={{ color: "white", fontSize:22, alignSelf:"center" }} >My Area Page</Title>
+              </Body>
+              <Button transparent onPress={() => this.state.navigation.navigate("Connection")}>
+                  <Icon name="globe-outline" />
+                </Button>
             </Header>
             <Content style= {{ position: "relative" }}>
+              <View>
+                {
+                  this.state.displayAllAreas.length !== 0?this.state.displayAllAreas:
+                  <View style={{ alignItems:"center", alignSelf:'center', marginTop:50 }}>
+                    <Text style={{ color:"gray" }} >No AREA created</Text>
+                    <Text style={{ marginTop:20, color:"gray", alignSelf:'center', alignItems:"center", flex:1 }}>Use the top left button to disconnect or the top</Text>
+                    <Text style={{ color:"gray", alignSelf:'center', alignItems:"center", flex:1 }}>right button to connect your account</Text>
+                    <Text style={{ color:"gray", alignSelf:'center', alignItems:"center", flex:1 }}>to service accounts</Text>
+                  </View>
+                }
+              </View>
             </Content>
             <Footer>
             <FooterTab>

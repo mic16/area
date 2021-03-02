@@ -1,9 +1,10 @@
 import React, { Component } from 'react';
 import { any } from 'prop-types';
 import { ImageBackground, Platform, View, StyleSheet} from "react-native";
-import { Footer, FooterTab, Text, Button, Container, Header, Content, Form, Item, Input, Label, Title, Icon, Picker, Spinner, Toast, Drawer, ListItem, CheckBox } from 'native-base';
-import * as Font from 'expo-font';
-import { Ionicons } from '@expo/vector-icons';
+import { Footer, FooterTab, Text, Button, Container, Header, Content, Form, Item, Input, Label, Title, Icon, Picker, Spinner, Toast, Drawer, ListItem, CheckBox, Root } from 'native-base';
+// import * as Font from 'expo-font';
+// import { Ionicons } from '@expo/vector-icons';
+import { Ionicons } from "react-icons/io"
 import { mobileIP } from '../Login/Login';
 import ConfigComponent from '../Configfield/Configfield';
 import Navigation from '../Navigation/Navigation';
@@ -46,7 +47,7 @@ export default class CreateArea extends Component<{}, any> {
       areact: [],
       rreact: [],
       actionApp: "",
-      action: "",
+      // action: "",
       reactionApp: "",
       reaction: "",
       actionValue: '',
@@ -87,6 +88,13 @@ export default class CreateArea extends Component<{}, any> {
         },
       })
       .then((response) => response.json()).then((json) => {
+        if (json.error != undefined) {
+          Toast.show({
+            text:json.error,
+            buttonText:"ok"
+          })
+          return
+        }
         let var_tmp:Array<String> = []
 
         json.result.forEach((element:String) => {
@@ -137,13 +145,16 @@ export default class CreateArea extends Component<{}, any> {
         })
         .then((response) => response.json()).then((json) => {
           let mapAREA:Map<String, Array<Object>> = new Map(Object.entries(json.result))
+
+          console.log("Voici la liste/map des services que je peux use:")
+          console.log(json.result)
+
           this.setState({reactionReact:mapAREA})
         })
         .catch((error) => {
           console.error(error)
           
         })
-        this.setState({reactListDataSecond:reactList})
     }
 
     public pickerReactionService(action:String) {
@@ -151,14 +162,20 @@ export default class CreateArea extends Component<{}, any> {
       let config:Object = new Object()
       this.getReaction(this.state.actionApp, action, config)
       .then((_) => {
+        console.log("Je vais print chaque obj dans l'array reactionReact")
       this.state.reactionReact.forEach((obj:any, name:string) => {
+        console.log(`L'Object de nom ${name} -> `)
+        console.log(obj)
         obj.forEach((objs:any) => {
-          this.setState({action:objs})
-          reactReaction.push(
-            <Picker.Item label={name} value={name} key={name}/>
-          )
+          console.log(`Pour l'obj ${name}, mon objs est le suivant -> `)
+          console.log(objs)
+          // this.setState({action:objs}) // POURQUOI J4AI ECRIS CAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA ?
+        });
+        reactReaction.push(
+          <Picker.Item label={name} value={name} key={name}/>
+        )
       });
-      });
+      console.log(`La longueur de l'array d'object est de ${reactReaction.length}`)
       this.setState({reactListDataSecond:reactReaction})
     });
     }
@@ -182,12 +199,39 @@ export default class CreateArea extends Component<{}, any> {
         })
       }
 
+      public createAreaFetch(json:any) {
+        return fetch('http://' + mobileIP + ':8080/area/create', {
+            method: 'POST',
+            headers: {
+              Accept: 'application/json',
+              'Content-Type': 'application/json'
+            },
+            body: json
+          })
+          .then((response) => response.json()).then((json) => {
+            if (json.result !== undefined) {
+            console.log(`Area Created with UUID {${json.result}}`)
+            } else if (json.error !== undefined) {
+              Toast.show({
+                text: json.error,
+                buttonText: 'Ok',
+                duration: 5
+              })
+            }
+          })
+          .catch((error) => {
+            console.error(error)
+            
+          })
+        }
+
     public pickerAction(service:String) {
       let reactAction = new Array()
       let mapAction:Map<String, any> = new Map()
       this.getAction(service)
       .then((_) => {
       this.state.actionReact.get("Action").forEach((obj:any) => {
+        console.log(`PickerAction foreach object = `)
         console.log(obj)
         mapAction.set(obj["name"], obj)
         reactAction.push(
@@ -206,12 +250,20 @@ export default class CreateArea extends Component<{}, any> {
       .then((_) => {
         this.state.reactionReact.get(service).forEach((objs:any) => {
           mapReaction.set(objs["name"], objs)
+          // console.log("HERRRE IS THE SERVICE DATA:")
+          // console.log(objs["name"])
+          // console.log(objs["description"])
           reactReaction.push(
             <Picker.Item label={objs["description"]} value={objs["name"]} key={objs["name"]}/>
           )
           });
       this.setState({rreact:reactReaction})
       this.setState({mapReaction:mapReaction})
+
+      console.log(`Les data: `)
+      console.log(mapReaction)
+      console.log(`et la reaction selectionner `)
+      console.log(this.state.selectedReaction)
     });
     }
 
@@ -238,7 +290,7 @@ export default class CreateArea extends Component<{}, any> {
     this.setState({
       selectedAppOne: value
     });
-    console.log("Action service selected is " + value)
+    console.log(`Action service selected is ${value}`)
     if (value.length != 0)
       this.setState({actionApp:value})
     if (value.length > 2)
@@ -249,7 +301,7 @@ export default class CreateArea extends Component<{}, any> {
     this.setState({
       selectedAction: value
     });
-    console.log("Action of the service selected is " + value)
+    console.log(`Action of the service selected is ${value}`)
     if (value.length != 0) {
       this.pickerReactionService(value)
     }
@@ -259,41 +311,45 @@ export default class CreateArea extends Component<{}, any> {
     this.setState({
       selectedAppTwo: value
     });
-    console.log("The other service selected is " + value)
+    console.log(`The other service selected is ${value}`)
     if (value === undefined)
       return
     if (value.length != 0) {
+      this.setState({rreact:[]})
       this.setState({reactionApp:value})
       this.pickerReaction(value)
     }
   }
 
   onValueChangeReaction(value: string) {
+    if (value === null)
+      return
     this.setState({
       selectedReaction: value
     });
-    console.log("Reaction of the other service selected is " + value)
+    console.log(`Reaction of the other service selected is ${value}`)
     if (value.length != 0) {
       this.setState({reaction:value})
     }
   }
 
-  public createArea() {
+
+  public createAreaMobile() {
     let params = this.props.route.params
     let jsonSerial = {}
     let actionSerial = {}
     let reactionSerial = {}
     if (params) {
-      console.log("PARAMETTERS ARE")
+      console.log(`Les parametres pour L'Area a créer sont:`)
       console.log(params)
 
       params["action"].forEach((value:any, key:string) => {  
         actionSerial[key] = value
       });
 
-      // params["reaction"].forEach((value:any, key:string) => {  
-      //   reactionSerial[key] = value
-      // });
+      params["reaction"].forEach((value:any, key:string) => {  
+        reactionSerial[key] = value
+      });
 
       jsonSerial = {
         "action": {
@@ -304,22 +360,25 @@ export default class CreateArea extends Component<{}, any> {
         "reaction": {
           "service": this.state.selectedAppTwo,
           "name": this.state.selectedReaction,
-          "config": ""
-        }
+          "config": reactionSerial
+        },
+        "token":userToken
       }
 
-      console.log(JSON.stringify(jsonSerial))
+      
+      console.log(`Les donées transformer en json sont: ${JSON.stringify(jsonSerial)}`)
+      this.createAreaFetch(JSON.stringify(jsonSerial))
 
     } else
       alert("Please have a look to the config before creating an Area")
   }
 
   async componentDidMount() {
-      await Font.loadAsync({
-          Roboto: require('native-base/Fonts/Roboto.ttf'),
-          Roboto_medium: require('native-base/Fonts/Roboto_medium.ttf'),
-          ...Ionicons.font,
-      });
+      // await Font.loadAsync({
+      //     Roboto: require('native-base/Fonts/Roboto.ttf'),
+      //     Roboto_medium: require('native-base/Fonts/Roboto_medium.ttf'),
+      //     ...Ionicons.font,
+      // });
       this.setState({ loading: false });
   }
 
@@ -360,7 +419,7 @@ export default class CreateArea extends Component<{}, any> {
       },
       body: JSON.stringify(test),
     }).then((response) => response.json()).then((json) => {
-      console.log(json);
+      console.log(`La réponse JSON de la création d'un Area: ${json}`);
     })
     .catch((error) => {
       console.error(error);
@@ -427,9 +486,9 @@ export default class CreateArea extends Component<{}, any> {
 
       tmpActionFieldList[key + 1] =
         <View key={key + 1} style={{marginTop: 10}}>
-          <View>
+          <View style={{display: 'flex', flexDirection: "row"}}>
             {this.state.actionField[key]}
-            <Text style={{fontSize: 12, marginTop: 10}}>
+            <Text style={{fontSize: 12, marginLeft: 20}}>
               {element.description}
             </Text>
           </View>
@@ -443,15 +502,15 @@ export default class CreateArea extends Component<{}, any> {
       this.setState({responseReactionField: tmpResponseReactionField});
       let tmpField = this.state.reactionField;
 
-      tmpField[key] = <CheckBox checked={this.state.responseReactionField[key]} onPress={() => this.updateFieldBoolean(key, type, element)}/>
+      tmpField[key] = <CheckBox color='black' checked={this.state.responseReactionField[key]} onPress={() => this.updateFieldBoolean(key, type, element)}/>
       this.setState({reactionField: tmpField});
       let tmpReactionFieldList: Array<any> = this.state.reactionFieldList;
 
       tmpReactionFieldList[key + 1] =
         <View key={key + 1} style={{marginTop: 10}}>
-          <View>
+          <View style={{display: 'flex', flexDirection: 'row'}}>
             {this.state.actionField[key]}
-            <Text style={{fontSize: 12, marginTop: 10}}>
+            <Text style={{fontSize: 12, marginLeft: 20}}>
               {element.description}
             </Text>
           </View>
@@ -485,7 +544,7 @@ export default class CreateArea extends Component<{}, any> {
         this.setState({responseActionField: tmpResponseActionField});
 
         tmpField.push(
-          <CheckBox style={{marginTop: '10px'}} color='black' checked={this.state.responseActionField[key]} onPress={() => this.updateFieldBoolean(key, type, element)}/>
+          <CheckBox color='black' checked={this.state.responseActionField[key]} onPress={() => this.updateFieldBoolean(key, type, element)}/>
         )
         this.setState({actionField: tmpField});
       } else if (type === 'reaction') {
@@ -496,7 +555,7 @@ export default class CreateArea extends Component<{}, any> {
         this.setState({responseReactionField: tmpResponseReactionField});
 
         tmpField.push(
-          <CheckBox style={{marginTop: '10px'}} color='black' checked={this.state.responseReactionField[key]} onPress={() => this.updateFieldBoolean(key, type, element)}/>
+          <CheckBox color='black' checked={this.state.responseReactionField[key]} onPress={() => this.updateFieldBoolean(key, type, element)}/>
         )
         this.setState({reactionField: tmpField});
       }
@@ -574,15 +633,16 @@ export default class CreateArea extends Component<{}, any> {
 
       this.state.actionNameList[value - 1].fields.forEach((element: any, key: number) => {
         this.generateField(element, key, 'action');
+
         tmpActionFieldList.push(
-          <View key={key + 1}>
-            {element.style === 'boolean' ?
-              <View style={{flexDirection: "row"}}>
-                {this.state.actionField[key]}
-                <Text style={{fontSize: 12, marginTop: '10px'}}>
-                  {element.description}
-                </Text>
-              </View>
+          <View key={key + 1} style={{marginTop: 10}}>
+            {element.type === 'boolean' ?
+            <View style={{display: 'flex', flexDirection: 'row'}}>
+              {this.state.actionField[key]}
+              <Text style={{fontSize: 12, marginLeft: 20}}>
+                {element.description}
+              </Text>
+            </View>
             :
               <View>
                 {this.state.actionField[key]}
@@ -616,9 +676,9 @@ export default class CreateArea extends Component<{}, any> {
       tmpReactionFieldList.push(
         <View key={key + 1}>
           {element.style === 'boolean' ?
-            <View style={{flexDirection: "row"}}>
+            <View style={{display: 'flex', flexDirection: "row"}}>
               {this.state.reactionField[key]}
-              <Text style={{fontSize: 12, marginTop: '10px'}}>
+              <Text style={{fontSize: 12}}>
                 {element.description}
               </Text>
             </View>
@@ -637,8 +697,6 @@ export default class CreateArea extends Component<{}, any> {
   }
 
   render() {
-      // console.log("LES PROPS :")
-      // console.log(this.props.route)
        if (this.state.loading) {
           this.listElem()
          return (
@@ -727,6 +785,7 @@ export default class CreateArea extends Component<{}, any> {
         );
 
         return (
+          <Root>
           <Container style= {{ position: "relative"}}>
           <Header>
           <Text style={{ color: "white", fontSize:22, alignSelf:"center" }}>
@@ -739,7 +798,6 @@ export default class CreateArea extends Component<{}, any> {
             <Picker
               mode="dropdown"
               iosIcon={<Icon name="arrow-down" />}
-              placeholder="Select your SIM"
               placeholderStyle={{ color: "#bfc6ea" }}
               placeholderIconColor="#007aff"
               style={{ width: undefined }}
@@ -756,7 +814,6 @@ export default class CreateArea extends Component<{}, any> {
             <Picker
               mode="dropdown"
               iosIcon={<Icon name="arrow-down" />}
-              placeholder="Select your SIM"
               placeholderStyle={{ color: "#bfc6ea" }}
               placeholderIconColor="#007aff"
               style={{ width: undefined }}
@@ -777,7 +834,6 @@ export default class CreateArea extends Component<{}, any> {
             <Picker
               mode="dropdown"
               iosIcon={<Icon name="arrow-down" />}
-              placeholder="Select your SIM"
               placeholderStyle={{ color: "#bfc6ea" }}
               placeholderIconColor="#007aff"
               style={{ width: undefined }}
@@ -794,11 +850,12 @@ export default class CreateArea extends Component<{}, any> {
             <Picker
               mode="dropdown"
               iosIcon={<Icon name="arrow-down" />}
-              placeholder="Select your SIM"
               placeholderStyle={{ color: "#bfc6ea" }}
               placeholderIconColor="#007aff"
+              style={{ width: undefined }}
               selectedValue={this.state.selectedReaction}
               onValueChange={this.onValueChangeReaction.bind(this)}
+              key="reactionID"
             >
                 {
                   this.state.rreact || <Picker.Item label="Loading, please wait" value="None" color="grey" />
@@ -808,7 +865,7 @@ export default class CreateArea extends Component<{}, any> {
                 this.state.rreact.length != 0 ? <Button icon style={{ marginRight:10 }} onPress={() => this.state.navigation.navigate("Config", {data:this.state.mapReaction.get(this.state.selectedReaction), type:"reaction"})}><Icon name='settings-outline' /></Button>: <Text></Text>
               }
             </Item>
-          <Button style={{ alignSelf:'center', marginTop:"40%" }} onPress={() => this.createArea()} >
+          <Button style={{ alignSelf:'center', marginTop:"40%" }} onPress={() => this.createAreaMobile()} >
             <Text>
             Create the AREA !
             </Text>
@@ -831,6 +888,7 @@ export default class CreateArea extends Component<{}, any> {
           </FooterTab>
         </Footer>
           </Container>
+          </Root>
               )
  }
 }

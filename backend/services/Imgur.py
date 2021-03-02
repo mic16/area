@@ -12,8 +12,8 @@ class Imgur():
     def __init__(self):
         pass
 
-    @Action('When the user post something')
-    @Field('match', FTYPE.STRING, 'String that should be matched in title or description')
+    @Action('When the user posts something')
+    @Field('match', FTYPE.STRING, 'String that should be matched with the title or description')
     def onPost(self, fields):
 
         trig = Trigger(types=[str, Imgs])
@@ -34,8 +34,8 @@ class Imgur():
 
         return trig.setAction(func)
 
-    @Action('When the user fav a post')
-    @Field('match', FTYPE.STRING, 'String that should be matched in title or description')
+    @Action('When the user favs a post')
+    @Field('match', FTYPE.STRING, 'String that should be matched with the title or description')
     def onFav(self, fields):
 
         trig = Trigger(types=[str])
@@ -57,7 +57,7 @@ class Imgur():
         return trig.setAction(func)
 
     @Reaction(
-        'make a post',
+        'Make a post',
         Imgs,
     )
     def createPost(self, area, fields):

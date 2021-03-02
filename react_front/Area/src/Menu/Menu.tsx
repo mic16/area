@@ -1,15 +1,16 @@
 import React, { Component } from 'react';
 import { ImageBackground, Platform, View } from "react-native";
 import { Footer, FooterTab, Text, Container, Header, Content, Form, Item, Input, Label, Title, Icon, Button, Left, Right } from 'native-base';
-import * as Font from 'expo-font';
-import { Ionicons } from '@expo/vector-icons';
 import LoginComponent from '../Login/Login';
 import { NavigationContainer } from '@react-navigation/native';
 import { createStackNavigator } from '@react-navigation/stack';
+import { Ionicons } from "react-icons/io"
 import MyArea from '../MyArea/MyArea';
 import MyApps from '../MyApps/MyApps';
 import CreateArea from '../CreateArea/CreateArea';
 import ConfigComponent from '../Configfield/Configfield'
+import Connection from "../Connection/Connection"
+import ServiceRoute from "../ServiceRoute/ServiceRoute";
 
 const Stack = createStackNavigator();
 export default class MenuComponent extends Component {
@@ -23,11 +24,11 @@ export default class MenuComponent extends Component {
   }
 
   async componentDidMount() {
-      await Font.loadAsync({
-          Roboto: require('native-base/Fonts/Roboto.ttf'),
-          Roboto_medium: require('native-base/Fonts/Roboto_medium.ttf'),
-          ...Ionicons.font,
-      });
+      // await Font.loadAsync({
+      //     Roboto: require('native-base/Fonts/Roboto.ttf'),
+      //     Roboto_medium: require('native-base/Fonts/Roboto_medium.ttf'),
+      //     ...Ionicons.font,
+      // });
       this.setState({ loading: false });
   }
 
@@ -50,6 +51,10 @@ export default class MenuComponent extends Component {
               <Stack.Screen name="MyApps" component={MyApps}
               options={{headerShown: false}}/>
               <Stack.Screen name="Config" component={ConfigComponent}
+              options={{headerShown: false}}/>
+              <Stack.Screen name="Connection" component={Connection}
+              options={{headerShown: false}}/>
+              <Stack.Screen name="ServiceRoute" component={ServiceRoute}
               options={{headerShown: false}}/>
             </Stack.Navigator>
           </NavigationContainer>

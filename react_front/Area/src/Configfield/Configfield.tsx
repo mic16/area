@@ -1,8 +1,9 @@
 import React, { Component } from 'react';
 import { Alert, ImageBackground, Platform, View } from "react-native";
 import { Spinner, Root, Text, Accordion, FooterTab, Footer, Button, Container, Header, Content, Form, Item, Input, Label, Title, Icon, Grid, Col, Left, Right, Body, Toast, CheckBox, ListItem, List } from 'native-base';
-import * as Font from 'expo-font';
-import { Ionicons } from '@expo/vector-icons';
+// import * as Font from 'expo-font';
+// import { Ionicons } from '@expo/vector-icons';
+import { Ionicons } from "react-icons/io"
 import { NavigationContainer } from "react-navigation";
 import { TextInput } from 'react-native-gesture-handler';
 
@@ -22,11 +23,11 @@ export default class ConfigComponent extends Component<{}, any> {
   }
   
   async componentDidMount() {
-      await Font.loadAsync({
-          Roboto: require('native-base/Fonts/Roboto.ttf'),
-          Roboto_medium: require('native-base/Fonts/Roboto_medium.ttf'),
-          ...Ionicons.font,
-      });
+      // await Font.loadAsync({
+      //     Roboto: require('native-base/Fonts/Roboto.ttf'),
+      //     Roboto_medium: require('native-base/Fonts/Roboto_medium.ttf'),
+      //     ...Ionicons.font,
+      // });
       this.setState({ loading: false });
   }
 
@@ -114,7 +115,7 @@ export default class ConfigComponent extends Component<{}, any> {
         if (element["type"] === "boolean") {
           arrayField.push(
             <ListItem key={element["name"]}>
-            <CheckBox onPress={(_) => this.onPressedCheckBox(element["name"])} checked={this.state.arrayValues.get(element["name"])}/>
+            <CheckBox onPress={() => this.onPressedCheckBox(element["name"])} checked={this.state.arrayValues.get(element["name"])}/>
             <Body><Text>{element["description"]}</Text></Body>
             </ListItem>
           )
@@ -159,16 +160,20 @@ export default class ConfigComponent extends Component<{}, any> {
   }
 
   render() {
-    this.createFields(this.props.route.params.data)
-    if (this.state.loading) {
+    if (this.props.route.params.data === undefined) {
+      console.log("Les paramètres data sont undefined, voici la route: ")
+      console.log(this.props.route)
+    } else
+      this.createFields(this.props.route.params.data)
+      if (this.state.loading) {
         console.log("JE SUIS DANS LA CONFIG")
         // console.log(this.props)
-         return (
+        return (
           <View>
             <Spinner color="blue" />
           </View>
          );
-       }
+        }
 
         return (
             <Root>

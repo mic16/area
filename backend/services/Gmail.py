@@ -10,7 +10,7 @@ class Gmail():
     def __init__(self):
         pass
 
-    @Action('When the user receive a mail')
+    @Action('When the user receives a mail')
     def onMail(self, fields):
         trig = Trigger(types=[str])
         def func(area, fields):
@@ -26,7 +26,7 @@ class Gmail():
         'Send a mail',
         str,
     )
-    @Field('mailAdresse', FTYPE.STRING, 'Mail Adresse of the target user')
-    @Field('object', FTYPE.STRING, 'object of the mail')
+    @Field('mailAdresse', FTYPE.STRING, 'Email adress of the targeted user')
+    @Field('object', FTYPE.STRING, 'Subject of the mail')
     def sendMail(self, area, fields):
         gmailApi.sendMail(area.getUser(), area.get(str)[0], fields.getString('mailAdresse'), fields.getString('object'))
