@@ -49,7 +49,7 @@ def oauthAuthorizedGoogle():
     except Exception as err:
         return {"error": err}
 
-    return {"result": "Google account linked to user '%s'" % (user.getMail())}
+    return {"result": "Google account linked to user '%s'" % (user)}
 
 def googleConnected(user):
     if user.get("Google") != None and user.get("Google.credential") != None:
