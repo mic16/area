@@ -163,18 +163,18 @@ class Area():
                     except Exception as err:
                         print('    '*2 + ' REACTION ERROR '.center(50,'='))
                         print('    '*2 + ' Error '.center(50, '-'))
-                        print(err)
+                        print('    '*2 +err)
                         print('    '*2 + ' Traceback '.center(50, '-'))
                         for line in traceback.format_exc().split('\n'):
-                            print(line)
+                            print('    '*2 + line)
                         print('    '*2 + '='*50)
                     print('    End Reaction')
             except Exception as err:
-                print(' ACTION ERROR '.center(50,'='))
-                print(' Error '.center(50, '-'))
-                print(err)
-                print(' Traceback '.center(50, '-'))
+                print('    '*2 + ' ACTION ERROR '.center(50,'='))
+                print('    '*2 + ' Error '.center(50, '-'))
+                print('    '*2 + err)
+                print('    '*2 + ' Traceback '.center(50, '-'))
                 for line in traceback.format_exc().split('\n'):
-                    print(line)
-                print('='*50)
+                    print('    '*2 + line)
+                print('    '*2 + '='*50)
             self.lastTrigger = time.time()
