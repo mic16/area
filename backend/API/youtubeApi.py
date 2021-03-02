@@ -16,7 +16,7 @@ API_VERSION = 'v3'
 def Diff(li1, li2):
     return (list(list(set(li1)-set(li2)) + list(set(li2)-set(li1))))
 
-def getLastSubscriber(user):
+def getLastSubscriber(user, area):
     c = google.oauth2.credentials.Credentials(**user.get("Google.credential"))
 
     youtube = googleapiclient.discovery.build(
@@ -31,27 +31,27 @@ def getLastSubscriber(user):
     lastSubscriberTab = []
     for subscriber in lastSubscriber.get('items'):
         lastSubscriberTab.append(subscriber)
-    if user.get("youtube") == None:
-        user.set("youtube", {'lastSubscriber':lastSubscriberTab})
+    if area.getValue("youtube") == None:
+        area.setValue("youtube", {'lastSubscriber':lastSubscriberTab})
         return (None)
-    oldSubscriber = user.get("youtube")
+    oldSubscriber = area.getValue("youtube")
     if oldSubscriber.get('lastSubscriber') == None:
         oldSubscriber['lastSubscriber'] = lastSubscriberTab
-        user.set("youtube", oldSubscriber)
+        area.setValue("youtube", oldSubscriber)
         return (None)
     oldSub = oldSubscriber['lastSubscriber']
     diff = diffFirstSecond(lastSubscriberTab, oldSub)
     if (len(diff) == 0):
         oldSubscriber['lastSubscriber'] = lastSubscriberTab
-        user.set("youtube", oldSubscriber)
+        area.setValue("youtube", oldSubscriber)
         return (None)
     else:
         oldSubscriber['lastSubscriber'] = lastSubscriberTab
-        user.set("youtube", oldSubscriber)
+        area.setValue("youtube", oldSubscriber)
         return (diff)
 
 
-def getLastLikedVideo(user):
+def getLastLikedVideo(user, area):
     c = google.oauth2.credentials.Credentials(**user.get("Google.credential"))
 
     youtube = googleapiclient.discovery.build(
@@ -66,23 +66,23 @@ def getLastLikedVideo(user):
     lastLikeTab = []
     for subscriber in lastSubscriber.get('items'):
         lastLikeTab.append(subscriber)
-    if user.get("youtube") == None:
-        user.set("youtube", {'lastLike':lastLikeTab})
+    if area.getValue("youtube") == None:
+        area.setValue("youtube", {'lastLike':lastLikeTab})
         return (None)
-    oldLike = user.get("youtube")
+    oldLike = area.getValue("youtube")
     if oldLike.get('lastLike') == None:
         oldLike['lastLike'] = lastLikeTab
-        user.set("youtube", oldLike)
+        area.setValue("youtube", oldLike)
         return (None)
     oldSub = oldLike['lastLike']
     diff = diffFirstSecond(lastLikeTab, oldSub)
     if (len(diff) == 0):
         oldLike['lastLike'] = lastLikeTab
-        user.set("youtube", oldLike)
+        area.setValue("youtube", oldLike)
         return (None)
     else:
         oldLike['lastLike'] = lastLikeTab
-        user.set("youtube", oldLike)
+        area.setValue("youtube", oldLike)
         return (diff)
 
 def sendNewComment(user, videoId, text):

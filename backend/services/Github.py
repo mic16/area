@@ -18,7 +18,7 @@ class Github():
         trig = Trigger(types=[str])
 
         def func(area, fields):
-            stars = githubApi.getLastStar(area.getUser(), fields.getString('url'))
+            stars = githubApi.getLastStar(area.getUser(), area)
             if stars == None:
                 return
             for star in stars:
@@ -40,7 +40,7 @@ class Github():
         trig = Trigger(types=[str, Imgs])
 
         def func(area, fields):
-            followers = githubApi.getNewFollower(area.getUser(), fields.getString('url'))
+            followers = githubApi.getNewFollower(area.getUser(), area)
             if (followers == None):
                 return
             for follower in followers:

@@ -85,7 +85,7 @@ def sendDirectMessage(user, text, userId):
     api = tweepy.API(auth) 
     direct_message = api.send_direct_message(userId, text)
 
-def getLastTweetUser(user):
+def getLastTweetUser(user, area):
     auth = tweepy.OAuthHandler(consumerKey, consumerSecretKey)     
     auth.set_access_token(user.get("twitter.token"), user.get("twitter.token_secret"))
     api = tweepy.API(auth) 
@@ -95,26 +95,26 @@ def getLastTweetUser(user):
     for tweet in lastTweets:
         lastTweetTab.append({'text':tweet.text, 'entities':tweet.entities})
 
-    if user.get("twitter") == None:
-        user.set("twitter", {'lastTweet':lastTweetTab})
+    if area.getValue("twitter") == None:
+        area.setValue("twitter", {'lastTweet':lastTweetTab})
         return (None)
-    oldTwiiter = user.get("twitter")
+    oldTwiiter = area.getValue("twitter")
     if oldTwiiter.get('lastTweet') == None:
         oldTwiiter['lastTweet'] = lastTweetTab
-        user.set("twitter", oldTwiiter)
+        area.setValue("twitter", oldTwiiter)
         return (None)
     oldTweets = oldTwiiter['lastTweet']
     diff = diffFirstSecond(lastTweetTab, oldTweets)
     if (len(diff) == 0):
         oldTwiiter['lastTweet'] = lastTweetTab
-        user.set("twitter", oldTwiiter)
+        area.setValue("twitter", oldTwiiter)
         return (None)
     else:
         oldTwiiter['lastTweet'] = lastTweetTab
-        user.set("twitter", oldTwiiter)
+        area.setValue("twitter", oldTwiiter)
         return (diff)
 
-def getLastLike(user):
+def getLastLike(user, area):
     auth = tweepy.OAuthHandler(consumerKey, consumerSecretKey)     
     auth.set_access_token(user.get("twitter.token"), user.get("twitter.token_secret"))
     api = tweepy.API(auth) 
@@ -124,21 +124,21 @@ def getLastLike(user):
     for tweet in lastFavs:
         lastFavTab.append(json.dumps({'text':tweet.text, 'entities':tweet.entities}))
 
-    if user.get("twitter") == None:
-        user.set("twitter", json.dumps({'lastFav':lastFavTab}))
+    if area.getValue("twitter") == None:
+        area.setValue("twitter", json.dumps({'lastFav':lastFavTab}))
         return (None)
-    oldTwiiter = user.get("twitter")
+    oldTwiiter = area.getValue("twitter")
     if oldTwiiter.get('lastFav') == None:
         oldTwiiter['lastFav'] = lastFavTab
-        user.set("twitter", oldTwiiter)
+        area.setValue("twitter", oldTwiiter)
         return (None)
     oldFavs = oldTwiiter['lastFav']
     diff = diffFirstSecond(lastFavTab, oldFavs)
     if (len(diff) == 0):
         oldTwiiter['lastFav'] = lastFavTab
-        user.set("twitter", oldTwiiter)
+        area.setValue("twitter", oldTwiiter)
         return (None)
     else:
         oldTwiiter['lastFav'] = lastFavTab
-        user.set("twitter", oldTwiiter)
+        area.setValue("twitter", oldTwiiter)
         return (diff)

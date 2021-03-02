@@ -55,7 +55,7 @@ def imgurConnected(user):
 OAuthManager.addManager('Imgur', loginImgur, oauthAuthorizedImgur, imgurConnected)
 
 
-def getLastFav(user):
+def getLastFav(user, area):
     client = ImgurClient(client_id, client_secret, user.get("imgur.token"), user.get("imgur.refresh_token"))
 
     albums = client.get_account_favorites(user.get("imgur.username"))
@@ -63,24 +63,24 @@ def getLastFav(user):
     for album in albums:
         lastAlbumsTab.append(json.dumps(album.__dict__))
 
-    if user.get("imgur") == None:
-        user.set("imgur", json.dumps({'lastFav':lastAlbumsTab}))
+    if area.getValue("imgur") == None:
+        area.setValue("imgur", json.dumps({'lastFav':lastAlbumsTab}))
         return (None)
 
-    oldImgur = user.get("imgur")
+    oldImgur = area.getValue("imgur")
     if oldImgur.get('lastFav') == None:
         oldImgur['lastFav'] = lastAlbumsTab
-        user.set("imgur", oldImgur)
+        area.setValue("imgur", oldImgur)
         return (None)
     oldAlbums = oldImgur['lastFav']
     diff = diffFirstSecond(lastAlbumsTab, oldAlbums)
     if (len(diff) == 0):
         oldImgur['lastFav'] = lastAlbumsTab
-        user.set("imgur", oldImgur)
+        area.setValue("imgur", oldImgur)
         return (None)
     else:
         oldImgur['lastFav'] = lastAlbumsTab
-        user.set("imgur", oldImgur)
+        area.setValue("imgur", oldImgur)
         finalRes = []
         for a in diff:
             if json.loads(a)['is_album']:
@@ -93,30 +93,30 @@ def getLastFav(user):
                 finalRes.append({'album':json.loads(a), 'imgs':[json.loads(a)['link']]})
         return (finalRes)
 
-def getLastPost(user):
+def getLastPost(user, area):
     client = ImgurClient(client_id, client_secret, user.get("imgur.token"), user.get("imgur.refresh_token"))
 
     albums = client.get_account_albums(user.get("imgur.username"))
     lastAlbumsTab = []
     for album in albums:
         lastAlbumsTab.append(json.dumps(album.__dict__))
-    if user.get("imgur") == None:
-        user.set("imgur", json.dumps({'lastAlbums':lastAlbumsTab}))
+    if area.getValue("imgur") == None:
+        area.setValue("imgur", json.dumps({'lastAlbums':lastAlbumsTab}))
         return (None)
-    oldImgur = user.get("imgur")
+    oldImgur = area.getValue("imgur")
     if oldImgur.get('lastAlbums') == None:
         oldImgur['lastAlbums'] = lastAlbumsTab
-        user.set("imgur", oldImgur)
+        area.setValue("imgur", oldImgur)
         return (None)
     oldAlbums = oldImgur['lastAlbums']
     diff = diffFirstSecond(lastAlbumsTab, oldAlbums)
     if (len(diff) == 0):
         oldImgur['lastAlbums'] = lastAlbumsTab
-        user.set("imgur", oldImgur)
+        area.setValue("imgur", oldImgur)
         return (None)
     else:
         oldImgur['lastAlbums'] = lastAlbumsTab
-        user.set("imgur", oldImgur)
+        area.setValue("imgur", oldImgur)
         finalRes = []
         for a in diff:
             imgs = client.get_album_images(json.loads(a)['id'])
