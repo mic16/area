@@ -17,25 +17,9 @@ import {
     useLocation,
     StaticRouter,
   } from "react-router-dom";
-  import { WebView } from 'react-native-webview';
-import { json } from 'express';
 
 
-// function AppRouter(service:string, data:JSON) {
-//     return (
-//         <Router>
-//             <View>
-//                 { data }
-//             </View>
-//             <Route path={"/oauth/" + service}/>
-//         </Router>
-//     );
-// }
-
-
-export default class MyApps extends Component<{}, any> {
-
-    webview = null
+export default class Connection extends Component<{}, any> {
 
   constructor(props:any) {
     super(props);

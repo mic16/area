@@ -47,7 +47,7 @@ export default class CreateArea extends Component<{}, any> {
       areact: [],
       rreact: [],
       actionApp: "",
-      action: "",
+      // action: "",
       reactionApp: "",
       reaction: "",
       actionValue: '',
@@ -155,7 +155,6 @@ export default class CreateArea extends Component<{}, any> {
           console.error(error)
           
         })
-        this.setState({reactListDataSecond:reactList})
     }
 
     public pickerReactionService(action:String) {
@@ -168,12 +167,15 @@ export default class CreateArea extends Component<{}, any> {
         console.log(`L'Object de nom ${name} -> `)
         console.log(obj)
         obj.forEach((objs:any) => {
-          this.setState({action:objs})
-          reactReaction.push(
-            <Picker.Item label={name} value={name} key={name}/>
-          )
+          console.log(`Pour l'obj ${name}, mon objs est le suivant -> `)
+          console.log(objs)
+          // this.setState({action:objs}) // POURQUOI J4AI ECRIS CAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA ?
+        });
+        reactReaction.push(
+          <Picker.Item label={name} value={name} key={name}/>
+        )
       });
-      });
+      console.log(`La longueur de l'array d'object est de ${reactReaction.length}`)
       this.setState({reactListDataSecond:reactReaction})
     });
     }

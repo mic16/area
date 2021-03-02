@@ -163,7 +163,8 @@ export default class ConfigComponent extends Component<{}, any> {
     if (this.props.route.params.data === undefined) {
       console.log("Les paramètres data sont undefined, voici la route: ")
       console.log(this.props.route)
-    }
+    } else
+      this.createFields(this.props.route.params.data)
       if (this.state.loading) {
         console.log("JE SUIS DANS LA CONFIG")
         // console.log(this.props)
@@ -173,7 +174,6 @@ export default class ConfigComponent extends Component<{}, any> {
           </View>
          );
         }
-        this.createFields(this.props.route.params.data)
 
         return (
             <Root>

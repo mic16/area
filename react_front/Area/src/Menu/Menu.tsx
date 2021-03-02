@@ -9,7 +9,7 @@ import MyArea from '../MyArea/MyArea';
 import MyApps from '../MyApps/MyApps';
 import CreateArea from '../CreateArea/CreateArea';
 import ConfigComponent from '../Configfield/Configfield'
-import Connection from '../Connection/Connection';
+import Connection from "../Connection/Connection"
 import ServiceRoute from "../ServiceRoute/ServiceRoute";
 
 const Stack = createStackNavigator();
