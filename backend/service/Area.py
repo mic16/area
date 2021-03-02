@@ -155,7 +155,7 @@ class Area():
                 print('    '*2 + 'Action Result: [%d]' % len(self.returnStates))
                 print('    End Action')
                 for returnState in self.returnStates:
-                    print('    Executing Reaction: %s' % returnState)
+                    print('    Executing Reaction: %s' % str(returnState))
                     try:
                         if not inputs or inputs in returnState:
                             self.returns = returnState
