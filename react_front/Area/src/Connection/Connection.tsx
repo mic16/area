@@ -17,6 +17,7 @@ import {
     StaticRouter,
   } from "react-router-dom";
   import { WebView } from 'react-native-webview';
+import { json } from 'express';
 
 
 // function AppRouter(service:string, data:JSON) {
@@ -127,15 +128,17 @@ export default class MyApps extends Component<{}, any> {
 
     public sendCallBack(service:string, data:any) {
         console.log("J'ENVOI DONC AU TRUC ")
-        console.log(data)
+        console.log(`http://${mobileIP}:8080/oauth/callback/${service}?${data}`)
         console.log(service)
-        return fetch('http://' + mobileIP + ':8080/oauth/callback/' + service, {
+        return fetch(`http://${mobileIP}:8080/oauth/callback/${service}?${data}` , {
             method: 'POST',
             headers: {
                 Accept: 'application/json',
                 'Content-Type': 'application/json'
             },
-            body: data
+            body: JSON.stringify({
+              token:userToken
+            })
             })
             .then((response) => response.json()).then((json) => {
             console.log("C4EST GOOD")
@@ -163,11 +166,7 @@ export default class MyApps extends Component<{}, any> {
                 console.log("QUERY IS")
                 console.log(good_params)
                 this.setState({query:good_params})
-                let json = JSON.stringify({
-                    data:good_params,
-                    token: userToken
-                })
-                this.sendCallBack(service, json).then(() => {
+                this.sendCallBack(service, good_params).then(() => {
                     console.log("SEND DATA TO URL DONE")
                 })
             } else if (Platform.OS === "android") {
@@ -229,11 +228,7 @@ export default class MyApps extends Component<{}, any> {
     }
     console.log("CE QUE J4ENVOI")
     console.log(params)
-    let json = JSON.stringify({
-        data: params[1],
-        token: userToken
-    })
-    this.sendCallBack(params[0], json).then(() => {
+    this.sendCallBack(params[0], params[1]).then(() => {
         console.log("SEND DATA TO URL DONE")
     })
   }
