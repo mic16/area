@@ -15,6 +15,8 @@ export default class ServiceRoute extends React.Component {
     webview = null;
 
     render() {
+      if (this.webview === null)
+        console.log(`L'URL DE LA REDIR EST = ${this.props.route.params.data.result}`)
       return (
         <WebView
           ref={(ref:any) => (this.webview = ref)}

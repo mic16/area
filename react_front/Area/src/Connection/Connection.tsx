@@ -190,6 +190,9 @@ export default class MyApps extends Component<{}, any> {
         })
             .catch((error) => {
             console.log("C4EST PAS GOOD")
+            console.log(JSON.stringify({
+              token:userToken
+            }))
             console.error(error)
             })
         }
@@ -235,7 +238,7 @@ export default class MyApps extends Component<{}, any> {
     console.log("CE QUE J4ENVOI")
     console.log(params)
     this.sendCallBack(params[0], params[1]).then(() => {
-        console.log("SEND DATA TO URL DONE")
+        console.log("SEND DATA TO URL FINISH")
     })
   }
 
