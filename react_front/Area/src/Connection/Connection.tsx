@@ -37,8 +37,8 @@ export default class Connection extends Component<{}, any> {
       connectMap: new Map(),
       urlRed: "",
       set: true,
-      already: false,
-      service: ""
+      service: "",
+      not_finished: true
     }
   }
 
@@ -81,8 +81,10 @@ export default class Connection extends Component<{}, any> {
           .then((response) => response.json()).then((json) => {
             console.log(json)
             if (json.result != undefined) {
-                if (Platform.OS === "web")
+                if (Platform.OS === "web") {
+                  this.setState({not_finished:false})
                   window.location.replace(json.result)
+                }
             } else {
                 Toast.show({
                     text: json.error,
@@ -197,11 +199,10 @@ export default class Connection extends Component<{}, any> {
                 if (params.length !== 3) {
                     return
                 }
-                let good_params = params[1] + window.location.search
                 console.log("QUERY IS")
-                console.log(good_params)
-                this.setState({query:good_params})
-                this.sendCallBack(service, good_params).then(() => {
+                console.log(window.location.search)
+                this.setState({query:window.location.search})
+                this.sendCallBack(params[1], window.location.search).then(() => {
                     console.log("SEND DATA TO URL DONE")
                 })
                 this.setState({set:true})
@@ -212,6 +213,22 @@ export default class Connection extends Component<{}, any> {
             }
         })
     }
+
+  public finishOauth() {
+    let params = window.location.pathname.match('^https?:\/\/[^:]+:[0-9]+\/oauth\/([^\/#?]+)[\/#?](.+)$')
+    if (params === null)
+      return
+    if (params.length !== 3) {
+        return
+    }
+    console.log("QUERY IS")
+    console.log(window.location.search)
+    this.setState({query:window.location.search})
+    this.sendCallBack(params[1], window.location.search).then(() => {
+        console.log("SEND DATA TO URL DONE")
+    })
+    this.setState({set:true})
+  }
 
 
   public sendToBack(data:string) {
@@ -234,6 +251,10 @@ export default class Connection extends Component<{}, any> {
   }
 
   render() {
+    if (window.location.pathname.includes("/oauth/") && this.state.not_finished) {
+      this.setState({not_finished:false})
+      this.finishOauth()
+    }
       if (this.props.route.params !== undefined) {
         console.log(`LES SERVICE SONT -${this.props.route.params.service}- et -${this.state.service}-`)
         console.log(`ET LES PARAMETRES SONT -${this.state.set}- et -${this.props.route.params.data}-`)

@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import { ImageBackground, Platform, View, StyleSheet} from "react-native";
-import { Footer, FooterTab, Text, Button, Container, Header, Content, Form, Item, Input, Label, Title, Icon, Toast } from 'native-base';
+import { Footer, FooterTab, Text, Button, Container, Header, Content, Form, Item, Input, Label, Title, Icon, Toast, Left, Body, Right } from 'native-base';
 // import * as Font from 'expo-font';
 // import { Ionicons } from '@expo/vector-icons';
 import { Ionicons } from "react-icons/io"
@@ -24,6 +24,7 @@ export default class MyArea extends Component {
   }
 
   public logout() {
+    console.log("Je vais me logout")
     return fetch('http://' + mobileIP + ':8080/logout', {
           method: 'POST',
           headers: {
@@ -197,6 +198,9 @@ export default class MyArea extends Component {
                     }}>
                       My Areas
                     </Text>
+                    <Button transparent onPress={() => this.state.navigation.navigate("Connection")}>
+                      <Icon name="globe-outline" />
+                    </Button>
                     <View>
                       {
                         this.state.displayAllAreas
@@ -212,18 +216,26 @@ export default class MyArea extends Component {
         return (
             <Container style= {{ position: "relative"}}>
             <Header >
-                <Button iconLeft transparent style={{ position:"absolute", paddingRight:320 }} onPress={() => this.logout()}>
+                <Button transparent style={{ width:85, marginLeft:-10 }} onPress={() => this.logout()}>
                   <Icon name="log-out-outline" />
                 </Button>
-              <Title style={{  marginRight:0, color: "white", fontSize:22, alignSelf:"center" }} >My Area Page</Title>
-              <Button iconRight transparent style={{ position:"absolute", paddingLeft:320 }} onPress={() => this.state.navigation.navigate("Connection")}>
+              <Body>
+              <Title style={{ color: "white", fontSize:22, alignSelf:"center" }} >My Area Page</Title>
+              </Body>
+              <Button transparent onPress={() => this.state.navigation.navigate("Connection")}>
                   <Icon name="globe-outline" />
                 </Button>
             </Header>
             <Content style= {{ position: "relative" }}>
               <View>
                 {
-                  this.state.displayAllAreas
+                  this.state.displayAllAreas.length !== 0?this.state.displayAllAreas:
+                  <View style={{ alignItems:"center", alignSelf:'center', marginTop:50 }}>
+                    <Text style={{ color:"gray" }} >No AREA created</Text>
+                    <Text style={{ marginTop:20, color:"gray", alignSelf:'center', alignItems:"center", flex:1 }}>Use the top left button to disconnect or the top</Text>
+                    <Text style={{ color:"gray", alignSelf:'center', alignItems:"center", flex:1 }}>right button to connect your account</Text>
+                    <Text style={{ color:"gray", alignSelf:'center', alignItems:"center", flex:1 }}>to service accounts</Text>
+                  </View>
                 }
               </View>
             </Content>
