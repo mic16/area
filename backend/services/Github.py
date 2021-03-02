@@ -23,13 +23,13 @@ class Github():
                 return
             for star in stars:
 
-                if (fields.getString('match') != '' and not fields.getString('match') in area.ret(star['name']) and not area.ret(star['description'])):
+                if (fields.getString('match') != '' and not fields.getString('match', '') in star.get('name', '') and not fields.getString('match', '') in star.get('description', '')):
                     continue
 
                 area.newReaction()
-                area.ret(star["name"])
-                area.ret(star["description"])
-                area.ret(star["starNb"])
+                area.ret(star.get('name'))
+                area.ret(star.get('description'))
+                area.ret(star.get('starNb'))
 
         return trig.setAction(func)
 
@@ -45,11 +45,11 @@ class Github():
                 return
             for follower in followers:
 
-                if (fields.getString('match') != '' and not fields.getString('match') in area.ret(follower['bio'])):
+                if (fields.getString('match', '') != '' and not fields.getString('match', '') in follower.get('bio', '')):
                     continue
                 
                 area.newReaction()
-                area.ret(follower["name"])
-                area.ret(follower["bio"])
-                area.ret(Imgs([follower["avatarUrl"]]))
+                area.ret(follower.get('name'))
+                area.ret(follower.get('bio'))
+                area.ret(Imgs([follower.get('avatarUrl')]))
         return trig.setAction(func)

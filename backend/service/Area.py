@@ -115,14 +115,14 @@ class Area():
     def get(self, type):
         return self.returns.get(type)
     
-    def ret(self, *values):
+    def ret(self, *values) -> None:
         for value in values:
             ttype = type(value)
             array = self.returns.get(ttype) or []
             array.append(value)
             self.returns[ttype] = array
 
-    def setValue(self, key, value):
+    def setValue(self, key, value) -> None:
         self.state[key] = value
     
     def getValue(self, key):
@@ -138,7 +138,7 @@ class Area():
     def getUUID(self):
         return self.uuid        
 
-    def getUser(self):
+    def getUser(self) -> User:
         return self.user
 
     def trigger(self):

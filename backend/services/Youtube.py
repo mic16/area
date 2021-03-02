@@ -5,6 +5,7 @@ from Field import Field, FTYPE
 from Trigger import Trigger
 from Imgs import Imgs
 
+import _
 import youtubeApi
 
 @Service(oauth='Google')
@@ -23,9 +24,9 @@ class Youtube():
                 return
             for subscriber in newSubscibers:
                 area.newReaction()
-                area.ret(subscriber['subscriberSnippet']['title'])
-                area.ret(subscriber['subscriberSnippet']['description'])
-                area.ret(Imgs([subscriber['subscriberSnippet']['thumbnails']['high']['url']]))
+                area.ret(_.get(subscriber, 'subscriberSnippet.title'))
+                area.ret(_.get(subscriber, 'subscriberSnippet.description'))
+                area.ret(Imgs([_.get(subscriber, 'subscriberSnippet.thumbnails.high.url')]))
         return trig.setAction(func)
 
     @Action('When the connected user like a video')
@@ -39,15 +40,15 @@ class Youtube():
                 return
             for like in newLike:
                 area.newReaction()
-                area.ret(like['snippet']['title'])
-                area.ret(like['snippet']['title']['description'])
-                area.ret(Imgs([like['snippet']['standard']['url']]))
+                area.ret(_.get(like, 'snippet.title'))
+                area.ret(_.get(like, 'snippet.title.description'))
+                area.ret(Imgs([_.get(like, 'snippet.standard.url')]))
         return trig.setAction(func)
 
     @Reaction(
         'Send a comment on a vidéo',
         str,
     )
-    @Field('videoId', 'string', 'videoId of the youtube video')
+    @Field('videoId', FTYPE.STRING, 'videoId of the youtube video')
     def sendCommentOnVideo(self, area, fields):
-        youtubeApi.sendNewComment(area.getUser(), fields.get(str)['userId'], area.get(str)[0])
+        youtubeApi.sendNewComment(area.getUser(), fields.getString('userId'), area.get(str)[0])
