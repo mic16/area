@@ -117,7 +117,7 @@ def deleteArea():
             if user := data.constructUser(mail):
                 if uuid := json.get('uuid'):
                     if data.deleteArea(mail, uuid):
-                        areaManager.remove(area.getUUID())
+                        areaManager.remove(uuid)
                         return {'result': "Area '%s' removed" % uuid}
                     return {'error': "Failed to delete area '%s' " % uuid}
                 return {'error': 'Missing UUID'}
