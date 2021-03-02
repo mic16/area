@@ -76,8 +76,7 @@ def newTweet(user, text):
     auth=tweepy.OAuthHandler(consumerKey,consumerSecretKey)
     auth.set_access_token(user.get("twitter.token"), user.get("twitter.token_secret"))
     api=tweepy.API(auth)
-    tweet=input(text)
-    api.update_status(tweet)
+    api.update_status(status=text)
 
 def sendDirectMessage(user, text, userId):
     auth = tweepy.OAuthHandler(consumerKey, consumerSecretKey)     
