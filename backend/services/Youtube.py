@@ -24,9 +24,9 @@ class Youtube():
                 return
             for subscriber in newSubscibers:
                 area.newReaction()
-                area.ret(_.get(subscriber, 'subscriberSnippet.title'))
-                area.ret(_.get(subscriber, 'subscriberSnippet.description'))
-                area.ret(Imgs([_.get(subscriber, 'subscriberSnippet.thumbnails.high.url')]))
+                area.ret(_.get(subscriber, 'title'))
+                area.ret(_.get(subscriber, 'description'))
+                area.ret(Imgs([_.get(subscriber, 'url')]))
         return trig.setAction(func)
 
     @Action('When the connected user likes a video')
@@ -40,9 +40,9 @@ class Youtube():
                 return
             for like in newLike:
                 area.newReaction()
-                area.ret(_.get(like, 'snippet.title'))
-                area.ret(_.get(like, 'snippet.title.description'))
-                area.ret(Imgs([_.get(like, 'snippet.standard.url')]))
+                area.ret(_.get(like, 'title'))
+                area.ret(_.get(like, 'description'))
+                area.ret(Imgs([_.get(like, 'url')]))
         return trig.setAction(func)
 
     @Reaction(
