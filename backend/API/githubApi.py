@@ -9,6 +9,7 @@ from github import Github
 from utils import diffFirstSecond
 import json
 import OAuthManager
+import qsparser
 
 import sys
 
@@ -31,16 +32,35 @@ def oauthAuthorizedGithub():
         return {"error": "Missing JSON body"}
     if (req_data.get("token") == None):
         return ({"error": "no token"})
-    if (TokenManager.getTokenUser(req_data.get("token")) == None):
+    if not (user := TokenManager.getTokenUser(req_data.get("token"))):
         return ({"error": "bad token"})
     parser = callbackParser()
     args = parser.parse_args()
+<<<<<<< HEAD
+=======
     res = requests.post(' https://github.com/login/oauth/access_token?code=' + args['code'] + '&client_id=' + consumerKey + '&client_secret=' + consumerSecretKey)
     res_split = res.text.split('&')
     oauth_token = res_split[0].split('=')[1]
     data.updateUser(TokenManager.getTokenUser(req_data.get("token")), {"github": {"token": oauth_token}})
+>>>>>>> 87581d750888f12e31c3891185d6a1ad65d8636e
 
-    return {"message": "connected as " + oauth_token}
+    if not args.get('code'):
+        return {"error": "Missing 'code' in query string"}
+
+    try:
+        res = requests.post('https://github.com/login/oauth/access_token?code=%s&client_id=%s&client_secret=%s' % (args['code'], consumerKey, consumerSecretKey))
+        options = qsparser.parse(res.text)
+
+        if not options.get('access_token'):
+            return {"error": "Missing 'access_token' in Github response"}
+
+        oauth_token = res_split[0].split('=')[1]
+        
+        data.updateUser(TokenManager.getTokenUser(req_data.get("token")), {"github": {"token": oauth_token}})
+    except Exception as err:
+        return {"error": err}
+
+    return {"result": "Github account linked to user '%s'" % (user.getMail())}
 
 def githubConnected(user):
     if user.get("github") != None and user.get("github.token") != None:

@@ -29,13 +29,23 @@ def oauthAuthorizedImgur():
         return {"error": "Missing JSON body"}
     if (req_data.get("token") == None):
         return ({"error": "no token"})
-    if (tokenManager.getTokenUser(req_data.get("token")) == None):
+    if not (user := tokenManager.getTokenUser(req_data.get("token"))):
         return ({"error": "bad token"})
 
     parser = callbackParser()
     args = parser.parse_args()
+
+    if not args.get('access_token'):
+        return {"error": "Missing 'access_token' in query string"}
+
+    if not args.get('refresh_token'):
+        return {"error": "Missing 'refresh_token' in query string"}
+
+    if not args.get('username'):
+        return {"error": "Missing 'username' in query string"}
+
     data.updateUser(tokenManager.getTokenUser(req_data.get("token")), {"imgur": {"token": args['access_token'], "refresh_token": args['refresh_token'], "username":args['account_username']}})
-    return {"message": "connected as " + args['account_username']}
+    return {"result": "Imgur account linked to user '%s'" % (user.getMail())}
 
 def imgurConnected(user):
     if user.get("imgur") != None and user.get("imgur.token") != None and user.get("imgur.refresh_token") != None and user.get("imgur.username") != None:

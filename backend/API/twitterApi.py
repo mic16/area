@@ -10,6 +10,7 @@ import json
 import tweepy
 from TokenManager import TokenManager
 import OAuthManager
+import qsparser
 
 consumerKey = "DTGYoaM8PlsMw6Zf42dhor8Rj"
 consumerSecretKey = "4JyPpImRxcoxSi3acwVkMZAK1tgghpKpPsrFddETgXYNhKDSt9"
@@ -36,20 +37,32 @@ def oauthAuthorizedTwitter():
         return {"error": "Missing JSON body"}
     if (req_data.get("token") == None):
         return ({"error": "no token"})
-    if (tokenManager.getTokenUser(req_data.get("token")) == None):
+    if not (user := tokenManager.getTokenUser(req_data.get("token"))):
         return ({"error": "bad token"})
     parser = callbackParser()
     args = parser.parse_args()
-    res = requests.post('https://api.twitter.com/oauth/access_token?oauth_token=' + args['oauth_token'] + '&oauth_verifier=' + args['oauth_verifier'])    
-    res_split = res.text.split('&')
-    oauth_token = res_split[0].split('=')[1]
-    oauth_secret = res_split[1].split('=')[1]
-    userid = res_split[2].split('=')[1]
-    username = res_split[3].split('=')[1]
+
+    if not args.get('oauth_token'):
+        return {"error": "Missing 'oauth_token' in query string"}
+    if not args.get('oauth_verifier'):
+        return {"error": "Missing 'oauth_verifier' in query string"}
     
-    data.updateUser(tokenManager.getTokenUser(req_data.get("token")), {"twitter": None})
-    data.updateUser(tokenManager.getTokenUser(req_data.get("token")), {"twitter": {"token": oauth_token, "token_secret": oauth_secret}})
-    return {"message": "connected as " + username}
+    try:
+        res = requests.post('https://api.twitter.com/oauth/access_token?oauth_token=%s&oauth_verifier=%s' % (args['oauth_token'], args['oauth_verifier']))
+
+        options = qsparser.parse(res.text)
+        
+        if not (oauth_token := options.get('oauth_token')):
+            return {"error": "Missing 'oauth_token' in twitter response"}
+
+        if not (oauth_secret := options.get('oauth_token_secret')):
+            return {"error": "Missing 'oauth_token_secret' in twitter response"}
+        
+        data.updateUser(user, {"twitter": {"token": oauth_token, "token_secret": oauth_secret}})
+    except Exception as err:
+        return {"error": err}
+
+    return {"result": "Twitter account linked to user '%s'" % (user.getMail())}
 
 def twitterConnected(user):
     if user.get("twitter") != None and user.get("twitter.token") != None and user.get("twitter.token_secret") != None:
