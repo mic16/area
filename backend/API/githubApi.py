@@ -50,7 +50,7 @@ def oauthAuthorizedGithub():
 
         oauth_token = res_split[0].split('=')[1]
         
-        data.updateUser(TokenManager.getTokenUser(req_data.get("token")), {"github": {"token": oauth_token}})
+        data.updateUser(user, {"github": {"token": oauth_token}})
     except Exception as err:
         return {"error": err}
 
