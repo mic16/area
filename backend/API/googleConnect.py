@@ -14,12 +14,6 @@ SCOPES = ['https://www.googleapis.com/auth/youtube.force-ssl',
           'https://www.googleapis.com/auth/gmail.compose']
 
 def loginGoogle():
-    tokenManager = TokenManager()
-    req_data = flask.request.get_json()
-    if (req_data.get("token") == None):
-        return ({"error": "no token"})
-    if (tokenManager.getTokenUser(req_data.get("token")) == None):
-        return ({"error": "bad token"})
     flow = google_auth_oauthlib.flow.Flow.from_client_secrets_file(
         CLIENT_SECRETS_FILE, scopes=SCOPES)
     flow.redirect_uri = 'http://localhost:8081/oauth/Google'
@@ -28,15 +22,16 @@ def loginGoogle():
         access_type='offline',
         include_granted_scopes='true')
     flask.session['state'] = state
-    return flask.redirect(authorization_url)
+    return authorization_url
 
-@app.route('/oauthAuthorizedGoogle')
 def oauthAuthorizedGoogle():
     tokenManager = TokenManager()
     req_data = flask.request.get_json()
+    if not req_data:
+        return {"error": "Missing JSON body"}
     if (req_data.get("token") == None):
-        return ({"error": "no token"})
-    if (tokenManager.getTokenUser(req_data.get("token")) == None):
+        return ({"error": "Missing token in body"})
+    if not (user := tokenManager.getTokenUser(req_data.get("token"))):
         return ({"error": "bad token"})
     state = flask.session['state']
 
@@ -45,15 +40,16 @@ def oauthAuthorizedGoogle():
     flow.redirect_uri = flask.url_for('oauthAuthorizedGoogle', _external=True)
 
     authorization_response = flask.request.url
-    flow.fetch_token(authorization_response=authorization_response)
+    try:
+        flow.fetch_token(authorization_response=authorization_response)
 
-    credentials = flow.credentials
-    
-    data.updateUser(TokenManager.getTokenUser(req_data.get("token")), {"gmail": None})
-    data.updateUser(TokenManager.getTokenUser(req_data.get("token")), {"youtube": None})
-    data.updateUser(tokenManager.getTokenUser(req_data.get("token")), {"Google": {"credential":  credentials_to_dict(credentials)}})
+        credentials = flow.credentials
 
-    return {"message": "user connected"}
+        data.updateUser(user, {"Google": {"credential":  credentials_to_dict(credentials)}})
+    except Exception as err:
+        return {"error": err}
+
+    return {"result": "Google account linked to user '%s'" % (user)}
 
 def googleConnected(user):
     if user.get("Google") != None and user.get("Google.credential") != None:

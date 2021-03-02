@@ -18,7 +18,7 @@ class Youtube():
         trig = Trigger(types=[str, Imgs])
 
         def func(area, fields):
-            newSubscibers = youtubeApi.getLastSubscriber(area.getUser())
+            newSubscibers = youtubeApi.getLastSubscriber(area.getUser(), area)
             if (newSubscibers == None):
                 return
             for subscriber in newSubscibers:
@@ -34,7 +34,7 @@ class Youtube():
         trig = Trigger(types=[str, Imgs])
 
         def func(area, fields):
-            newLike = youtubeApi.getLastLikedVideo(area.getUser())
+            newLike = youtubeApi.getLastLikedVideo(area.getUser(), area)
             if (newLike == None):
                 return
             for like in newLike:

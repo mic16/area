@@ -6,7 +6,7 @@ class User:
         self.mail = mail
 
     def getMail(self):
-        return self.get('mail')
+        return self.mail
 
     def get(self, field):
         return _.get(self.redis.jsonget('user.%s' % self.mail, '.'), field)

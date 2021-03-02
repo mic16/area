@@ -12,14 +12,8 @@ client_id = '0beee62c1273552'
 client_secret = '1d2a939c474367667bdd4de55ede8b67b633694a'
 
 def loginImgur():
-    tokenManager = TokenManager()
-    req_data = request.get_json()
-    if (req_data.get("token") == None):
-        return ({"error": "no token"})
-    if (tokenManager.getTokenUser(req_data.get("token")) == None):
-        return ({"error": "bad token"})
     client = ImgurClient(client_id, client_secret)
-    return redirect(client.get_auth_url('token'))
+    return client.get_auth_url('token')
 
 def callbackParser():
     parser = reqparse.RequestParser()
@@ -31,16 +25,27 @@ def callbackParser():
 def oauthAuthorizedImgur():
     tokenManager = TokenManager()
     req_data = request.get_json()
+    if not req_data:
+        return {"error": "Missing JSON body"}
     if (req_data.get("token") == None):
         return ({"error": "no token"})
-    if (tokenManager.getTokenUser(req_data.get("token")) == None):
+    if not (user := tokenManager.getTokenUser(req_data.get("token"))):
         return ({"error": "bad token"})
 
     parser = callbackParser()
     args = parser.parse_args()
-    data.updateUser(tokenManager.getTokenUser(req_data.get("token")), {"imgur": None})
-    data.updateUser(tokenManager.getTokenUser(req_data.get("token")), {"imgur": {"token": args['access_token'], "refresh_token": args['refresh_token'], "username":args['account_username']}})
-    return {"message": "connected as " + args['account_username']}
+
+    if not args.get('access_token'):
+        return {"error": "Missing 'access_token' in query string"}
+
+    if not args.get('refresh_token'):
+        return {"error": "Missing 'refresh_token' in query string"}
+
+    if not args.get('username'):
+        return {"error": "Missing 'username' in query string"}
+
+    data.updateUser(user, {"imgur": {"token": args['access_token'], "refresh_token": args['refresh_token'], "username":args['account_username']}})
+    return {"result": "Imgur account linked to user '%s'" % (user)}
 
 def imgurConnected(user):
     if user.get("imgur") != None and user.get("imgur.token") != None and user.get("imgur.refresh_token") != None and user.get("imgur.username") != None:
@@ -50,7 +55,7 @@ def imgurConnected(user):
 OAuthManager.addManager('Imgur', loginImgur, oauthAuthorizedImgur, imgurConnected)
 
 
-def getLastFav(user):
+def getLastFav(user, area):
     client = ImgurClient(client_id, client_secret, user.get("imgur.token"), user.get("imgur.refresh_token"))
 
     albums = client.get_account_favorites(user.get("imgur.username"))
@@ -58,24 +63,24 @@ def getLastFav(user):
     for album in albums:
         lastAlbumsTab.append(json.dumps(album.__dict__))
 
-    if user.get("imgur") == None:
-        user.set("imgur", json.dumps({'lastFav':lastAlbumsTab}))
+    if area.getValue("imgur") == None:
+        area.setValue("imgur", json.dumps({'lastFav':lastAlbumsTab}))
         return (None)
 
-    oldImgur = user.get("imgur")
+    oldImgur = area.getValue("imgur")
     if oldImgur.get('lastFav') == None:
         oldImgur['lastFav'] = lastAlbumsTab
-        user.set("imgur", oldImgur)
+        area.setValue("imgur", oldImgur)
         return (None)
     oldAlbums = oldImgur['lastFav']
     diff = diffFirstSecond(lastAlbumsTab, oldAlbums)
     if (len(diff) == 0):
         oldImgur['lastFav'] = lastAlbumsTab
-        user.set("imgur", oldImgur)
+        area.setValue("imgur", oldImgur)
         return (None)
     else:
         oldImgur['lastFav'] = lastAlbumsTab
-        user.set("imgur", oldImgur)
+        area.setValue("imgur", oldImgur)
         finalRes = []
         for a in diff:
             if json.loads(a)['is_album']:
@@ -88,30 +93,30 @@ def getLastFav(user):
                 finalRes.append({'album':json.loads(a), 'imgs':[json.loads(a)['link']]})
         return (finalRes)
 
-def getLastPost(user):
+def getLastPost(user, area):
     client = ImgurClient(client_id, client_secret, user.get("imgur.token"), user.get("imgur.refresh_token"))
 
     albums = client.get_account_albums(user.get("imgur.username"))
     lastAlbumsTab = []
     for album in albums:
         lastAlbumsTab.append(json.dumps(album.__dict__))
-    if user.get("imgur") == None:
-        user.set("imgur", json.dumps({'lastAlbums':lastAlbumsTab}))
+    if area.getValue("imgur") == None:
+        area.setValue("imgur", json.dumps({'lastAlbums':lastAlbumsTab}))
         return (None)
-    oldImgur = user.get("imgur")
+    oldImgur = area.getValue("imgur")
     if oldImgur.get('lastAlbums') == None:
         oldImgur['lastAlbums'] = lastAlbumsTab
-        user.set("imgur", oldImgur)
+        area.setValue("imgur", oldImgur)
         return (None)
     oldAlbums = oldImgur['lastAlbums']
     diff = diffFirstSecond(lastAlbumsTab, oldAlbums)
     if (len(diff) == 0):
         oldImgur['lastAlbums'] = lastAlbumsTab
-        user.set("imgur", oldImgur)
+        area.setValue("imgur", oldImgur)
         return (None)
     else:
         oldImgur['lastAlbums'] = lastAlbumsTab
-        user.set("imgur", oldImgur)
+        area.setValue("imgur", oldImgur)
         finalRes = []
         for a in diff:
             imgs = client.get_album_images(json.loads(a)['id'])

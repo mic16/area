@@ -21,7 +21,7 @@ class Twitter():
             trig.addType(Imgs)
 
         def func(area, fields):
-            favs = twitterApi.getLastLike(area.getUser())
+            favs = twitterApi.getLastLike(area.getUser(), area)
             if (favs == None):
                 return
             for fav in favs:
@@ -48,7 +48,7 @@ class Twitter():
             trig.addType(Imgs)
 
         def func(area, fields):
-            tweets = twitterApi.getLastTweetUser(area.getUser())
+            tweets = twitterApi.getLastTweetUser(area.getUser(), area)
             if (tweets == None):
                 return
             for tweet in tweets:

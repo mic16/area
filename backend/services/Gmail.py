@@ -14,7 +14,7 @@ class Gmail():
     def onMail(self, fields):
         trig = Trigger(types=[str])
         def func(area, fields):
-            mails = gmailApi.getLastMail(area.getUser())
+            mails = gmailApi.getLastMail(area.getUser(), area)
             if (mails == None):
                 return
             for mail in mails:
