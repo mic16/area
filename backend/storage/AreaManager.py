@@ -1,7 +1,8 @@
 import threading
 import asyncio
 from concurrent.futures import ThreadPoolExecutor
-import Area
+from singleton import singleton
+from Area import Area
 
 @singleton()
 class AreaManager(threading.Thread):
@@ -10,7 +11,6 @@ class AreaManager(threading.Thread):
         self.setDaemon(True)
         self.areas = []
         self.ilock = threading.Lock()
-        self.eventLoop = asyncio.new_event_loop()
         print("Area Manager started")
     
     def append(self, area):
