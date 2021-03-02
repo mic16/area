@@ -21,6 +21,10 @@ class DataBase:
                         area = Area(areaJson, user, areaJson.get('uuid'))
                         if not area.isErrored():
                             areaManager.append(area)
+        try:
+            areaManager.start()
+        except:
+            pass
     
     def getRedis(self):
         return (self.redis)

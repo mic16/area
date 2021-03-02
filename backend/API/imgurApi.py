@@ -83,14 +83,14 @@ def getLastFav(user, area):
         area.setValue("imgur", oldImgur)
         finalRes = []
         for a in diff:
-            if json.loads(a)['is_album']:
-                imgs = client.get_album_images(json.loads(a)['id'])
+            if a.get('is_album'):
+                imgs = client.get_album_images(a.get('id'))
                 imgsListLink = []
                 for i in imgs:
                     imgsListLink.append(i.link)
-                finalRes.append({'album':json.loads(a), 'imgs':imgsListLink})
+                finalRes.append({'album':a, 'imgs':imgsListLink})
             else:
-                finalRes.append({'album':json.loads(a), 'imgs':[json.loads(a)['link']]})
+                finalRes.append({'album':a, 'imgs':[a.get('link')]})
         return (finalRes)
 
 def getLastPost(user, area):
@@ -119,11 +119,11 @@ def getLastPost(user, area):
         area.setValue("imgur", oldImgur)
         finalRes = []
         for a in diff:
-            imgs = client.get_album_images(json.loads(a)['id'])
+            imgs = client.get_album_images(a.get('id'))
             imgsListLink = []
             for i in imgs:
                 imgsListLink.append(i.link)
-            finalRes.append({'album':json.loads(a), 'imgs':imgsListLink})
+            finalRes.append({'album':a, 'imgs':imgsListLink})
         return (finalRes)
 
 def CreateAlbumAndUploadImages(client, albumName, albumDescription, images):
