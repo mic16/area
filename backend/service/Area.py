@@ -155,15 +155,15 @@ class Area():
                             self.returns = returnState
                             self.reaction(self.reactionInstance, self, self.reactionConfig)
                     except Exception as err:
-                        print('============ ERROR ============')
+                        print('============ REACTION ERROR ============')
                         print(self.debug)
-                        print('-------------------------------')
+                        print('----------------------------------------')
                         print(err)
-                        print('===============================')
+                        print('========================================')
             except Exception as err:
-                print('============ ERROR ============')
+                print('============ ACTION ERROR ============')
                 print(self.debug)
-                print('-------------------------------')
+                print('--------------------------------------')
                 print(err)
-                print('===============================')
+                print('======================================')
             self.lastTrigger = time.time()
