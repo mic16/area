@@ -427,9 +427,9 @@ export default class CreateArea extends Component<{}, any> {
 
       tmpActionFieldList[key + 1] =
         <View key={key + 1} style={{marginTop: 10}}>
-          <View>
+          <View style={{display: 'flex', flexDirection: "row"}}>
             {this.state.actionField[key]}
-            <Text style={{fontSize: 12, marginTop: 10}}>
+            <Text style={{fontSize: 12, marginLeft: 20}}>
               {element.description}
             </Text>
           </View>
@@ -443,15 +443,15 @@ export default class CreateArea extends Component<{}, any> {
       this.setState({responseReactionField: tmpResponseReactionField});
       let tmpField = this.state.reactionField;
 
-      tmpField[key] = <CheckBox checked={this.state.responseReactionField[key]} onPress={() => this.updateFieldBoolean(key, type, element)}/>
+      tmpField[key] = <CheckBox color='black' checked={this.state.responseReactionField[key]} onPress={() => this.updateFieldBoolean(key, type, element)}/>
       this.setState({reactionField: tmpField});
       let tmpReactionFieldList: Array<any> = this.state.reactionFieldList;
 
       tmpReactionFieldList[key + 1] =
         <View key={key + 1} style={{marginTop: 10}}>
-          <View>
+          <View style={{display: 'flex', flexDirection: 'row'}}>
             {this.state.actionField[key]}
-            <Text style={{fontSize: 12, marginTop: 10}}>
+            <Text style={{fontSize: 12, marginLeft: 20}}>
               {element.description}
             </Text>
           </View>
@@ -485,7 +485,7 @@ export default class CreateArea extends Component<{}, any> {
         this.setState({responseActionField: tmpResponseActionField});
 
         tmpField.push(
-          <CheckBox style={{marginTop: '10px'}} color='black' checked={this.state.responseActionField[key]} onPress={() => this.updateFieldBoolean(key, type, element)}/>
+          <CheckBox color='black' checked={this.state.responseActionField[key]} onPress={() => this.updateFieldBoolean(key, type, element)}/>
         )
         this.setState({actionField: tmpField});
       } else if (type === 'reaction') {
@@ -496,7 +496,7 @@ export default class CreateArea extends Component<{}, any> {
         this.setState({responseReactionField: tmpResponseReactionField});
 
         tmpField.push(
-          <CheckBox style={{marginTop: '10px'}} color='black' checked={this.state.responseReactionField[key]} onPress={() => this.updateFieldBoolean(key, type, element)}/>
+          <CheckBox color='black' checked={this.state.responseReactionField[key]} onPress={() => this.updateFieldBoolean(key, type, element)}/>
         )
         this.setState({reactionField: tmpField});
       }
@@ -574,15 +574,16 @@ export default class CreateArea extends Component<{}, any> {
 
       this.state.actionNameList[value - 1].fields.forEach((element: any, key: number) => {
         this.generateField(element, key, 'action');
+
         tmpActionFieldList.push(
-          <View key={key + 1}>
-            {element.style === 'boolean' ?
-              <View style={{flexDirection: "row"}}>
-                {this.state.actionField[key]}
-                <Text style={{fontSize: 12, marginTop: '10px'}}>
-                  {element.description}
-                </Text>
-              </View>
+          <View key={key + 1} style={{marginTop: 10}}>
+            {element.type === 'boolean' ?
+            <View style={{display: 'flex', flexDirection: 'row'}}>
+              {this.state.actionField[key]}
+              <Text style={{fontSize: 12, marginLeft: 20}}>
+                {element.description}
+              </Text>
+            </View>
             :
               <View>
                 {this.state.actionField[key]}
@@ -616,9 +617,9 @@ export default class CreateArea extends Component<{}, any> {
       tmpReactionFieldList.push(
         <View key={key + 1}>
           {element.style === 'boolean' ?
-            <View style={{flexDirection: "row"}}>
+            <View style={{display: 'flex', flexDirection: "row"}}>
               {this.state.reactionField[key]}
-              <Text style={{fontSize: 12, marginTop: '10px'}}>
+              <Text style={{fontSize: 12}}>
                 {element.description}
               </Text>
             </View>
