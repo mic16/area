@@ -1,6 +1,7 @@
 import threading
 import asyncio
 from concurrent.futures import ThreadPoolExecutor
+from singleton import singleton
 from Area import Area
 
 @singleton()
