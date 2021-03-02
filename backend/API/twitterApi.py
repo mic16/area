@@ -62,7 +62,7 @@ def oauthAuthorizedTwitter():
     except Exception as err:
         return {"error": err}
 
-    return {"result": "Twitter account linked to user '%s'" % (user.getMail())}
+    return {"result": "Twitter account linked to user '%s'" % (user)}
 
 def twitterConnected(user):
     if user.get("twitter") != None and user.get("twitter.token") != None and user.get("twitter.token_secret") != None:

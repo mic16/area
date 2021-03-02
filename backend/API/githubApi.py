@@ -36,13 +36,6 @@ def oauthAuthorizedGithub():
         return ({"error": "bad token"})
     parser = callbackParser()
     args = parser.parse_args()
-<<<<<<< HEAD
-=======
-    res = requests.post(' https://github.com/login/oauth/access_token?code=' + args['code'] + '&client_id=' + consumerKey + '&client_secret=' + consumerSecretKey)
-    res_split = res.text.split('&')
-    oauth_token = res_split[0].split('=')[1]
-    data.updateUser(TokenManager.getTokenUser(req_data.get("token")), {"github": {"token": oauth_token}})
->>>>>>> 87581d750888f12e31c3891185d6a1ad65d8636e
 
     if not args.get('code'):
         return {"error": "Missing 'code' in query string"}
@@ -60,7 +53,7 @@ def oauthAuthorizedGithub():
     except Exception as err:
         return {"error": err}
 
-    return {"result": "Github account linked to user '%s'" % (user.getMail())}
+    return {"result": "Github account linked to user '%s'" % (user)}
 
 def githubConnected(user):
     if user.get("github") != None and user.get("github.token") != None:

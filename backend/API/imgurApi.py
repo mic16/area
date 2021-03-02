@@ -45,7 +45,7 @@ def oauthAuthorizedImgur():
         return {"error": "Missing 'username' in query string"}
 
     data.updateUser(tokenManager.getTokenUser(req_data.get("token")), {"imgur": {"token": args['access_token'], "refresh_token": args['refresh_token'], "username":args['account_username']}})
-    return {"result": "Imgur account linked to user '%s'" % (user.getMail())}
+    return {"result": "Imgur account linked to user '%s'" % (user)}
 
 def imgurConnected(user):
     if user.get("imgur") != None and user.get("imgur.token") != None and user.get("imgur.refresh_token") != None and user.get("imgur.username") != None:
