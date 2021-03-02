@@ -1,10 +1,8 @@
 import threading
-from singleton import singleton
 import asyncio
+from concurrent.futures import ThreadPoolExecutor
+import Area
 
-
-async def _exec(area):
-    area.trigger()
 @singleton()
 class AreaManager(threading.Thread):
     def __init__(self):
@@ -28,12 +26,16 @@ class AreaManager(threading.Thread):
         self.ilock.release()
 
     def run(self):
-        while True:
-            asyncio.set_event_loop(self.eventLoop)
-            futures = []
-            self.ilock.acquire()
-            for area in self.areas:
-                futures.append(self.eventLoop.create_task(_exec(area)))
-            self.ilock.release()
-            self.eventLoop.run_until_complete(asyncio.gather(*futures))
+        with ThreadPoolExecutor(max_workers=16) as executor:
+            while True:
+                futures = []
+                self.ilock.acquire()
+                for area in self.areas:
+                    futures.append(executor.submit(Area.trigger, area))
+                self.ilock.release()
+                for task in futures:
+                    try:
+                        task.result(timeout=10)
+                    except:
+                        pass
 
