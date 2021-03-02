@@ -60,6 +60,15 @@ export default class MyArea extends Component {
   }
 
   public deleteArea = (key: number) => {
+    let otherTmp:Array<Object> = []
+    let i = 0
+    this.state.displayAllAreas.forEach((obj:Object) => {
+      if (key !== i) {
+        otherTmp.push(obj)
+      }
+      i = i + 1
+    })
+    this.setState({displayAllAreas:otherTmp})
     fetch('http://' + mobileIP + ':8080/area/delete', {
       method: 'POST',
       headers: {

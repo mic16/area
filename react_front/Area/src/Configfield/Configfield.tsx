@@ -160,18 +160,20 @@ export default class ConfigComponent extends Component<{}, any> {
   }
 
   render() {
-    if (this.props.route.params.data === undefined)
+    if (this.props.route.params.data === undefined) {
+      console.log("Les paramètres data sont undefined, voici la route: ")
       console.log(this.props.route)
-    this.createFields(this.props.route.params.data)
-    if (this.state.loading) {
+    }
+      if (this.state.loading) {
         console.log("JE SUIS DANS LA CONFIG")
         // console.log(this.props)
-         return (
+        return (
           <View>
             <Spinner color="blue" />
           </View>
          );
-       }
+        }
+        this.createFields(this.props.route.params.data)
 
         return (
             <Root>

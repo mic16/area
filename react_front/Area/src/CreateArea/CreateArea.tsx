@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import { any } from 'prop-types';
 import { ImageBackground, Platform, View, StyleSheet} from "react-native";
-import { Footer, FooterTab, Text, Button, Container, Header, Content, Form, Item, Input, Label, Title, Icon, Picker, Spinner, Toast, Drawer, ListItem, CheckBox } from 'native-base';
+import { Footer, FooterTab, Text, Button, Container, Header, Content, Form, Item, Input, Label, Title, Icon, Picker, Spinner, Toast, Drawer, ListItem, CheckBox, Root } from 'native-base';
 // import * as Font from 'expo-font';
 // import { Ionicons } from '@expo/vector-icons';
 import { Ionicons } from "react-icons/io"
@@ -145,6 +145,10 @@ export default class CreateArea extends Component<{}, any> {
         })
         .then((response) => response.json()).then((json) => {
           let mapAREA:Map<String, Array<Object>> = new Map(Object.entries(json.result))
+
+          console.log("Voici la liste/map des services que je peux use:")
+          console.log(json.result)
+
           this.setState({reactionReact:mapAREA})
         })
         .catch((error) => {
@@ -159,7 +163,10 @@ export default class CreateArea extends Component<{}, any> {
       let config:Object = new Object()
       this.getReaction(this.state.actionApp, action, config)
       .then((_) => {
+        console.log("Je vais print chaque obj dans l'array reactionReact")
       this.state.reactionReact.forEach((obj:any, name:string) => {
+        console.log(`L'Object de nom ${name} -> `)
+        console.log(obj)
         obj.forEach((objs:any) => {
           this.setState({action:objs})
           reactReaction.push(
@@ -200,16 +207,15 @@ export default class CreateArea extends Component<{}, any> {
             body: json
           })
           .then((response) => response.json()).then((json) => {
-            if (json.result != undefined) {
-            console.log("LE UUID DE L'AREA CREATED IS " + json.result)
-            } else if (json.error != undefined) {
-              console.log(json)
-              // Toast.show({
-              //   text: json.error,
-              //   buttonText: 'Ok'
-              // })
-            } else 
-              console.log(json)
+            if (json.result !== undefined) {
+            console.log(`Area Created with UUID {${json.result}}`)
+            } else if (json.error !== undefined) {
+              Toast.show({
+                text: json.error,
+                buttonText: 'Ok',
+                duration: 5
+              })
+            }
           })
           .catch((error) => {
             console.error(error)
@@ -223,6 +229,7 @@ export default class CreateArea extends Component<{}, any> {
       this.getAction(service)
       .then((_) => {
       this.state.actionReact.get("Action").forEach((obj:any) => {
+        console.log(`PickerAction foreach object = `)
         console.log(obj)
         mapAction.set(obj["name"], obj)
         reactAction.push(
@@ -251,9 +258,9 @@ export default class CreateArea extends Component<{}, any> {
       this.setState({rreact:reactReaction})
       this.setState({mapReaction:mapReaction})
 
-      console.log("LES DATA:::")
+      console.log(`Les data: `)
       console.log(mapReaction)
-      console.log("ET LE SELECTED IS")
+      console.log(`et la reaction selectionner `)
       console.log(this.state.selectedReaction)
     });
     }
@@ -281,7 +288,7 @@ export default class CreateArea extends Component<{}, any> {
     this.setState({
       selectedAppOne: value
     });
-    console.log("Action service selected is " + value)
+    console.log(`Action service selected is ${value}`)
     if (value.length != 0)
       this.setState({actionApp:value})
     if (value.length > 2)
@@ -292,7 +299,7 @@ export default class CreateArea extends Component<{}, any> {
     this.setState({
       selectedAction: value
     });
-    console.log("Action of the service selected is " + value)
+    console.log(`Action of the service selected is ${value}`)
     if (value.length != 0) {
       this.pickerReactionService(value)
     }
@@ -302,7 +309,7 @@ export default class CreateArea extends Component<{}, any> {
     this.setState({
       selectedAppTwo: value
     });
-    console.log("The other service selected is " + value)
+    console.log(`The other service selected is ${value}`)
     if (value === undefined)
       return
     if (value.length != 0) {
@@ -312,15 +319,15 @@ export default class CreateArea extends Component<{}, any> {
     }
   }
 
-  onValueChangeReaction(valuee: string) {
-    if (valuee === null)
+  onValueChangeReaction(value: string) {
+    if (value === null)
       return
     this.setState({
-      selectedReaction: valuee
+      selectedReaction: value
     });
-    console.log("Reaction of the other service selected is " + valuee)
-    if (valuee.length != 0) {
-      this.setState({reaction:valuee})
+    console.log(`Reaction of the other service selected is ${value}`)
+    if (value.length != 0) {
+      this.setState({reaction:value})
     }
   }
 
@@ -331,7 +338,7 @@ export default class CreateArea extends Component<{}, any> {
     let actionSerial = {}
     let reactionSerial = {}
     if (params) {
-      console.log("PARAMETTERS ARE")
+      console.log(`Les parametres pour L'Area a créer sont:`)
       console.log(params)
 
       params["action"].forEach((value:any, key:string) => {  
@@ -357,7 +364,7 @@ export default class CreateArea extends Component<{}, any> {
       }
 
       
-      console.log(JSON.stringify(jsonSerial))
+      console.log(`Les donées transformer en json sont: ${JSON.stringify(jsonSerial)}`)
       this.createAreaFetch(JSON.stringify(jsonSerial))
 
     } else
@@ -410,7 +417,7 @@ export default class CreateArea extends Component<{}, any> {
       },
       body: JSON.stringify(test),
     }).then((response) => response.json()).then((json) => {
-      console.log(json);
+      console.log(`La réponse JSON de la création d'un Area: ${json}`);
     })
     .catch((error) => {
       console.error(error);
@@ -687,8 +694,6 @@ export default class CreateArea extends Component<{}, any> {
   }
 
   render() {
-      // console.log("LES PROPS :")
-      // console.log(this.props.route)
        if (this.state.loading) {
           this.listElem()
          return (
@@ -777,6 +782,7 @@ export default class CreateArea extends Component<{}, any> {
         );
 
         return (
+          <Root>
           <Container style= {{ position: "relative"}}>
           <Header>
           <Text style={{ color: "white", fontSize:22, alignSelf:"center" }}>
@@ -879,6 +885,7 @@ export default class CreateArea extends Component<{}, any> {
           </FooterTab>
         </Footer>
           </Container>
+          </Root>
               )
  }
 }
