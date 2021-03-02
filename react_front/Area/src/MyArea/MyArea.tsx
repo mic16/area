@@ -212,6 +212,11 @@ export default class MyArea extends Component {
                 </Button>
             </Header>
             <Content style= {{ position: "relative" }}>
+              <View>
+                {
+                  this.state.displayAllAreas
+                }
+              </View>
             </Content>
             <Footer>
             <FooterTab>
