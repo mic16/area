@@ -122,10 +122,10 @@ def getLastLike(user, area):
     lastFavs = api.favorites(include_entities=True, count = 50)
     lastFavTab = []
     for tweet in lastFavs:
-        lastFavTab.append(json.dumps({'text':tweet.text, 'entities':tweet.entities}))
+        lastFavTab.append({'text':tweet.text, 'entities':tweet.entities})
 
     if area.getValue("twitter") == None:
-        area.setValue("twitter", json.dumps({'lastFav':lastFavTab}))
+        area.setValue("twitter", {'lastFav':lastFavTab})
         return (None)
     oldTwitter = area.getValue("twitter")
     if oldTwitter.get('lastFav') == None:
