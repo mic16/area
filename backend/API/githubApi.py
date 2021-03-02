@@ -36,6 +36,10 @@ def oauthAuthorizedGithub():
         return ({"error": "bad token"})
     parser = callbackParser()
     args = parser.parse_args()
+    res = requests.post(' https://github.com/login/oauth/access_token?code=' + args['code'] + '&client_id=' + consumerKey + '&client_secret=' + consumerSecretKey)
+    res_split = res.text.split('&')
+    oauth_token = res_split[0].split('=')[1]
+    data.updateUser(TokenManager.getTokenUser(req_data.get("token")), {"github": {"token": oauth_token}})
 
     if not args.get('code'):
         return {"error": "Missing 'code' in query string"}

@@ -52,7 +52,9 @@ export default class MyApps extends Component<{}, any> {
       arrayAREA: new Map(),
       connectMap: new Map(),
       urlRed: "",
-      set: false
+      set: true,
+      already: false,
+      service: ""
     }
   }
 
@@ -109,6 +111,47 @@ export default class MyApps extends Component<{}, any> {
           })
         }
 
+        public listElem() {
+          let reactList:Array<any> = []
+          let i = 0
+          if (this.state.servicesData.length === 0) {
+            this.getServices()
+            .then((_) => {
+              let mapStyle = new Map()
+              let connectMap = new Map()
+              mapStyle.set("Twitter", { backgroundColor:"#1da1f2" })
+              mapStyle.set("Google", { backgroundColor:"#FF0000" })
+              mapStyle.set("Github", { backgroundColor:"black" })
+              mapStyle.set("Imgur", { backgroundColor:"#89c623" })
+              this.state.servicesData.forEach((elem:string, key:number) => {
+                connectMap.set(elem, "Press to connect")
+                if (this.state.connectMap.get(elem) === undefined)
+                    this.setState({connectMap:connectMap})
+                reactList.push(
+                  <Card style={mapStyle.get(elem)} key={key}>
+                    <CardItem style={ mapStyle.get(elem)} header button onPress={ () => this.connect(elem)}>
+                      <Text style={{ color:"white" }}>{elem}</Text>
+                    </CardItem>
+                    <CardItem style={ mapStyle.get(elem)} header button onPress={ () => this.connect(elem)}>
+                      <Text style={{ color:"white" }}>{this.state.connectMap.get(elem)}</Text>
+                    </CardItem>
+                  </Card>
+                )
+                i += 1
+              })
+              this.setState({reactListData:reactList})
+            });
+            }
+          }
+    
+      async componentDidMount() {
+          // await Font.loadAsync({
+          //     Roboto: require('native-base/Fonts/Roboto.ttf'),
+          //     Roboto_medium: require('native-base/Fonts/Roboto_medium.ttf'),
+          //     ...Ionicons.font,
+          // });
+          this.setState({ loading: false });
+      }
 
     public getLinks() {
         return fetch('http://' + mobileIP + ':8080/oauth/links/', {
@@ -153,9 +196,9 @@ export default class MyApps extends Component<{}, any> {
     
     public connect(service:string) {
         console.log("START TO CONNECT")
-        this.setState({set:false})
         let routetmp = <Route exact={true} path={"/oauth/" + service} component={ServiceRoute}/>
         this.setState({route:routetmp})
+        this.setState({service:service})
         this.serviceLogin(service).then((response) => {
             console.log("CALL TO URL DONE")
             if (Platform.OS === "web") {
@@ -171,52 +214,12 @@ export default class MyApps extends Component<{}, any> {
                     console.log("SEND DATA TO URL DONE")
                 })
             } else if (Platform.OS === "android") {
+                console.log("LE SERVICE QUI EST APPELER EST " + service)
                 this.state.navigation.navigate("ServiceRoute", {data:response, service:service})
             }
         })
     }
 
-    public listElem() {
-      let reactList:Array<any> = []
-      let i = 0
-      if (this.state.servicesData.length === 0) {
-        this.getServices()
-        .then((_) => {
-          let mapStyle = new Map()
-          let connectMap = new Map()
-          mapStyle.set("Twitter", { backgroundColor:"#1da1f2" })
-          mapStyle.set("Google", { backgroundColor:"#FF0000" })
-          mapStyle.set("Github", { backgroundColor:"black" })
-          mapStyle.set("Imgur", { backgroundColor:"#89c623" })
-          this.state.servicesData.forEach((elem:string, key:number) => {
-            connectMap.set(elem, "Press to connect")
-            if (this.state.connectMap.get(elem) === undefined)
-                this.setState({connectMap:connectMap})
-            reactList.push(
-              <Card style={mapStyle.get(elem)} key={key}>
-                <CardItem style={ mapStyle.get(elem)} header button onPress={ () => this.connect(elem)}>
-                  <Text style={{ color:"white" }}>{elem}</Text>
-                </CardItem>
-                <CardItem style={ mapStyle.get(elem)} header button onPress={ () => this.connect(elem)}>
-                  <Text style={{ color:"white" }}>{this.state.connectMap.get(elem)}</Text>
-                </CardItem>
-              </Card>
-            )
-            i += 1
-          })
-          this.setState({reactListData:reactList})
-        });
-        }
-      }
-
-  async componentDidMount() {
-      // await Font.loadAsync({
-      //     Roboto: require('native-base/Fonts/Roboto.ttf'),
-      //     Roboto_medium: require('native-base/Fonts/Roboto_medium.ttf'),
-      //     ...Ionicons.font,
-      // });
-      this.setState({ loading: false });
-  }
 
   public sendToBack(data:string) {
     data = data.replace("http://localhost:8081/oauth/", "")
@@ -235,9 +238,14 @@ export default class MyApps extends Component<{}, any> {
   }
 
   render() {
-      if (this.props.route.params !== undefined && this.state.set === false) {
-          this.setState({set:true})
+      if (this.props.route.params !== undefined) {
+        console.log(`LES SERVICE SONT -${this.props.route.params.service}- et -${this.state.service}-`)
+        console.log(`ET LES PARAMETRES SONT -${this.state.set}- et -${this.props.route.params.data}-`)
+        if (this.state.set && this.props.route.params.service === this.state.service) {
+          console.log("DONC JE FAIS LE CALL CALLBACK")
+          this.setState({set:false})
           this.sendToBack(this.props.route.params.data)
+        }
       }
        if (this.state.loading) {
         this.listElem()
