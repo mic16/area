@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import { ImageBackground, Platform, View, StyleSheet} from "react-native";
-import { Footer, FooterTab, Text, Button, Container, Header, Content, Form, Item, Input, Label, Title, Icon, Toast, Card, CardItem, Body } from 'native-base';
+import { Footer, FooterTab, Text, Button, Container, Header, Content, Form, Item, Input, Label, Title, Icon, Toast } from 'native-base';
 // import * as Font from 'expo-font';
 // import { Ionicons } from '@expo/vector-icons';
 import { Ionicons } from "react-icons/io"
@@ -19,7 +19,6 @@ export default class MyArea extends Component {
       set: false,
       allArea: [],
       displayAllAreas: [],
-      displayAllAreasMobile: [],
       stockAllAreas: [],
     }
   }
@@ -104,8 +103,6 @@ export default class MyArea extends Component {
       }
       let tmpDisplayAllAreas: Array<Object> = [];
       let tmpStockAllAreas: Array<string> = [];
-      let tmpdisplayAllAreasMobile: Array<any> = [];
-      
       
       json.result.forEach((element: any, key: number) => {
       //   fetch('http://' + mobileIP + `:8080/services/${element.service}`, {
@@ -122,18 +119,6 @@ export default class MyArea extends Component {
   
       // })
         tmpStockAllAreas.push(element.uuid)
-        tmpdisplayAllAreasMobile.push(
-          <Card style={{ borderColor:"blue" }}>
-          <CardItem header button style={{display: 'flex', flexDirection: 'column', alignItems: 'center'}}>
-            <Text>{element.action.service}</Text>
-            <Text>{element.reaction.service}</Text>
-          </CardItem>
-            <CardItem button>
-            <Body>{ element.action.name }</Body>
-            <Body>{ element.reaction.name }</Body>
-            </CardItem>
-        </Card>
-        )
         tmpDisplayAllAreas.push(
           <View style={{marginTop: 10, width: '100%'}}>
             <View style={{marginLeft: 'auto', marginRight: 'auto'}}>
@@ -229,7 +214,7 @@ export default class MyArea extends Component {
             <Content style= {{ position: "relative" }}>
               <View>
                 {
-                  this.state.displayAllAreasMobile
+                  this.state.displayAllAreas
                 }
               </View>
             </Content>
