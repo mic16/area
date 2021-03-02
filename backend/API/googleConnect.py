@@ -37,7 +37,7 @@ def oauthAuthorizedGoogle():
 
     flow = google_auth_oauthlib.flow.Flow.from_client_secrets_file(
         CLIENT_SECRETS_FILE, scopes=None, state=state)
-    flow.redirect_uri = flask.url_for('oauthAuthorizedGoogle', _external=True)
+    flow.redirect_uri = 'http://localhost:8081/oauth/Google'
 
     authorization_response = flask.request.url
     try:

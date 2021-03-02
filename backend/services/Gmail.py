@@ -19,14 +19,14 @@ class Gmail():
                 return
             for mail in mails:
                 area.newReaction()
-                area.ret(mail['snippet'])
+                area.ret(mail.get('snippet'))
         return trig.setAction(func)
 
     @Reaction(
         'Send a mail',
         str,
     )
-    @Field('mailAdresse', 'string', 'Mail Adresse of the target user')
-    @Field('object', 'string', 'object of the mail')
+    @Field('mailAdresse', FTYPE.STRING, 'Mail Adresse of the target user')
+    @Field('object', FTYPE.STRING, 'object of the mail')
     def sendMail(self, area, fields):
-        gmailApi.sendMail(area.getUser(), area.get(str)[0], fields.get(str)['mailAdresse'], fields.get(str)['object'])
+        gmailApi.sendMail(area.getUser(), area.get(str)[0], fields.getString('mailAdresse'), fields.getString('object'))

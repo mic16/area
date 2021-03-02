@@ -7,6 +7,7 @@ import time
 from User import User
 from didyoumean import DidYouMean
 import OAuthManager
+import traceback
 
 tokenManager = TokenManager()
 
@@ -100,6 +101,8 @@ class Area():
 
         if not Service.isReactionCompatibleWithAction(reactionInfos, self.action):
             return self.error('Action %s.%s and Reaction %s.%s are incompatible with their configuration' % (actionService, actionName, reactionService, reactionName))
+
+        self.debug = json
         
     def error(self, message=None):
         self.errored = True
@@ -112,14 +115,14 @@ class Area():
     def get(self, type):
         return self.returns.get(type)
     
-    def ret(self, *values):
+    def ret(self, *values) -> None:
         for value in values:
             ttype = type(value)
             array = self.returns.get(ttype) or []
             array.append(value)
             self.returns[ttype] = array
 
-    def setValue(self, key, value):
+    def setValue(self, key, value) -> None:
         self.state[key] = value
     
     def getValue(self, key):
@@ -135,25 +138,43 @@ class Area():
     def getUUID(self):
         return self.uuid        
 
-    def getUser(self):
+    def getUser(self) -> User:
         return self.user
 
     def trigger(self):
         if (time.time() - self.lastTrigger)>= 60:
             print("Executing area %s" % self.getUUID())
+            print('    Area Infos: %s' % self.debug)
             try:
+                print('    Executing Action')
                 self.returns = {}
                 self.returnStates = []
                 actionEx = self.action.getAction()
                 actionEx(self, self.actionConfig)
                 inputs = self.reaction.__service__['inputs']
+                print('    '*2 + 'Action Result: [%d]' % len(self.returnStates))
+                print('    End Action')
                 for returnState in self.returnStates:
+                    print('    Executing Reaction: %s' % str(returnState))
                     try:
                         if not inputs or inputs in returnState:
                             self.returns = returnState
                             self.reaction(self.reactionInstance, self, self.reactionConfig)
                     except Exception as err:
-                        print(err)
+                        print('    '*2 + ' REACTION ERROR '.center(50,'='))
+                        print('    '*2 + ' Error '.center(50, '-'))
+                        print('    '*2 + str(err))
+                        print('    '*2 + ' Traceback '.center(50, '-'))
+                        for line in traceback.format_exc().split('\n'):
+                            print('    '*2 + line)
+                        print('    '*2 + '='*50)
+                    print('    End Reaction')
             except Exception as err:
-                print(err)
+                print('    '*2 + ' ACTION ERROR '.center(50,'='))
+                print('    '*2 + ' Error '.center(50, '-'))
+                print('    '*2 + str(err))
+                print('    '*2 + ' Traceback '.center(50, '-'))
+                for line in traceback.format_exc().split('\n'):
+                    print('    '*2 + line)
+                print('    '*2 + '='*50)
             self.lastTrigger = time.time()

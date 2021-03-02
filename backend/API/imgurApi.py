@@ -61,10 +61,10 @@ def getLastFav(user, area):
     albums = client.get_account_favorites(user.get("imgur.username"))
     lastAlbumsTab = []
     for album in albums:
-        lastAlbumsTab.append(json.dumps(album.__dict__))
+        lastAlbumsTab.append(album.__dict__)
 
     if area.getValue("imgur") == None:
-        area.setValue("imgur", json.dumps({'lastFav':lastAlbumsTab}))
+        area.setValue("imgur", {'lastFav':lastAlbumsTab})
         return (None)
 
     oldImgur = area.getValue("imgur")
@@ -83,14 +83,14 @@ def getLastFav(user, area):
         area.setValue("imgur", oldImgur)
         finalRes = []
         for a in diff:
-            if json.loads(a)['is_album']:
-                imgs = client.get_album_images(json.loads(a)['id'])
+            if a.get('is_album'):
+                imgs = client.get_album_images(a.get('id'))
                 imgsListLink = []
                 for i in imgs:
                     imgsListLink.append(i.link)
-                finalRes.append({'album':json.loads(a), 'imgs':imgsListLink})
+                finalRes.append({'album':a, 'imgs':imgsListLink})
             else:
-                finalRes.append({'album':json.loads(a), 'imgs':[json.loads(a)['link']]})
+                finalRes.append({'album':a, 'imgs':[a.get('link')]})
         return (finalRes)
 
 def getLastPost(user, area):
@@ -99,9 +99,9 @@ def getLastPost(user, area):
     albums = client.get_account_albums(user.get("imgur.username"))
     lastAlbumsTab = []
     for album in albums:
-        lastAlbumsTab.append(json.dumps(album.__dict__))
+        lastAlbumsTab.append(album.__dict__)
     if area.getValue("imgur") == None:
-        area.setValue("imgur", json.dumps({'lastAlbums':lastAlbumsTab}))
+        area.setValue("imgur", {'lastAlbums':lastAlbumsTab})
         return (None)
     oldImgur = area.getValue("imgur")
     if oldImgur.get('lastAlbums') == None:
@@ -119,11 +119,11 @@ def getLastPost(user, area):
         area.setValue("imgur", oldImgur)
         finalRes = []
         for a in diff:
-            imgs = client.get_album_images(json.loads(a)['id'])
+            imgs = client.get_album_images(a.get('id'))
             imgsListLink = []
             for i in imgs:
                 imgsListLink.append(i.link)
-            finalRes.append({'album':json.loads(a), 'imgs':imgsListLink})
+            finalRes.append({'album':a, 'imgs':imgsListLink})
         return (finalRes)
 
 def CreateAlbumAndUploadImages(client, albumName, albumDescription, images):
