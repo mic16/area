@@ -41,7 +41,7 @@ def oauthAuthorizedImgur():
     if not args.get('refresh_token'):
         return {"error": "Missing 'refresh_token' in query string"}
 
-    if not args.get('username'):
+    if not args.get('account_username'):
         return {"error": "Missing 'username' in query string"}
 
     data.updateUser(user, {"imgur": {"token": args['access_token'], "refresh_token": args['refresh_token'], "username":args['account_username']}})
