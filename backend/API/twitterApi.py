@@ -98,20 +98,20 @@ def getLastTweetUser(user, area):
     if area.getValue("twitter") == None:
         area.setValue("twitter", {'lastTweet':lastTweetTab})
         return (None)
-    oldTwiiter = area.getValue("twitter")
-    if oldTwiiter.get('lastTweet') == None:
-        oldTwiiter['lastTweet'] = lastTweetTab
-        area.setValue("twitter", oldTwiiter)
+    oldTwitter = area.getValue("twitter")
+    if oldTwitter.get('lastTweet') == None:
+        oldTwitter['lastTweet'] = lastTweetTab
+        area.setValue("twitter", oldTwitter)
         return (None)
-    oldTweets = oldTwiiter['lastTweet']
+    oldTweets = oldTwitter['lastTweet']
     diff = diffFirstSecond(lastTweetTab, oldTweets)
     if (len(diff) == 0):
-        oldTwiiter['lastTweet'] = lastTweetTab
-        area.setValue("twitter", oldTwiiter)
+        oldTwitter['lastTweet'] = lastTweetTab
+        area.setValue("twitter", oldTwitter)
         return (None)
     else:
-        oldTwiiter['lastTweet'] = lastTweetTab
-        area.setValue("twitter", oldTwiiter)
+        oldTwitter['lastTweet'] = lastTweetTab
+        area.setValue("twitter", oldTwitter)
         return (diff)
 
 def getLastLike(user, area):
