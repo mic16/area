@@ -404,6 +404,7 @@ export default class CreateArea extends Component<{}, any> {
         console.error(error)
       })
     } else if (type === 'reaction') {
+      this.setState({reactionValue: 0, reactionFieldList: []})
       service = this.state.reactionServiceList[value].props.label;
       this.setState({reactionService: service, reactionValue: 0});
       if (value === '0') {
@@ -604,8 +605,10 @@ export default class CreateArea extends Component<{}, any> {
       this.setState({confirmButton: false})
     else
       this.setState({confirmButton: true});
-    this.setState({serviceReaction: this.state.reactionNameList[this.state.reactionService][value], reactionValue: value});
+    this.setState({serviceReaction: this.state.reactionNameList[this.state.reactionService][value], reactionValue: value, reactionFieldList: []});
 
+    if (value === '0')
+      return;
     let tmpReactionFieldList: Array<any> = [<View key={0}></View>];
 
     this.state.reactionFieldName[this.state.reactionService][this.state.reactionValue].fields.forEach((element: any, key: number) => {
