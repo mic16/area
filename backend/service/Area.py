@@ -144,7 +144,7 @@ class Area():
     def trigger(self):
         if (time.time() - self.lastTrigger)>= 60:
             print("Executing area %s" % self.getUUID())
-            print('Area Infos: %s' % self.debug)
+            print('    Area Infos: %s' % self.debug)
             try:
                 print('    Executing Action')
                 self.returns = {}
