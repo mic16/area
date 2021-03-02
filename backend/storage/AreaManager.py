@@ -1,5 +1,6 @@
 import threading
 from singleton import singleton
+import asyncio
 
 @singleton()
 class AreaManager(threading.Thread):
@@ -8,6 +9,7 @@ class AreaManager(threading.Thread):
         self.setDaemon(True)
         self.areas = []
         self.ilock = threading.Lock()
+        self.eventLoop = asyncio.new_event_loop()
         print("Area Manager started")
     
     def append(self, area):
@@ -21,11 +23,17 @@ class AreaManager(threading.Thread):
         self.ilock.acquire()
         self.areas = [i for i in self.areas if i.getUUID() != uuid]
         self.ilock.release()
-    
+
+    async def _exec(area):
+        area.trigger()
+
     def run(self):
         while True:
+            asyncio.set_event_loop(self.eventLoop)
+            futures = []
             self.ilock.acquire()
             for area in self.areas:
-                area.trigger()
+                futures.append(asyncio.create_task(_exec(area.trigger())))
             self.ilock.release()
+            self.eventLoop.run_until_complete(asyncio.gather(*futures))
 
