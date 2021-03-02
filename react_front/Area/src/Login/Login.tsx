@@ -169,8 +169,10 @@ export default class LoginComponent extends Component<{}, any> {
 
   render() {
 
-    if (window.location.pathname.includes("/oauth/")) {
-      this.state.navigation.navigate("Connection")
+    if (Platform.OS == "web") {
+      if (window.location.pathname.includes("/oauth/")) {
+        this.state.navigation.navigate("Connection")
+      }
     }
 
     if (this.state.firstLoad) {
