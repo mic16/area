@@ -96,8 +96,9 @@ export default class MyApps extends Component<{}, any> {
           })
           .then((response) => response.json()).then((json) => {
             console.log(json)
-            if (json.result != undefined && Platform.OS === "web") {
-                window.location.replace(json.result)
+            if (json.result != undefined) {
+                if (Platform.OS === "web")
+                  window.location.replace(json.result)
             } else {
                 Toast.show({
                     text: json.error,
