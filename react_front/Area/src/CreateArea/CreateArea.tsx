@@ -412,7 +412,7 @@ export default class CreateArea extends Component<{}, any> {
     }
   }
 
-  updateFieldBoolean = (key: number, type: string) => {
+  updateFieldBoolean = (key: number, type: string, element: Array<Object>) => {
     if (type === 'action') {
       let tmpResponseActionField = this.state.responseActionField;
 
@@ -420,8 +420,21 @@ export default class CreateArea extends Component<{}, any> {
       this.setState({responseActionField: tmpResponseActionField});
       let tmpField = this.state.actionField;
 
-      tmpField[key] = <CheckBox checked={this.state.responseActionField[key]} onPress={() => this.updateFieldBoolean(key, type)}/>
+      tmpField[key] = <CheckBox color='black' checked={this.state.responseActionField[key]} onPress={() => this.updateFieldBoolean(key, type, element)}/>
       this.setState({actionField: tmpField});
+      let tmpActionFieldList: Array<any> = this.state.actionFieldList;
+
+      tmpActionFieldList[key + 1] =
+        <View key={key + 1} style={{marginTop: 10}}>
+          <View>
+            {this.state.actionField[key]}
+            <Text style={{fontSize: 12, marginTop: 10}}>
+              {element.description}
+            </Text>
+          </View>
+        </View>
+      
+      this.setState({actionFieldList: tmpActionFieldList})
     } else if (type === 'reaction') {
       let tmpResponseReactionField = this.state.responseReactionField;
 
@@ -429,8 +442,21 @@ export default class CreateArea extends Component<{}, any> {
       this.setState({responseReactionField: tmpResponseReactionField});
       let tmpField = this.state.reactionField;
 
-      tmpField[key] = <CheckBox checked={this.state.responseReactionField[key]} onPress={() => this.updateFieldBoolean(key, type)}/>
+      tmpField[key] = <CheckBox checked={this.state.responseReactionField[key]} onPress={() => this.updateFieldBoolean(key, type, element)}/>
       this.setState({reactionField: tmpField});
+      let tmpReactionFieldList: Array<any> = this.state.reactionFieldList;
+
+      tmpReactionFieldList[key + 1] =
+        <View key={key + 1} style={{marginTop: 10}}>
+          <View>
+            {this.state.actionField[key]}
+            <Text style={{fontSize: 12, marginTop: 10}}>
+              {element.description}
+            </Text>
+          </View>
+        </View>
+      
+      this.setState({reactionFieldList: tmpReactionFieldList})
     }
   }
 
@@ -458,7 +484,7 @@ export default class CreateArea extends Component<{}, any> {
         this.setState({responseActionField: tmpResponseActionField});
 
         tmpField.push(
-          <CheckBox style={{marginTop: '10px'}} color='black' checked={this.state.responseActionField[key]} onPress={() => this.updateFieldBoolean(key, type)}/>
+          <CheckBox style={{marginTop: '10px'}} color='black' checked={this.state.responseActionField[key]} onPress={() => this.updateFieldBoolean(key, type, element)}/>
         )
         this.setState({actionField: tmpField});
       } else if (type === 'reaction') {
@@ -469,7 +495,7 @@ export default class CreateArea extends Component<{}, any> {
         this.setState({responseReactionField: tmpResponseReactionField});
 
         tmpField.push(
-          <CheckBox style={{marginTop: '10px'}} color='black' checked={this.state.responseReactionField[key]} onPress={() => this.updateFieldBoolean(key, type)}/>
+          <CheckBox style={{marginTop: '10px'}} color='black' checked={this.state.responseReactionField[key]} onPress={() => this.updateFieldBoolean(key, type, element)}/>
         )
         this.setState({reactionField: tmpField});
       }
@@ -492,7 +518,7 @@ export default class CreateArea extends Component<{}, any> {
 
       tmpField.push(
         <Form style={{height: '25%', marginTop: '10px'}}>
-          <Input onChangeText={(text) => this.updateFieldString(text, key, type)}/>
+          <Input style={{borderWidth: 1, borderRadius: 5}} onChangeText={(text) => this.updateFieldString(text, key, type)}/>
         </Form>
       )
       if (type === 'action') {
@@ -552,7 +578,7 @@ export default class CreateArea extends Component<{}, any> {
             {element.style === 'boolean' ?
               <View style={{flexDirection: "row"}}>
                 {this.state.actionField[key]}
-                <Text>
+                <Text style={{fontSize: 12, marginTop: '10px'}}>
                   {element.description}
                 </Text>
               </View>
@@ -589,7 +615,7 @@ export default class CreateArea extends Component<{}, any> {
           {element.style === 'boolean' ?
             <View style={{flexDirection: "row"}}>
               {this.state.reactionField[key]}
-              <Text>
+              <Text style={{fontSize: 12, marginTop: '10px'}}>
                 {element.description}
               </Text>
             </View>
@@ -658,10 +684,12 @@ export default class CreateArea extends Component<{}, any> {
                                     this.state.actionList
                                   }
                                 </Picker>
+                              </Form>
+                              <View style={{margin: 10}}>
                                 {
                                   this.state.actionFieldList
                                 }
-                              </Form>
+                              </View>
                             </View>
                             <Icon style={{marginTop: 10, }} name="arrow-forward-sharp"/>
                             <View style={{width: '50%', right: 0, backgroundColor: 'rgba(255, 255, 255, 0.5)', height: '100%', borderRadius: 20 }}>
@@ -682,7 +710,7 @@ export default class CreateArea extends Component<{}, any> {
                               </Form>
                             </View>
                           </View>
-                          <Button style={{marginLeft: 'auto',  marginTop: 10}} disabled={this.state.confirmButton} onPress={() => this.createAreaWeb()}><Text>Confirm</Text></Button>
+                          <Button style={{marginLeft: 'auto',  marginTop: 10, borderRadius: 10}} disabled={this.state.confirmButton} onPress={() => this.createAreaWeb()}><Text>Confirm</Text></Button>
                         </View>
                       </View>
                     </View>
