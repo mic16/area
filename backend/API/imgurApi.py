@@ -61,10 +61,10 @@ def getLastFav(user, area):
     albums = client.get_account_favorites(user.get("imgur.username"))
     lastAlbumsTab = []
     for album in albums:
-        lastAlbumsTab.append(json.dumps(album.__dict__))
+        lastAlbumsTab.append(album.__dict__)
 
     if area.getValue("imgur") == None:
-        area.setValue("imgur", json.dumps({'lastFav':lastAlbumsTab}))
+        area.setValue("imgur", {'lastFav':lastAlbumsTab})
         return (None)
 
     oldImgur = area.getValue("imgur")
@@ -99,9 +99,9 @@ def getLastPost(user, area):
     albums = client.get_account_albums(user.get("imgur.username"))
     lastAlbumsTab = []
     for album in albums:
-        lastAlbumsTab.append(json.dumps(album.__dict__))
+        lastAlbumsTab.append(album.__dict__)
     if area.getValue("imgur") == None:
-        area.setValue("imgur", json.dumps({'lastAlbums':lastAlbumsTab}))
+        area.setValue("imgur", {'lastAlbums':lastAlbumsTab})
         return (None)
     oldImgur = area.getValue("imgur")
     if oldImgur.get('lastAlbums') == None:

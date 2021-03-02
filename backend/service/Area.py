@@ -144,35 +144,37 @@ class Area():
     def trigger(self):
         if (time.time() - self.lastTrigger)>= 60:
             print("Executing area %s" % self.getUUID())
+            print('Area Infos: %s' % self.debug)
             try:
+                print('    Executing Action')
                 self.returns = {}
                 self.returnStates = []
                 actionEx = self.action.getAction()
                 actionEx(self, self.actionConfig)
                 inputs = self.reaction.__service__['inputs']
+                print('    '*2 + 'Action Result: [%d]' % len(self.returnStates))
+                print('    End Action')
                 for returnState in self.returnStates:
+                    print('    Executing Reaction: %s' % returnState)
                     try:
                         if not inputs or inputs in returnState:
                             self.returns = returnState
                             self.reaction(self.reactionInstance, self, self.reactionConfig)
                     except Exception as err:
-                        print(' REACTION ERROR '.center(50,'='))
-                        print(' Infos '.center(50, '-'))
-                        print(self.debug)
-                        print(' Error '.center(50, '-'))
-                        print(err)
-                        print(' Traceback '.center(50, '-'))
+                        print('    '*2 + ' REACTION ERROR '.center(50,'='))
+                        print('    '*2 + ' Error '.center(50, '-'))
+                        print('    '*2 +err)
+                        print('    '*2 + ' Traceback '.center(50, '-'))
                         for line in traceback.format_exc().split('\n'):
-                            print(line)
-                        print('='*50)
+                            print('    '*2 + line)
+                        print('    '*2 + '='*50)
+                    print('    End Reaction')
             except Exception as err:
-                print(' ACTION ERROR '.center(50,'='))
-                print(' Infos '.center(50, '-'))
-                print(self.debug)
-                print(' Error '.center(50, '-'))
-                print(err)
-                print(' Traceback '.center(50, '-'))
+                print('    '*2 + ' ACTION ERROR '.center(50,'='))
+                print('    '*2 + ' Error '.center(50, '-'))
+                print('    '*2 + err)
+                print('    '*2 + ' Traceback '.center(50, '-'))
                 for line in traceback.format_exc().split('\n'):
-                    print(line)
-                print('='*50)
+                    print('    '*2 + line)
+                print('    '*2 + '='*50)
             self.lastTrigger = time.time()
