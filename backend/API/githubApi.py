@@ -27,12 +27,13 @@ def callbackParser():
     return parser
     
 def oauthAuthorizedGithub():
+    tokenManager = TokenManager()
     req_data = request.get_json()
     if not req_data:
         return {"error": "Missing JSON body"}
     if (req_data.get("token") == None):
         return ({"error": "no token"})
-    if not (user := TokenManager.getTokenUser(req_data.get("token"))):
+    if not (user := tokenManager.getTokenUser(req_data.get("token"))):
         return ({"error": "bad token"})
     parser = callbackParser()
     args = parser.parse_args()
