@@ -5,6 +5,7 @@ from Field import Field, FTYPE
 from Trigger import Trigger
 from Imgs import Imgs
 import twitterApi
+import _
 
 @Service(oauth='Twitter')
 class Twitter():
@@ -17,7 +18,7 @@ class Twitter():
     def onLike(self, fields):
 
         trig = Trigger(types=[str])
-        if fields.getBool('with image') == True:
+        if fields.getBool('with image', False) == True:
             trig.addType(Imgs)
 
         def func(area, fields):
@@ -26,15 +27,15 @@ class Twitter():
                 return
             for fav in favs:
 
-                if (fields.getBool('with image') == True and not 'media' in fav["entities"]):
+                if (fields.getBool('with image', False) == True and not 'media' in fav.get('entities', '')):
                     continue
-                if (fields.getString('match') != '' and not fields.getString('match') in fav.text):
+                if (fields.getString('match', '') != '' and not fields.getString('match', '') in fav.get('text', '')):
                     continue
                 
                 area.newReaction()
-                if fields.getBool('with image') == True:
-                    area.ret(Imgs([fav["entities"]['media']['media_url']]))
-                area.ret(fav['text'])
+                if fields.getBool('with image', False) == True:
+                    area.ret(Imgs([_.get(fav, "entities.media.media_url")]))
+                area.ret(fav.get('text'))
 
 
         return trig.setAction(func)
@@ -44,7 +45,7 @@ class Twitter():
     @Field('with image', FTYPE.BOOLEAN, 'If the post should contain an image')
     def onTweet(self, fields):
         trig = Trigger(types=[str])
-        if fields.getBool('with image') == True:
+        if fields.getBool('with image', False) == True:
             trig.addType(Imgs)
 
         def func(area, fields):
@@ -53,17 +54,17 @@ class Twitter():
                 return
             for tweet in tweets:
 
-                if (fields.getBool('with image') == True and not 'media' in tweet["entities"]):
+                if (fields.getBool('with image', False) == True and not 'media' in tweet.get('entities', '')):
                     continue
-                if (fields.getString('match') != '' and not fields.getString('match') in tweet.text):
+                if (fields.getString('match', '') != '' and not fields.getString('match', '') in tweet.get('text', '')):
                     continue
 
                 area.newReaction()
-                if fields.getBool('with image') == True:
-                    area.ret(Imgs([tweet["entities"]['media']['media_url']]))
-                area.ret(tweet['text'])
+                if fields.getBool('with image', False) == True:
+                    area.ret(Imgs([_.get(tweet, "entities.media.media_url")]))
+                area.ret(tweet.get('text'))
 
-        return trig.setAction(func)      
+        return trig.setAction(func)
 
     @Reaction(
         'Post a new tweet',
@@ -79,6 +80,6 @@ class Twitter():
         'Send a direct message',
         str,
     )
-    @Field('userId', 'string', 'userId of the target user')
+    @Field('userId', FTYPE.STRING, 'userId of the target user')
     def directMessage(self, area, fields):
-        twitterApi.sendDirectMessage(area.getUser(), area.get(str)[0], fields.get(str)['userId'])
+        twitterApi.sendDirectMessage(area.getUser(), area.get(str)[0], fields.getString('userId'))
