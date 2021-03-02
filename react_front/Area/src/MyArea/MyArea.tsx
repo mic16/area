@@ -59,8 +59,6 @@ export default class MyArea extends Component {
   }
 
   public deleteArea = (key: number) => {
-    console.log(this.state.stockAllAreas[key])
-    console.log(userToken)
     fetch('http://' + mobileIP + ':8080/area/delete', {
       method: 'POST',
       headers: {
@@ -102,7 +100,6 @@ export default class MyArea extends Component {
         }
         return;
       }
-      console.log(json.result)
       let tmpDisplayAllAreas: Array<Object> = [];
       let tmpStockAllAreas: Array<string> = [];
       
@@ -121,7 +118,6 @@ export default class MyArea extends Component {
   
       // })
         tmpStockAllAreas.push(element.uuid)
-        console.log(element)
         tmpDisplayAllAreas.push(
           <View style={{marginTop: 10, width: '100%'}}>
             <View style={{marginLeft: 'auto', marginRight: 'auto'}}>

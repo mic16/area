@@ -704,10 +704,12 @@ export default class CreateArea extends Component<{}, any> {
                                     this.state.reactionList[this.state.reactionService]
                                   }
                                 </Picker>
+                              </Form>
+                              <View style={{margin: 10}}>
                                 {
                                   this.state.reactionFieldList
                                 }
-                              </Form>
+                              </View>
                             </View>
                           </View>
                           <Button style={{marginLeft: 'auto',  marginTop: 10, borderRadius: 10}} disabled={this.state.confirmButton} onPress={() => this.createAreaWeb()}><Text>Confirm</Text></Button>
