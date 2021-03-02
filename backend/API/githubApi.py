@@ -43,14 +43,13 @@ def oauthAuthorizedGithub():
 
     try:
         res = requests.post('https://github.com/login/oauth/access_token?code=%s&client_id=%s&client_secret=%s' % (args['code'], consumerKey, consumerSecretKey))
+        print(res.text)
         options = qsparser.parse(res.text)
 
         if not options.get('access_token'):
             return {"error": "Missing 'access_token' in Github response"}
-
-        oauth_token = res_split[0].split('=')[1]
         
-        data.updateUser(user, {"github": {"token": oauth_token}})
+        data.updateUser(user, {"github": {"token": options.get('access_token')}})
     except Exception as err:
         return {"error": err}
 
