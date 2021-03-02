@@ -161,5 +161,9 @@ class Area():
                         print(err)
                         print('===============================')
             except Exception as err:
+                print('============ ERROR ============')
+                print(self.debug)
+                print('-------------------------------')
                 print(err)
+                print('===============================')
             self.lastTrigger = time.time()
