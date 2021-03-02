@@ -12,9 +12,9 @@ class Twitter():
     def __init__(self):
         pass
 
-    @Action('When the user like something')
+    @Action('When the user likes something')
     @Field('match', FTYPE.STRING, 'String that should be matched')
-    @Field('with image', FTYPE.BOOLEAN, 'If the post should contain an image')
+    @Field('With image', FTYPE.BOOLEAN, 'If the post should contain an image')
     def onLike(self, fields):
 
         trig = Trigger(types=[str])
@@ -40,9 +40,9 @@ class Twitter():
 
         return trig.setAction(func)
 
-    @Action('When the user tweet something')
+    @Action('When the user tweets something')
     @Field('match', FTYPE.STRING, 'String that should be matched')
-    @Field('with image', FTYPE.BOOLEAN, 'If the post should contain an image')
+    @Field('wWth image', FTYPE.BOOLEAN, 'If the post should contain an image')
     def onTweet(self, fields):
         trig = Trigger(types=[str])
         if fields.getBool('with image', False) == True:
@@ -80,6 +80,6 @@ class Twitter():
         'Send a direct message',
         str,
     )
-    @Field('userId', FTYPE.STRING, 'userId of the target user')
+    @Field('userId', FTYPE.STRING, 'UserId of the targeted user')
     def directMessage(self, area, fields):
         twitterApi.sendDirectMessage(area.getUser(), area.get(str)[0], fields.getString('userId'))
