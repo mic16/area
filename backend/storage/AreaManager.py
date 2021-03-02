@@ -33,7 +33,7 @@ class AreaManager(threading.Thread):
             futures = []
             self.ilock.acquire()
             for area in self.areas:
-                futures.append(self.eventLoop.create_task(_exec(area.trigger())))
+                futures.append(self.eventLoop.create_task(_exec(area)))
             self.ilock.release()
             self.eventLoop.run_until_complete(asyncio.gather(*futures))
 
