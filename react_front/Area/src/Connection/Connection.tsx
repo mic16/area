@@ -90,6 +90,7 @@ export default class MyApps extends Component<{}, any> {
             headers: {
                 Accept: 'application/json',
                 'Content-Type': 'application/json',
+                "User-Agent": 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_11_5) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/56.0.2924.87 Safari/537.36'
               },
             redirect: "follow"
           })
@@ -205,8 +206,10 @@ export default class MyApps extends Component<{}, any> {
         this.serviceLogin(service).then((response) => {
             console.log("CALL TO URL DONE")
             if (Platform.OS === "web") {
-                let params = window.location.pathname.match('^https?://[^:]+:[0-9]+/oauth/([^/#?]+)[/#?](.+)$')
-                if (params?.length !== 2) {
+                let params = window.location.pathname.match('^https?:\/\/[^:]+:[0-9]+\/oauth\/([^\/#?]+)[\/#?](.+)$')
+                if (params === null)
+                  return
+                if (params.length !== 3) {
                     return
                 }
                 let good_params = params[1] + window.location.search
@@ -227,19 +230,22 @@ export default class MyApps extends Component<{}, any> {
 
 
   public sendToBack(data:string) {
-    data = data.replace("http://localhost:8081/oauth/", "")
-    data = data.replace("#", "?")
+    let params = data.match('^https?:\/\/[^:]+:[0-9]+\/oauth\/([^\/#?]+)[\/#?](.+)$')
 
-    let params = data.split("?")
+    if (params === null)
+      return false
 
-    if (params.length !== 2) {
-        return
-    }
+    console.log(`LES  ${params.length} PARAMETRE AVANT LE CALL BACK = ${params}`)
+
+    if (params.length !== 3)
+      return false
+
     console.log("CE QUE J4ENVOI")
     console.log(params)
-    this.sendCallBack(params[0], params[1]).then(() => {
+    this.sendCallBack(params[1], params[2]).then(() => {
         console.log("SEND DATA TO URL FINISH")
     })
+    return true
   }
 
   render() {
@@ -248,8 +254,9 @@ export default class MyApps extends Component<{}, any> {
         console.log(`ET LES PARAMETRES SONT -${this.state.set}- et -${this.props.route.params.data}-`)
         if (this.state.set && this.props.route.params.service === this.state.service) {
           console.log("DONC JE FAIS LE CALL CALLBACK")
-          this.setState({set:false})
-          this.sendToBack(this.props.route.params.data)
+
+          if (this.sendToBack(this.props.route.params.data))
+            this.setState({set:false})
         }
       }
        if (this.state.loading) {

@@ -40,13 +40,13 @@ export default class MyArea extends Component {
           if (json.result === undefined) {
             Toast.show({
               text: 'Logout failed',
-              buttonText: 'Sad'
+              buttonText: 'Ok'
             })
             return
           }
           Toast.show({
             text: 'Logout Success',
-            buttonText: 'Sad'
+            buttonText: 'Ok'
           })
           this.state.navigation.navigate("LoginComponent")
         })

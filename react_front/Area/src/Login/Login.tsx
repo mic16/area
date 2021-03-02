@@ -75,6 +75,7 @@ export default class LoginComponent extends Component<{}, any> {
       console.log(json)
       userToken = json.result
       this.state.navigation.navigate('CreateArea')
+      
     })
     .catch((error) => {
       this.setState({ loading: false });
