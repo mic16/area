@@ -66,12 +66,12 @@ class DataBase:
     
     def updateUser(self, mail, json):
         print('Update user %s' % mail)
-        user = self.getuser(mail)
-        if (user == None):
+        
+        if not (user := self.getUser(mail)):
             return (False)
-        else:
-            self.redis.jsonset("user.%s"%mail, ".",{**user, **json})
-            return (True)
+
+        self.redis.jsonset("user.%s"%mail, ".",{**user, **json})
+        return (True)
     
     def createArea(self, mail, uuid, json):
         print('Create area for user %s' % mail)
