@@ -2,6 +2,9 @@ import threading
 from singleton import singleton
 import asyncio
 
+
+async def _exec(area):
+    area.trigger()
 @singleton()
 class AreaManager(threading.Thread):
     def __init__(self):
@@ -23,9 +26,6 @@ class AreaManager(threading.Thread):
         self.ilock.acquire()
         self.areas = [i for i in self.areas if i.getUUID() != uuid]
         self.ilock.release()
-
-    async def _exec(area):
-        area.trigger()
 
     def run(self):
         while True:
