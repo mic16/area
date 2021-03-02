@@ -7,6 +7,7 @@ import time
 from User import User
 from didyoumean import DidYouMean
 import OAuthManager
+import traceback
 
 tokenManager = TokenManager()
 
@@ -155,15 +156,23 @@ class Area():
                             self.returns = returnState
                             self.reaction(self.reactionInstance, self, self.reactionConfig)
                     except Exception as err:
-                        print('============ REACTION ERROR ============')
+                        print(' REACTION ERROR '.center(50,'='))
+                        print(' Infos '.center(50, '-'))
                         print(self.debug)
-                        print('----------------------------------------')
+                        print(' Error '.center(50, '-'))
                         print(err)
-                        print('========================================')
+                        print(' Traceback '.center(50, '-'))
+                        for line in traceback.format_exc().split('\n'):
+                            print(line)
+                        print('='*50)
             except Exception as err:
-                print('============ ACTION ERROR ============')
+                print(' ACTION ERROR '.center(50,'='))
+                print(' Infos '.center(50, '-'))
                 print(self.debug)
-                print('--------------------------------------')
+                print(' Error '.center(50, '-'))
                 print(err)
-                print('======================================')
+                print(' Traceback '.center(50, '-'))
+                for line in traceback.format_exc().split('\n'):
+                    print(line)
+                print('='*50)
             self.lastTrigger = time.time()
