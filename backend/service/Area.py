@@ -100,6 +100,8 @@ class Area():
 
         if not Service.isReactionCompatibleWithAction(reactionInfos, self.action):
             return self.error('Action %s.%s and Reaction %s.%s are incompatible with their configuration' % (actionService, actionName, reactionService, reactionName))
+
+        self.debug = json
         
     def error(self, message=None):
         self.errored = True
@@ -153,7 +155,11 @@ class Area():
                             self.returns = returnState
                             self.reaction(self.reactionInstance, self, self.reactionConfig)
                     except Exception as err:
+                        print('============ ERROR ============')
+                        print(self.debug)
+                        print('-------------------------------')
                         print(err)
+                        print('===============================')
             except Exception as err:
                 print(err)
             self.lastTrigger = time.time()
