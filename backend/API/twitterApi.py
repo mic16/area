@@ -128,7 +128,7 @@ def getLastTweetUser(user, area):
         area.setValue("twitter", oldTwitter)
         return (None)
     oldTweets = oldTwitter['lastTweet']
-    diff = diffFirstSecond(lastTweetTab, oldTweets)
+    diff = diffFirstSecond(lastTweetTab, oldTweets, lambda x,y: x.id == y.id)
     if (len(diff) == 0):
         oldTwitter['lastTweet'] = lastTweetTab
         area.setValue("twitter", oldTwitter)
@@ -157,7 +157,7 @@ def getLastLike(user, area):
         area.setValue("twitter", oldTwitter)
         return (None)
     oldFavs = oldTwitter['lastFav']
-    diff = diffFirstSecond(lastFavTab, oldFavs)
+    diff = diffFirstSecond(lastFavTab, oldFavs, lambda x,y: x.id == y.id)
     if (len(diff) == 0):
         oldTwitter['lastFav'] = lastFavTab
         area.setValue("twitter", oldTwitter)

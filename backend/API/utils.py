@@ -1,10 +1,10 @@
-def diffFirstSecond(source, after):
+def diffFirstSecond(source, after, compare=None):
     firstIndex = -1 
     for i in source:
         if firstIndex != -1:
             break
         for j in range(len(after)):
-            if i == after[j]:
+            if (compare and compare(i, after[j])) or i == after[j]:
                 firstIndex = j
                 break
     if firstIndex == -1:
