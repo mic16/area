@@ -159,7 +159,7 @@ def oauthLinks():
                 return {'result': OAuthManager.userLinks(user)}
     return {'error': 'Invalid Token'}
 
-@app.route('/oauth/login/<string:manager>')
+@app.route('/oauth/login/<string:manager>', methods = [ 'POST' ])
 def oauthLogin(manager):
     if oauth := OAuthManager.getManager(manager):
         return {"result": oauth[0]()}
