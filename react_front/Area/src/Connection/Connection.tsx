@@ -79,7 +79,7 @@ export default class Connection extends Component<{}, any> {
                 "User-Agent": 'chrome'
               },
             redirect: "follow",
-            body: JSON.stringify({token: token})
+            body: JSON.stringify({'token': token})
           })
           .then((response) => response.json()).then((json) => {
             console.log(json)
