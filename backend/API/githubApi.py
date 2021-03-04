@@ -112,7 +112,7 @@ def getNewFollower(user, area):
         area.setValue("github", oldGithub)
         return (None)
     oldFollowers = oldGithub['lastFollowers']
-    diff = diffFirstSecond(lastFollowersTab, oldFollowers, lambda x,y: x.id == y.id)
+    diff = diffFirstSecond(lastFollowersTab, oldFollowers, lambda x,y: x.get('id') == y.get('id'))
     if (len(diff) == 0):
         oldGithub['lastFollowers'] = lastFollowersTab
         area.setValue("github", oldGithub)

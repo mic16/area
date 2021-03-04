@@ -128,7 +128,7 @@ def getLastTweetUser(user, area):
         area.setValue("twitter", oldTwitter)
         return (None)
     oldTweets = oldTwitter['lastTweet']
-    diff = diffFirstSecond(lastTweetTab, oldTweets, lambda x,y: x.id == y.id)
+    diff = diffFirstSecond(lastTweetTab, oldTweets, lambda x,y: x.get('id') == y.get('id'))
     if (len(diff) == 0):
         oldTwitter['lastTweet'] = lastTweetTab
         area.setValue("twitter", oldTwitter)

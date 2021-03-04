@@ -37,7 +37,7 @@ def getLastSubscriber(user, area):
         area.setValue("youtube", oldSubscriber)
         return (None)
     oldSub = oldSubscriber['lastSubscriber']
-    diff = diffFirstSecond(lastSubscriberTab, oldSub, lambda x,y: x.id == y.id)
+    diff = diffFirstSecond(lastSubscriberTab, oldSub, lambda x,y: x.get('id') == y.get('id'))
     if (len(diff) == 0):
         oldSubscriber['lastSubscriber'] = lastSubscriberTab
         area.setValue("youtube", oldSubscriber)
