@@ -183,7 +183,7 @@ export default class MyArea extends Component {
        if (Platform.OS === "web")
         return (
           <Container>
-            <CustomHeader/>
+            <CustomHeader navigation={this.state.navigation}/>
             <ImageBackground source={require('../../assets/login.png')} style={{ width: '100%', height: '100%' }}>
                 <Navigation navigation={this.state.navigation}/>
                 <View style={{height: '90%', width: '78%', right: 0, position: 'absolute'}}>
@@ -198,9 +198,6 @@ export default class MyArea extends Component {
                     }}>
                       My Areas
                     </Text>
-                    <Button transparent onPress={() => this.state.navigation.navigate("Connection")}>
-                      <Icon name="globe-outline" />
-                    </Button>
                     <View>
                       {
                         this.state.displayAllAreas

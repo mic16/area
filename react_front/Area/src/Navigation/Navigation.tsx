@@ -30,6 +30,14 @@ export default function Navigation({ navigation }) {
             My Areas
           </Text>
         </Button>
+        <Button style={styles.button}
+          onPress={() => navigation.navigate('Connection')}
+          transparent={true}
+          full={true}>
+            <Text>
+              Connect Accounts
+            </Text>
+          </Button>
       </View>
     </View>
   );

@@ -5,6 +5,7 @@ import { Ionicons } from "react-icons/io"
 import { NavigationContainer } from "react-navigation";
 import { navigate } from '@react-navigation/routers/lib/typescript/src/CommonActions';
 import { TextInput } from 'react-native-gesture-handler';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 export let mobileIP = ""
 export let userToken = ""
@@ -63,6 +64,9 @@ export default class LoginComponent extends Component<{}, any> {
       console.log("CONNECTED WITH TOKEN:")
       console.log(json)
       userToken = json.result
+      if (Platform.OS === 'web') {
+        this.storeData(userToken);
+      }
       this.setState({firstLoad:true})
       this.state.navigation.navigate('CreateArea')
     })
@@ -72,6 +76,14 @@ export default class LoginComponent extends Component<{}, any> {
       
       return error;
     })
+  }
+
+  private storeData = async (value: string) => {
+    try {
+      await AsyncStorage.setItem('userToken', value)
+    } catch (e) {
+      console.log(e);
+    }
   }
 
   public popUpAlert(text: string, buttonText: string) {
@@ -170,6 +182,7 @@ export default class LoginComponent extends Component<{}, any> {
   render() {
 
     if (window.location.pathname.includes("/oauth/")) {
+      console.log(userToken)
       this.state.navigation.navigate("Connection")
     }
 
