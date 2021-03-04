@@ -72,7 +72,7 @@ export default class Connection extends Component<{}, any> {
     public async serviceLogin(service:string) {
       let token = await this.getData();
         return fetch('http://' + mobileIP + ':8080/oauth/login/' + service, {
-            method: 'GET',
+            method: 'POST',
             headers: {
                 Accept: 'application/json',
                 'Content-Type': 'application/json',
