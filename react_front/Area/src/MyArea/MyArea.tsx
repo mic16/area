@@ -1,8 +1,6 @@
 import React, { Component } from 'react';
 import { ImageBackground, Platform, View, StyleSheet} from "react-native";
 import { Footer, FooterTab, Text, Button, Container, Header, Content, Form, Item, Input, Label, Title, Icon, Toast, Left, Body, Right } from 'native-base';
-// import * as Font from 'expo-font';
-// import { Ionicons } from '@expo/vector-icons';
 import { Ionicons } from "react-icons/io"
 import { mobileIP } from '../Login/Login';
 import { userToken } from '../Login/Login';

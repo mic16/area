@@ -1,8 +1,6 @@
 import React, { Component } from 'react';
 import { Alert, ImageBackground, Platform, View } from "react-native";
 import { Spinner, Root, Text, Accordion, FooterTab, Footer, Button, Container, Header, Content, Form, Item, Input, Label, Title, Icon, Grid, Col, Left, Right, Body, Toast, CheckBox, ListItem, List } from 'native-base';
-// import * as Font from 'expo-font';
-// import { Ionicons } from '@expo/vector-icons';
 import { Ionicons } from "react-icons/io"
 import { NavigationContainer } from "react-navigation";
 import { TextInput } from 'react-native-gesture-handler';

@@ -2,8 +2,6 @@ import React, { Component } from 'react';
 import { any } from 'prop-types';
 import { ImageBackground, Platform, View, StyleSheet} from "react-native";
 import { Footer, FooterTab, Text, Button, Container, Header, Content, Form, Item, Input, Label, Title, Icon, Picker, Spinner, Toast, Drawer, ListItem, CheckBox, Root } from 'native-base';
-// import * as Font from 'expo-font';
-// import { Ionicons } from '@expo/vector-icons';
 import { Ionicons } from "react-icons/io"
 import { mobileIP } from '../Login/Login';
 import ConfigComponent from '../Configfield/Configfield';

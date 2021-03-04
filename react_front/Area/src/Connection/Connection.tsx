@@ -1,8 +1,6 @@
 import React, { Component } from 'react';
 import { ImageBackground, Platform, View, StyleSheet } from "react-native";
 import { Footer, FooterTab, Text, Button, Container, Content, Form, Item, Input, Label, Title, Icon, Drawer, Accordion, Spinner, Picker, Header, Card, CardItem, Body, Left, Right, Thumbnail, Toast } from 'native-base';
-// import * as Font from 'expo-font';
-// import { Ionicons } from '@expo/vector-icons';
 import { Ionicons } from "react-icons/io"
 import { any } from 'prop-types';
 import Navigation from '../Navigation/Navigation';

@@ -12,8 +12,6 @@ export function saveVar(str: string) {
 import { AppRegistry, TextInput, TouchableOpacity, TouchableOpacityBase } from "react-native"
 import { Alert, StyleSheet, View } from 'react-native';
 import { Text, Button, Container, Header, Content, Form, Item, Input, Label, Title, Root } from 'native-base';
-import { Font } from 'expo';
-import { Ionicons } from '@expo/vector-icons';
 import LoginComponent from './src/Login/Login';
 import MenuComponent from './src/Menu/Menu';
 import Menu from './src/Menu/Menu';
