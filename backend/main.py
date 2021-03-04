@@ -163,13 +163,13 @@ def oauthLinks():
 def oauthLogin(manager):
     if oauth := OAuthManager.getManager(manager):
         return {"result": oauth[0]()}
-    return {"error": "Unkonwn oauth service '%s'" % manager}
+    return {"error": "Unknown oauth service '%s'" % manager}
 
 @app.route('/oauth/callback/<string:manager>', methods = [ 'POST' ])
 def oauthCallback(manager):
     if oauth := OAuthManager.getManager(manager):
         return oauth[1]()
-    return {"error": "Unkonwn oauth service '%s'" % manager}
+    return {"error": "Unknown oauth service '%s'" % manager}
 
 
 print('started')
