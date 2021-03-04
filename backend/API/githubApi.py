@@ -82,7 +82,7 @@ def getLastStar(user, area):
         area.setValue("github", oldGithub)
         return (None)
     oldStars = oldGithub['lastStars']
-    diff = diffFirstSecond(lastStarsTab, oldStars, lambda x,y: x.get('id') == y.get('id'))
+    diff = diffFirstSecond(oldStars, lastStarsTab, lambda x,y: x.get('id') == y.get('id'))
     if (len(diff) == 0):
         oldGithub['lastStars'] = lastStarsTab
         area.setValue("github", oldGithub)
@@ -112,7 +112,7 @@ def getNewFollower(user, area):
         area.setValue("github", oldGithub)
         return (None)
     oldFollowers = oldGithub['lastFollowers']
-    diff = diffFirstSecond(lastFollowersTab, oldFollowers, lambda x,y: x.get('id') == y.get('id'))
+    diff = diffFirstSecond(oldFollowers, lastFollowersTab, lambda x,y: x.get('id') == y.get('id'))
     if (len(diff) == 0):
         oldGithub['lastFollowers'] = lastFollowersTab
         area.setValue("github", oldGithub)
