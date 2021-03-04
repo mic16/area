@@ -39,6 +39,8 @@ import Youtube
 import Gmail
 import Imgur
 
+import events
+
 tokenManager = TokenManager()
 data.load()
 
