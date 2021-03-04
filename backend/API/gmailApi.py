@@ -49,7 +49,7 @@ def getLastMail(user, area):
         area.setValue("gmail", oldGmail)
         return (None)
     oldMails = oldGmail['lastMail']
-    diff = diffFirstSecond(lastMailTab, oldMails, lambda x,y: x.get('id') == y.get('id'))
+    diff = diffFirstSecond(oldMails, lastMailTab, lambda x,y: x.get('id') == y.get('id'))
     if (len(diff) == 0):
         oldGmail['lastMail'] = lastMailTab
         area.setValue("gmail", oldGmail)

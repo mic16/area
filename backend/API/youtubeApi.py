@@ -37,7 +37,7 @@ def getLastSubscriber(user, area):
         area.setValue("youtube", oldSubscriber)
         return (None)
     oldSub = oldSubscriber['lastSubscriber']
-    diff = diffFirstSecond(lastSubscriberTab, oldSub, lambda x,y: x.get('id') == y.get('id'))
+    diff = diffFirstSecond(oldSub, lastSubscriberTab, lambda x,y: x.get('id') == y.get('id'))
     if (len(diff) == 0):
         oldSubscriber['lastSubscriber'] = lastSubscriberTab
         area.setValue("youtube", oldSubscriber)
@@ -72,7 +72,7 @@ def getLastLikedVideo(user, area):
         area.setValue("youtube", oldLike)
         return (None)
     oldSub = oldLike['lastLike']
-    diff = diffFirstSecond(lastLikeTab, oldSub, lambda x,y: x.get('id') == y.get('id'))
+    diff = diffFirstSecond(oldSub, lastLikeTab, lambda x,y: x.get('id') == y.get('id'))
     if (len(diff) == 0):
         oldLike['lastLike'] = lastLikeTab
         area.setValue("youtube", oldLike)
