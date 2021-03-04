@@ -1,10 +1,12 @@
-def diffFirstSecond(l1, l2):
-    tab = []
-    for i in l1:
-        a = False
-        for j in l2:
-            if i == j:
-                a = True
-        if not a:
-            tab.append(i)
-    return tab  
+def diffFirstSecond(source, after, compare=None):
+    firstIndex = -1 
+    for i in source:
+        if firstIndex != -1:
+            break
+        for j in range(len(after)):
+            if (compare and compare(i, after[j])) or i == after[j]:
+                firstIndex = j
+                break
+    if firstIndex == -1:
+        return after
+    return after[0:firstIndex]
