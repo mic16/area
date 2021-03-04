@@ -387,7 +387,6 @@ export default class CreateArea extends Component<{}, any> {
     try {
       const value = await AsyncStorage.getItem('userToken')
       if (value !== null) {
-        console.log(value)
         return (value)
       }
     } catch(e) {
@@ -426,7 +425,6 @@ export default class CreateArea extends Component<{}, any> {
         test.reaction.config[element.name] = this.state.responseReactionField[key];
     });
     let tmp = await this.getData();
-    console.log(tmp)
     console.log(test)
     await fetch('http://localhost:8080/area/create', {
       method: 'POST',
