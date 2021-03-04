@@ -13,9 +13,6 @@ import googleapiclient.discovery
 API_SERVICE_NAME = 'youtube'
 API_VERSION = 'v3'
 
-def Diff(li1, li2):
-    return (list(list(set(li1)-set(li2)) + list(set(li2)-set(li1))))
-
 def getLastSubscriber(user, area):
     c = google.oauth2.credentials.Credentials(**user.get("Google.credential"))
 
@@ -30,7 +27,7 @@ def getLastSubscriber(user, area):
     lastSubscriber = request.execute()
     lastSubscriberTab = []
     for subscriber in lastSubscriber.get('items'):
-        lastSubscriberTab.append(subscriber)
+        lastSubscriberTab.append({'title':subscriber.subscriberSnippet.title, 'description':subscriber.subscriberSnippet.description, 'url':subscriber.subscriberSnippet.thumbnails.medium.url})
     if area.getValue("youtube") == None:
         area.setValue("youtube", {'lastSubscriber':lastSubscriberTab})
         return (None)
@@ -40,7 +37,7 @@ def getLastSubscriber(user, area):
         area.setValue("youtube", oldSubscriber)
         return (None)
     oldSub = oldSubscriber['lastSubscriber']
-    diff = diffFirstSecond(lastSubscriberTab, oldSub)
+    diff = diffFirstSecond(lastSubscriberTab, oldSub, lambda x,y: x.id == y.id)
     if (len(diff) == 0):
         oldSubscriber['lastSubscriber'] = lastSubscriberTab
         area.setValue("youtube", oldSubscriber)
@@ -65,7 +62,7 @@ def getLastLikedVideo(user, area):
     lastSubscriber = request.execute()
     lastLikeTab = []
     for subscriber in lastSubscriber.get('items'):
-        lastLikeTab.append(subscriber)
+        lastLikeTab.append({'title':subscriber.snippet.title, 'description':subscriber.snippet.description, 'url':subscriber.snippet.thumbnails.maxres.url})
     if area.getValue("youtube") == None:
         area.setValue("youtube", {'lastLike':lastLikeTab})
         return (None)
@@ -75,7 +72,7 @@ def getLastLikedVideo(user, area):
         area.setValue("youtube", oldLike)
         return (None)
     oldSub = oldLike['lastLike']
-    diff = diffFirstSecond(lastLikeTab, oldSub)
+    diff = diffFirstSecond(lastLikeTab, oldSub, lambda x,y: x.id == y.id)
     if (len(diff) == 0):
         oldLike['lastLike'] = lastLikeTab
         area.setValue("youtube", oldLike)
