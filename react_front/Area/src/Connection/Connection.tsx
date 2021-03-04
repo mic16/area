@@ -17,6 +17,7 @@ import {
     useLocation,
     StaticRouter,
   } from "react-router-dom";
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 
 export default class Connection extends Component<{}, any> {
@@ -68,15 +69,17 @@ export default class Connection extends Component<{}, any> {
       })
     }
 
-    public serviceLogin(service:string) {
+    public async serviceLogin(service:string) {
+      let token = await this.getData();
         return fetch('http://' + mobileIP + ':8080/oauth/login/' + service, {
             method: 'GET',
             headers: {
                 Accept: 'application/json',
                 'Content-Type': 'application/json',
-                "User-Agent": 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_11_5) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/56.0.2924.87 Safari/537.36'
+                "User-Agent": 'chrome'
               },
-            redirect: "follow"
+            redirect: "follow",
+            body: JSON.stringify({token: token})
           })
           .then((response) => response.json()).then((json) => {
             console.log(json)
@@ -178,10 +181,16 @@ export default class Connection extends Component<{}, any> {
             })
         }
 
-    public sendCallBack(service:string, data:any) {
+    public async sendCallBack(service:string, data:any) {
         console.log("J'ENVOI DONC AU TRUC ")
         console.log(`http://${mobileIP}:8080/oauth/callback/${service}?${data}`)
         console.log(service)
+        console.log(userToken)
+        let token = userToken;
+        if (Platform.OS === 'web') {
+          token = await this.getData();
+        }
+        
         return fetch(`http://${mobileIP}:8080/oauth/callback/${service}?${data}` , {
             method: 'POST',
             headers: {
@@ -189,7 +198,7 @@ export default class Connection extends Component<{}, any> {
                 'Content-Type': 'application/json'
             },
             body: JSON.stringify({
-              token:userToken
+              token: token
             })
             })
             .then((response) => response.json()).then((json) => {
@@ -199,7 +208,7 @@ export default class Connection extends Component<{}, any> {
             .catch((error) => {
             console.log("C4EST PAS GOOD")
             console.log(JSON.stringify({
-              token:userToken
+              token: token
             }))
             console.error(error)
             })
@@ -270,18 +279,32 @@ export default class Connection extends Component<{}, any> {
     return true
   }
 
+  private getData = async () => {
+    try {
+      const value = await AsyncStorage.getItem('userToken')
+      if (value !== null) {
+        return (value);
+      }
+      return ('');
+    } catch(e) {
+      console.log(e);
+      return ('');
+    }
+  }
+
   render() {
     if (window.location.pathname.includes("/oauth/") && this.state.not_finished) {
       this.setState({not_finished:false})
       this.finishOauth()
     }
-    if (this.props.route.params !== undefined) {
-      console.log(`LES SERVICE SONT -${this.props.route.params.service}- et -${this.state.service}-`)
-      console.log(`ET LES PARAMETRES SONT -${this.state.set}- et -${this.props.route.params.data}-`)
-      if (this.state.set && this.props.route.params.service === this.state.service) {
-        console.log("DONC JE FAIS LE CALL CALLBACK")
+    let service = window.location.pathname.match('^/oauth/(.+)$');
 
-        if (this.sendToBack(this.props.route.params.data))
+    if (service) {
+      // console.log(`LES SERVICE SONT -${service[1]}- et -${this.state.service}-`)
+      // console.log(`ET LES PARAMETRES SONT -${this.state.set}-`)
+      if (this.state.set ) {//&& service[1] === this.state.service) {
+        // console.log("DONC JE FAIS LE CALL CALLBACK")
+        if (this.sendToBack(window.location.href))
           this.setState({set:false})
       }
     }

@@ -181,8 +181,7 @@ export default class LoginComponent extends Component<{}, any> {
 
   render() {
 
-    if (window.location.pathname.includes("/oauth/")) {
-      console.log(userToken)
+    if (Platform.OS === 'web' && window.location.pathname.includes("/oauth/")) {
       this.state.navigation.navigate("Connection")
     }
 

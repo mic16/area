@@ -383,7 +383,7 @@ export default class CreateArea extends Component<{}, any> {
       this.setState({ loading: false });
   }
 
-  private getData = async () => {
+  public getData = async () => {
     try {
       const value = await AsyncStorage.getItem('userToken')
       if (value !== null) {
@@ -424,7 +424,6 @@ export default class CreateArea extends Component<{}, any> {
       if (element.type === 'boolean')
         test.reaction.config[element.name] = this.state.responseReactionField[key];
     });
-    let tmp = await this.getData();
     console.log(test)
     await fetch('http://localhost:8080/area/create', {
       method: 'POST',

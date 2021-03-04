@@ -5,9 +5,13 @@ import { Alert, StyleSheet, View } from 'react-native';
 import Icon from 'react-native-vector-icons/FontAwesome';
 import { Container, Button, Text } from 'native-base';
 import { relative } from 'path';
+import { NativeRouter, Route, Link } from "react-router-native";
+import CreateArea from '../CreateArea/CreateArea';
+import MyArea from '../MyArea/MyArea';
+import Connection from '../Connection/Connection';
 
-export default function Navigation({ navigation }) {
-  return (
+export default function Navigation({navigation}) {
+  return(
     <View style={{height: '90%', width: '18%'}}>
       <View style={styles.container}>
         <Button
