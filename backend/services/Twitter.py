@@ -5,7 +5,7 @@ from Field import Field, FTYPE
 from Trigger import Trigger
 from Imgs import Imgs
 import twitterApi
-import _
+import Imgs from Imgs
 
 @Service(oauth='Twitter')
 class Twitter():
@@ -74,7 +74,10 @@ class Twitter():
         txt = area.get(str)[0]
         if len(txt) > 280:
             txt = txt[0:279]
-        twitterApi.newTweet(area.getUser(), txt)
+        if len(area.get(Imgs)) >= 1:
+            twitterApi.newTweetImages(area.getUser(), txt, area.get(Imgs)[0])
+        else :
+            twitterApi.newTweet(area.getUser(), txt)
 
     @Reaction(
         'Send a direct message',

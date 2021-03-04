@@ -63,11 +63,6 @@ def githubConnected(user):
 OAuthManager.addManager('Github', loginGithub, oauthAuthorizedGithub, githubConnected)
 
 
-
-def Diff(li1, li2):
-    return (list(list(set(li1)-set(li2)) + list(set(li2)-set(li1))))
-
-
 def getLastStar(user, area):
     git = Github(user.get("github.token"))
     lastStarred = git.get_user().get_starred().reversed
@@ -87,7 +82,7 @@ def getLastStar(user, area):
         area.setValue("github", oldGithub)
         return (None)
     oldStars = oldGithub['lastStars']
-    diff = diffFirstSecond(lastStarsTab, oldStars)
+    diff = diffFirstSecond(lastStarsTab, oldStars, lambda x,y: x.id == y.id)
     if (len(diff) == 0):
         oldGithub['lastStars'] = lastStarsTab
         area.setValue("github", oldGithub)
@@ -117,7 +112,7 @@ def getNewFollower(user, area):
         area.setValue("github", oldGithub)
         return (None)
     oldFollowers = oldGithub['lastFollowers']
-    diff = diffFirstSecond(lastFollowersTab, oldFollowers)
+    diff = diffFirstSecond(lastFollowersTab, oldFollowers, lambda x,y: x.id == y.id)
     if (len(diff) == 0):
         oldGithub['lastFollowers'] = lastFollowersTab
         area.setValue("github", oldGithub)

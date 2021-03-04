@@ -7,6 +7,7 @@ from flask_restful import Resource, reqparse
 import sys
 from utils import diffFirstSecond
 import json
+import os
 import tweepy
 from TokenManager import TokenManager
 import OAuthManager
@@ -76,8 +77,31 @@ def newTweet(user, text):
     auth=tweepy.OAuthHandler(consumerKey,consumerSecretKey)
     auth.set_access_token(user.get("twitter.token"), user.get("twitter.token_secret"))
     api=tweepy.API(auth)
-    tweet=input(text)
-    api.update_status(tweet)
+    api.update_status(status=text)
+
+def newTweetImages(user, text, imgs):
+    auth=tweepy.OAuthHandler(consumerKey,consumerSecretKey)
+    auth.set_access_token(user.get("twitter.token"), user.get("twitter.token_secret"))
+    api=tweepy.API(auth)
+
+    mediaList = []
+    for i in imgs:
+        filename = i.split('/')[:1]
+        request = requests.get(i, stream=True)
+
+        if request.status_code == 200:
+            file = open(filename, 'wb')
+            with file as image:
+                for chunk in request:
+                    image.write(chunk)
+            media = api.media_upload(file=file).media_id
+            if (media != None):
+                mediaList.append(media)
+            file.close()
+            os.remove(filename)
+
+    api.update_status(filename, status=text, media_ids=mediaList[:4])
+
 
 def sendDirectMessage(user, text, userId):
     auth = tweepy.OAuthHandler(consumerKey, consumerSecretKey)     
@@ -104,7 +128,7 @@ def getLastTweetUser(user, area):
         area.setValue("twitter", oldTwitter)
         return (None)
     oldTweets = oldTwitter['lastTweet']
-    diff = diffFirstSecond(lastTweetTab, oldTweets)
+    diff = diffFirstSecond(lastTweetTab, oldTweets, lambda x,y: x.id == y.id)
     if (len(diff) == 0):
         oldTwitter['lastTweet'] = lastTweetTab
         area.setValue("twitter", oldTwitter)
@@ -133,7 +157,7 @@ def getLastLike(user, area):
         area.setValue("twitter", oldTwitter)
         return (None)
     oldFavs = oldTwitter['lastFav']
-    diff = diffFirstSecond(lastFavTab, oldFavs)
+    diff = diffFirstSecond(lastFavTab, oldFavs, lambda x,y: x.id == y.id)
     if (len(diff) == 0):
         oldTwitter['lastFav'] = lastFavTab
         area.setValue("twitter", oldTwitter)
