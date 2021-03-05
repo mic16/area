@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import { ImageBackground, Platform, View, StyleSheet} from "react-native";
-import { Footer, FooterTab, Text, Button, Container, Header, Content, Form, Item, Input, Label, Title, Icon, Toast, Left, Body, Right } from 'native-base';
+import { Footer, FooterTab, Text, Button, Container, Header, Content, Form, Item, Input, Label, Title, Icon, Toast, Left, Body, Right, Card, CardItem } from 'native-base';
 // import * as Font from 'expo-font';
 // import { Ionicons } from '@expo/vector-icons';
 import { Ionicons } from "react-icons/io"
@@ -175,6 +175,8 @@ export default class MyArea extends Component {
               }
             });
           tmpStockAllAreas.push(element.uuid)
+          
+          if (Platform.OS === "web") {
           tmpDisplayAllAreas.push(
             <View style={{marginTop: 10, width: '100%'}}>
                 <View style={{marginLeft: 'auto', marginRight: 'auto'}}>
@@ -187,24 +189,47 @@ export default class MyArea extends Component {
                 <View style={{display: 'flex', flexDirection: 'column', alignItems: 'center'}}>
                   <Text>{element.reaction.service}</Text>
                   <Text>{reactionDescription}</Text>
-                </View>
               </View>
-              </View>
+            </View>
+            </View>
               <Button style={{right: 10, position: 'absolute'}} onPress={() => this.deleteArea(key)}>
                 <Icon name="trash"></Icon>
               </Button>
             </View>
           )
-          console.log("test")
+          } else {
+            tmpDisplayAllAreas.push(
+              <Card style={{ borderColor:"blue" }} key={key}>
+              <CardItem>
+                <Text style={{ fontWeight: 'bold', textDecorationLine: 'underline' }} >Service: </Text>
+                <Text>{element.action.service}</Text>
+              </CardItem>
+              <CardItem>
+                <Text style={{ fontWeight: 'bold', textDecorationLine: 'underline' }} >Action: </Text>
+                <Text>{actionDescription}</Text>
+              </CardItem>
+              <Icon style={{ alignSelf:'center' }} name="arrow-down-outline" />
+              <CardItem>
+                <Text style={{ fontWeight: 'bold', textDecorationLine: 'underline' }} >Service: </Text>
+                <Text>{element.reaction.service}</Text>
+              </CardItem>
+              <CardItem>
+                <Text style={{ fontWeight: 'bold', textDecorationLine: 'underline' }} >Reaction: </Text>
+                <Text>{reactionDescription}</Text>
+              </CardItem>
+                <Button style={{ alignSelf:'center' }} onPress={() => this.deleteArea(key)}>
+                  <Icon name="trash"></Icon>
+                </Button>
+            </Card>
+            )
+          }
         })
       })
       promiseTab.push(promise);
-      console.log("yeet")
       });
       await Promise.all(promiseTab);
       return ([json.result, tmpDisplayAllAreas, tmpStockAllAreas])
     }).then(([result, displayAllAreas, stockAllAreas]: any) => {
-      console.log("hhhh")
       if (result && displayAllAreas && stockAllAreas) {
         this.setState({allArea: result, displayAllAreas: displayAllAreas, stockAllAreas: stockAllAreas})
       }
