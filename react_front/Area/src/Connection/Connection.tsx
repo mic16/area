@@ -298,18 +298,30 @@ export default class Connection extends Component<{}, any> {
         this.setState({not_finished:false})
         this.finishOauth()
       }
-    }
-    let service = window.location.pathname.match('^/oauth/(.+)$');
+      let service = window.location.pathname.match('^/oauth/(.+)$');
+  
+      if (service) {
+        // console.log(`LES SERVICE SONT -${service[1]}- et -${this.state.service}-`)
+        // console.log(`ET LES PARAMETRES SONT -${this.state.set}-`)
+        if (this.state.set ) {//&& service[1] === this.state.service) {
+          // console.log("DONC JE FAIS LE CALL CALLBACK")
+          if (this.sendToBack(window.location.href))
+            this.setState({set:false})
+        }
+      }
+    } else {
+      if (this.props.route.params !== undefined) {
+        console.log(`LES SERVICE SONT -${this.props.route.params.service}- et -${this.state.service}-`)
+        console.log(`ET LES PARAMETRES SONT -${this.state.set}- et -${this.props.route.params.data}-`)
+        if (this.state.set && this.props.route.params.service === this.state.service) {
+          console.log("DONC JE FAIS LE CALL CALLBACK")
 
-    if (service) {
-      // console.log(`LES SERVICE SONT -${service[1]}- et -${this.state.service}-`)
-      // console.log(`ET LES PARAMETRES SONT -${this.state.set}-`)
-      if (this.state.set ) {//&& service[1] === this.state.service) {
-        // console.log("DONC JE FAIS LE CALL CALLBACK")
-        if (this.sendToBack(window.location.href))
-          this.setState({set:false})
+          if (this.sendToBack(this.props.route.params.data))
+            this.setState({set:false})
+        }
       }
     }
+
     if (this.state.loading) {
       this.listElem()
       return (
