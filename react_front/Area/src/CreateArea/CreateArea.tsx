@@ -49,7 +49,6 @@ export default class CreateArea extends Component<{}, any> {
       areact: [],
       rreact: [],
       actionApp: "",
-      // action: "",
       reactionApp: "",
       reaction: "",
       actionValue: '',
@@ -374,7 +373,7 @@ export default class CreateArea extends Component<{}, any> {
       
       console.log(`Les donées transformer en json sont: ${JSON.stringify(jsonSerial)}`)
       this.createAreaFetch(JSON.stringify(jsonSerial))
-
+      this.props.route.params = undefined
     } else
       alert("Please have a look to the config before creating an Area")
   }
