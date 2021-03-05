@@ -8,6 +8,7 @@ import { mobileIP } from '../Login/Login';
 import { userToken } from '../Login/Login';
 import Navigation from '../Navigation/Navigation';
 import CustomHeader from '../CustomHeader/CustomHeader';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 export default class MyArea extends Component {
 
@@ -23,8 +24,12 @@ export default class MyArea extends Component {
     }
   }
 
-  public logout() {
+  public async logout() {
     console.log("Je vais me logout")
+    let token = userToken;
+    if (Platform.OS === 'web') {
+      token = await this.getData();
+    }
     return fetch('http://' + mobileIP + ':8080/logout', {
           method: 'POST',
           headers: {
@@ -32,7 +37,7 @@ export default class MyArea extends Component {
             'Content-Type': 'application/json'
           },
           body: JSON.stringify({
-            "token":userToken,
+            "token": token,
           })
         })
         .then((response) => response.json()).then((json) => {
@@ -60,9 +65,26 @@ export default class MyArea extends Component {
         })
   }
 
-  public deleteArea = (key: number) => {
+  public getData = async () => {
+    try {
+      const value = await AsyncStorage.getItem('userToken')
+      if (value !== null) {
+        return (value)
+      }
+      return ('')
+    } catch(e) {
+      console.log(e);
+      return ('');
+    }
+  }
+
+  public deleteArea = async (key: number) => {
     let otherTmp:Array<Object> = []
     let i = 0
+    let token = userToken;
+    if (Platform.OS === 'web') {
+      token = await this.getData();
+    }
     this.state.displayAllAreas.forEach((obj:Object) => {
       if (key !== i) {
         otherTmp.push(obj)
@@ -77,7 +99,7 @@ export default class MyArea extends Component {
         'Content-Type': 'application/json'
       },
       body: JSON.stringify({
-        'token': userToken,
+        'token': token,
         'uuid': this.state.stockAllAreas[key]
       })
     })
@@ -89,6 +111,12 @@ export default class MyArea extends Component {
   }
 
   public async getAREA() {
+    let token = userToken;
+    if (Platform.OS === 'web') {
+      token = await this.getData();
+    }
+
+    
     fetch('http://' + mobileIP + ':8080/area/list', {
       method: 'POST',
       headers: {
@@ -96,10 +124,11 @@ export default class MyArea extends Component {
         'Content-Type': 'application/json'
       },
       body: JSON.stringify({
-        "token":userToken,
+        "token":token,
       })
     })
     .then((response) => response.json()).then((json) => {
+      console.log(json)
       if (json.result === undefined) {
         if (Platform.OS === "web") {
           alert('List Area Failed')
@@ -183,7 +212,7 @@ export default class MyArea extends Component {
        if (Platform.OS === "web")
         return (
           <Container>
-            <CustomHeader/>
+            <CustomHeader navigation={this.state.navigation}/>
             <ImageBackground source={require('../../assets/login.png')} style={{ width: '100%', height: '100%' }}>
                 <Navigation navigation={this.state.navigation}/>
                 <View style={{height: '90%', width: '78%', right: 0, position: 'absolute'}}>
@@ -198,9 +227,6 @@ export default class MyArea extends Component {
                     }}>
                       My Areas
                     </Text>
-                    <Button transparent onPress={() => this.state.navigation.navigate("Connection")}>
-                      <Icon name="globe-outline" />
-                    </Button>
                     <View>
                       {
                         this.state.displayAllAreas

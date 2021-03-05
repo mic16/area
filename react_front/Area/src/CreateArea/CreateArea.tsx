@@ -10,6 +10,8 @@ import ConfigComponent from '../Configfield/Configfield';
 import Navigation from '../Navigation/Navigation';
 import CustomHeader from '../CustomHeader/CustomHeader';
 import { userToken } from '../Login/Login';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+
 
 export default class CreateArea extends Component<{}, any> {
 
@@ -263,7 +265,7 @@ export default class CreateArea extends Component<{}, any> {
       console.log(`Les data: `)
       console.log(mapReaction)
       console.log(`et la reaction selectionner `)
-      console.log(this.state.selectedReaction)
+      // console.log(this.state.selectedReaction)
     });
     }
 
@@ -293,8 +295,10 @@ export default class CreateArea extends Component<{}, any> {
     console.log(`Action service selected is ${value}`)
     if (value.length != 0)
       this.setState({actionApp:value})
-    if (value.length > 2)
+    if (value.length > 2) {
+      this.setState({areact:[]})
       this.pickerAction(value)
+    }
   }
 
   onValueChangeAction(value: string) {
@@ -302,6 +306,8 @@ export default class CreateArea extends Component<{}, any> {
       selectedAction: value
     });
     console.log(`Action of the service selected is ${value}`)
+    if (!value)
+      return
     if (value.length != 0) {
       this.pickerReactionService(value)
     }
@@ -382,6 +388,18 @@ export default class CreateArea extends Component<{}, any> {
       this.setState({ loading: false });
   }
 
+  public getData = async () => {
+    try {
+      const value = await AsyncStorage.getItem('userToken')
+      if (value !== null) {
+        return (value)
+      }
+    } catch(e) {
+      console.log(e);
+      return (null);
+    }
+  }
+
   public createAreaWeb = async () => {
     let test = {
       action: {
@@ -398,7 +416,7 @@ export default class CreateArea extends Component<{}, any> {
           
         }
       },
-    token: userToken};
+    token: await this.getData()};
     this.state.actionFieldName.forEach((element: any, key: number) => {
       if (element.type === 'string')
         test.action.config[element.name] = this.state.responseActionField[key];
@@ -411,6 +429,7 @@ export default class CreateArea extends Component<{}, any> {
       if (element.type === 'boolean')
         test.reaction.config[element.name] = this.state.responseReactionField[key];
     });
+    console.log(test)
     await fetch('http://localhost:8080/area/create', {
       method: 'POST',
       headers: {
@@ -419,7 +438,8 @@ export default class CreateArea extends Component<{}, any> {
       },
       body: JSON.stringify(test),
     }).then((response) => response.json()).then((json) => {
-      console.log(`La réponse JSON de la création d'un Area: ${json}`);
+      console.log(`La réponse JSON de la création d'un Area:`);
+      console.log(json)
     })
     .catch((error) => {
       console.error(error);
@@ -708,8 +728,8 @@ export default class CreateArea extends Component<{}, any> {
        if (Platform.OS == "web")
         return (
           <Container>
-            <CustomHeader onPressButton={() => this.openCloseDrawer()}/>
-            <ImageBackground source={require('../../assets/login.png')} style={{ width: '100%', height: '100%' }} >
+            <CustomHeader navigation={this.state.navigation}/>
+            <ImageBackground source={require('../../assets/login.png')} style={{ width: '100%', height: '100%' }}>
               <View style={{height: '100%'}}>
                 <View style={{flexDirection: 'row', height: '100%'}}>
                   {/* <Drawer

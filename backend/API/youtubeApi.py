@@ -27,7 +27,7 @@ def getLastSubscriber(user, area):
     lastSubscriber = request.execute()
     lastSubscriberTab = []
     for subscriber in lastSubscriber.get('items'):
-        lastSubscriberTab.append({'title':subscriber.subscriberSnippet.title, 'description':subscriber.subscriberSnippet.description, 'url':subscriber.subscriberSnippet.thumbnails.medium.url})
+        lastSubscriberTab.append({'id':subscriber.id, 'title':subscriber.subscriberSnippet.title, 'description':subscriber.subscriberSnippet.description, 'url':subscriber.subscriberSnippet.thumbnails.medium.url})
     if area.getValue("youtube") == None:
         area.setValue("youtube", {'lastSubscriber':lastSubscriberTab})
         return (None)
@@ -62,7 +62,7 @@ def getLastLikedVideo(user, area):
     lastSubscriber = request.execute()
     lastLikeTab = []
     for subscriber in lastSubscriber.get('items'):
-        lastLikeTab.append({'title':subscriber.snippet.title, 'description':subscriber.snippet.description, 'url':subscriber.snippet.thumbnails.maxres.url})
+        lastLikeTab.append({'id':subscriber.id, 'title':subscriber.snippet.title, 'description':subscriber.snippet.description, 'url':subscriber.snippet.thumbnails.maxres.url})
     if area.getValue("youtube") == None:
         area.setValue("youtube", {'lastLike':lastLikeTab})
         return (None)

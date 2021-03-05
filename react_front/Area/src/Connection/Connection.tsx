@@ -17,6 +17,7 @@ import {
     useLocation,
     StaticRouter,
   } from "react-router-dom";
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 
 export default class Connection extends Component<{}, any> {
@@ -68,15 +69,17 @@ export default class Connection extends Component<{}, any> {
       })
     }
 
-    public serviceLogin(service:string) {
+    public async serviceLogin(service:string) {
+      let token = await this.getData();
         return fetch('http://' + mobileIP + ':8080/oauth/login/' + service, {
-            method: 'GET',
+            method: 'POST',
             headers: {
                 Accept: 'application/json',
                 'Content-Type': 'application/json',
-                "User-Agent": 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_11_5) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/56.0.2924.87 Safari/537.36'
+                "User-Agent": 'chrome'
               },
-            redirect: "follow"
+            redirect: "follow",
+            body: JSON.stringify({'token': token})
           })
           .then((response) => response.json()).then((json) => {
             console.log(json)
@@ -107,24 +110,44 @@ export default class Connection extends Component<{}, any> {
             .then((_) => {
               let mapStyle = new Map()
               let connectMap = new Map()
-              mapStyle.set("Twitter", { backgroundColor:"#1da1f2" })
-              mapStyle.set("Google", { backgroundColor:"#FF0000" })
-              mapStyle.set("Github", { backgroundColor:"black" })
-              mapStyle.set("Imgur", { backgroundColor:"#89c623" })
+              if (Platform.OS === 'web') {
+                mapStyle.set("Twitter", { backgroundColor:"#1da1f2", borderRadius: 15 })
+                mapStyle.set("Google", { backgroundColor:"#FF0000", borderRadius: 15 })
+                mapStyle.set("Github", { backgroundColor:"black", borderRadius: 15 })
+                mapStyle.set("Imgur", { backgroundColor:"#89c623", borderRadius: 15 })
+              } else {
+                mapStyle.set("Twitter", { backgroundColor:"#1da1f2" })
+                mapStyle.set("Google", { backgroundColor:"#FF0000" })
+                mapStyle.set("Github", { backgroundColor:"black" })
+                mapStyle.set("Imgur", { backgroundColor:"#89c623" })
+              }
               this.state.servicesData.forEach((elem:string, key:number) => {
                 connectMap.set(elem, "Press to connect")
                 if (this.state.connectMap.get(elem) === undefined)
                     this.setState({connectMap:connectMap})
-                reactList.push(
-                  <Card style={mapStyle.get(elem)} key={key}>
-                    <CardItem style={ mapStyle.get(elem)} header button onPress={ () => this.connect(elem)}>
-                      <Text style={{ color:"white" }}>{elem}</Text>
-                    </CardItem>
-                    <CardItem style={ mapStyle.get(elem)} header button onPress={ () => this.connect(elem)}>
-                      <Text style={{ color:"white" }}>{this.state.connectMap.get(elem)}</Text>
-                    </CardItem>
-                  </Card>
-                )
+                if (Platform.OS === 'web') {
+                  reactList.push(
+                    <Card style={mapStyle.get(elem)} key={key}>
+                      <CardItem style={ mapStyle.get(elem)} header button onPress={ () => this.connect(elem)}>
+                        <Text style={{ color:"white" }}>{elem}</Text>
+                      </CardItem>
+                      <CardItem style={ mapStyle.get(elem)} header button onPress={ () => this.connect(elem)}>
+                        <Text style={{ color:"white" }}>{this.state.connectMap.get(elem)}</Text>
+                      </CardItem>
+                    </Card>
+                  )
+                } else {
+                  reactList.push(
+                    <Card style={mapStyle.get(elem)} key={key}>
+                      <CardItem style={ mapStyle.get(elem)} header button onPress={ () => this.connect(elem)}>
+                        <Text style={{ color:"white" }}>{elem}</Text>
+                      </CardItem>
+                      <CardItem style={ mapStyle.get(elem)} header button onPress={ () => this.connect(elem)}>
+                        <Text style={{ color:"white" }}>{this.state.connectMap.get(elem)}</Text>
+                      </CardItem>
+                    </Card>
+                  )
+                }
                 i += 1
               })
               this.setState({reactListData:reactList})
@@ -158,10 +181,16 @@ export default class Connection extends Component<{}, any> {
             })
         }
 
-    public sendCallBack(service:string, data:any) {
+    public async sendCallBack(service:string, data:any) {
         console.log("J'ENVOI DONC AU TRUC ")
         console.log(`http://${mobileIP}:8080/oauth/callback/${service}?${data}`)
         console.log(service)
+        console.log(userToken)
+        let token = userToken;
+        if (Platform.OS === 'web') {
+          token = await this.getData();
+        }
+        
         return fetch(`http://${mobileIP}:8080/oauth/callback/${service}?${data}` , {
             method: 'POST',
             headers: {
@@ -169,7 +198,7 @@ export default class Connection extends Component<{}, any> {
                 'Content-Type': 'application/json'
             },
             body: JSON.stringify({
-              token:userToken
+              token: token
             })
             })
             .then((response) => response.json()).then((json) => {
@@ -179,7 +208,7 @@ export default class Connection extends Component<{}, any> {
             .catch((error) => {
             console.log("C4EST PAS GOOD")
             console.log(JSON.stringify({
-              token:userToken
+              token: token
             }))
             console.error(error)
             })
@@ -250,11 +279,37 @@ export default class Connection extends Component<{}, any> {
     return true
   }
 
-  render() {
-    if (window.location.pathname.includes("/oauth/") && this.state.not_finished) {
-      this.setState({not_finished:false})
-      this.finishOauth()
+  private getData = async () => {
+    try {
+      const value = await AsyncStorage.getItem('userToken')
+      if (value !== null) {
+        return (value);
+      }
+      return ('');
+    } catch(e) {
+      console.log(e);
+      return ('');
     }
+  }
+
+  render() {
+    if (Platform.OS === "web") {
+      if (window.location.pathname.includes("/oauth/") && this.state.not_finished) {
+        this.setState({not_finished:false})
+        this.finishOauth()
+      }
+      let service = window.location.pathname.match('^/oauth/(.+)$');
+  
+      if (service) {
+        // console.log(`LES SERVICE SONT -${service[1]}- et -${this.state.service}-`)
+        // console.log(`ET LES PARAMETRES SONT -${this.state.set}-`)
+        if (this.state.set ) {//&& service[1] === this.state.service) {
+          // console.log("DONC JE FAIS LE CALL CALLBACK")
+          if (this.sendToBack(window.location.href))
+            this.setState({set:false})
+        }
+      }
+    } else {
       if (this.props.route.params !== undefined) {
         console.log(`LES SERVICE SONT -${this.props.route.params.service}- et -${this.state.service}-`)
         console.log(`ET LES PARAMETRES SONT -${this.state.set}- et -${this.props.route.params.data}-`)
@@ -265,14 +320,35 @@ export default class Connection extends Component<{}, any> {
             this.setState({set:false})
         }
       }
-       if (this.state.loading) {
-        this.listElem()
-        return (
-          <View>
-             <Spinner color="blue" />
-           </View>
-        );
-       }
+    }
+
+    if (this.state.loading) {
+      this.listElem()
+      return (
+        <View>
+            <Spinner color="blue" />
+          </View>
+      );
+    }
+    if (Platform.OS === 'web') {
+      return (
+          <Container>
+            <CustomHeader/>
+            <ImageBackground source={require('../../assets/login.png')} style={{ width: '100%', height: '100%' }}>
+              <Navigation navigation={this.state.navigation}/>
+              <View style={{height: '90%', width: '78%', right: 0, position: 'absolute'}}>
+                <View style={styles.container}>
+                  <View style= {{ position: "relative" }}>
+                    {
+                      this.state.reactListData
+                    }
+                  </View>
+                </View>
+              </View>
+            </ImageBackground>
+          </Container>
+      )
+    }
         return (
             <Container style= {{ position: "relative"}}>
             <Header>
@@ -295,3 +371,16 @@ export default class Connection extends Component<{}, any> {
                 )
    }
 }
+
+const styles = StyleSheet.create({
+  container: {
+    width: '100%',
+    margin: 5,
+    marginRight: 10,
+    borderRadius: 20,
+    height: '100%',
+    position: 'absolute',
+    right: 0,
+    backgroundColor: 'rgba(255, 255, 255, 0.5)'
+  },
+});

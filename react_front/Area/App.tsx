@@ -18,14 +18,9 @@ import LoginComponent from './src/Login/Login';
 import MenuComponent from './src/Menu/Menu';
 import Menu from './src/Menu/Menu';
 
-const Stack = createStackNavigator();
-
 export default function App() {
   return (
-    // <Root>
     <Menu></Menu>
-    
-    // </Root>
   );
 }
 
