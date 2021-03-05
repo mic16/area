@@ -117,7 +117,7 @@ def getLastTweetUser(user, area):
     lastTweets = api.user_timeline(include_entities=True, count = 50)
     lastTweetTab = []
     for tweet in lastTweets:
-        lastTweetTab.append({'text':tweet.text, 'entities':tweet.entities})
+        lastTweetTab.append({'id':tweet.id, 'text':tweet.text, 'entities':tweet.entities})
 
     if area.getValue("twitter") == None:
         area.setValue("twitter", {'lastTweet':lastTweetTab})
@@ -146,7 +146,7 @@ def getLastLike(user, area):
     lastFavs = api.favorites(include_entities=True, count = 50)
     lastFavTab = []
     for tweet in lastFavs:
-        lastFavTab.append({'text':tweet.text, 'entities':tweet.entities})
+        lastFavTab.append({'id':tweet.id, 'text':tweet.text, 'entities':tweet.entities})
 
     if area.getValue("twitter") == None:
         area.setValue("twitter", {'lastFav':lastFavTab})
