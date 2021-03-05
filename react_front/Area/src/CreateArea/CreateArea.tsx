@@ -456,6 +456,14 @@ export default class CreateArea extends Component<{}, any> {
     })
   }
 
+  private storeData = async (item: string, value: string) => {
+    try {
+      await AsyncStorage.setItem(item, value)
+    } catch (e) {
+      console.log(e);
+    }
+  }
+
   changeService = async (value: any, type: string) => {
     let service = '';
 
@@ -469,9 +477,11 @@ export default class CreateArea extends Component<{}, any> {
           Accept: 'application/json',
           'Content-Type': 'application/json',
         },
-      }).then((response) => response.json()).then((json) => {
+      }).then((response) => response.json()).then(async (json) => {
         let tmpActionList: Array<any> = [<Picker.Item label={''} value={0} key={0}/>];
         let tmpActionNameList: Array<any> = [];
+        const jsonValue = JSON.stringify(json.result.actions);
+        await this.storeData('actions', jsonValue);
         json.result.actions.forEach((elem: any, key: number) => {
           tmpActionList.push(
             <Picker.Item label={elem.description} value={key + 1} key={key + 1}/>
@@ -625,12 +635,14 @@ export default class CreateArea extends Component<{}, any> {
         'with image': false,
         'string': '',
       })
-    }).then((response) => response.json()).then((json) => {
+    }).then((response) => response.json()).then(async(json) => {
       let tmpReactionList: {[k: string]: any} = {};
       let tmpReactionNameList: {[k: string]: any} = {};
       let tmpReactionServiceList = [<Picker.Item label={''} value={0} key={0}/>];
       let serviceKey = 1;
       
+      const jsonValue = JSON.stringify(json.result)
+      await this.storeData('reactions', jsonValue);
       for (let service in json.result) {
         if (json.result.hasOwnProperty(service)) {
           tmpReactionList[service] = [<Picker.Item label={''} value={0} key={0}/>];

@@ -64,7 +64,7 @@ export default class LoginComponent extends Component<{}, any> {
       console.log("CONNECTED WITH TOKEN:")
       console.log(json)
       userToken = json.result
-      this.storeData(userToken);
+      this.storeData('userToken', userToken);
       this.setState({firstLoad:true})
       this.state.navigation.navigate('CreateArea')
     })
@@ -76,9 +76,9 @@ export default class LoginComponent extends Component<{}, any> {
     })
   }
 
-  private storeData = async (value: string) => {
+  private storeData = async (item: string, value: string) => {
     try {
-      await AsyncStorage.setItem('userToken', value)
+      await AsyncStorage.setItem(item, value)
     } catch (e) {
       console.log(e);
     }

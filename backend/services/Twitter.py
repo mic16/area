@@ -4,6 +4,8 @@ from Reaction import Reaction
 from Field import Field, FTYPE
 from Trigger import Trigger
 from Imgs import Imgs
+
+import _
 import twitterApi
 
 @Service(oauth='Twitter')

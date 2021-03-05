@@ -6,6 +6,7 @@ import sys
 import json
 from utils import diffFirstSecond
 
+import _
 import google.oauth2.credentials
 import google_auth_oauthlib.flow
 import googleapiclient.discovery
@@ -27,7 +28,9 @@ def getLastSubscriber(user, area):
     lastSubscriber = request.execute()
     lastSubscriberTab = []
     for subscriber in lastSubscriber.get('items'):
-        lastSubscriberTab.append({'id':subscriber.id, 'title':subscriber.subscriberSnippet.title, 'description':subscriber.subscriberSnippet.description, 'url':subscriber.subscriberSnippet.thumbnails.medium.url})
+        if (_.get(subscriber, 'id') == None or _.get(subscriber, 'subscriberSnippet.title') == None or _.get(subscriber, 'subscriberSnippet.description') == None or _.get(subscriber, 'subscriberSnippet.thumbnails.medium.url') == None):
+            continue
+        lastSubscriberTab.append({'id':_.get(subscriber, 'id'), 'title':_.get(subscriber, 'subscriberSnippet.title'), 'description':_.get(subscriber, 'subscriberSnippet.description'), 'url':_.get(subscriber, 'subscriberSnippet.thumbnails.medium.url')})
     if area.getValue("youtube") == None:
         area.setValue("youtube", {'lastSubscriber':lastSubscriberTab})
         return (None)
@@ -62,7 +65,9 @@ def getLastLikedVideo(user, area):
     lastSubscriber = request.execute()
     lastLikeTab = []
     for subscriber in lastSubscriber.get('items'):
-        lastLikeTab.append({'id':subscriber.id, 'title':subscriber.snippet.title, 'description':subscriber.snippet.description, 'url':subscriber.snippet.thumbnails.maxres.url})
+        if (_.get(subscriber, 'id') == None or _.get(subscriber, 'snippet.title') == None or _.get(subscriber, 'snippet.description') == None or _.get(subscriber, 'snippet.thumbnails.medium.url') == None):
+            continue
+        lastLikeTab.append({'id':_.get(subscriber, 'id'), 'title':_.get(subscriber, 'snippet.title'), 'description':_.get(subscriber, 'snippet.description'), 'url':_.get(subscriber, 'snippet.thumbnails.medium.url')})
     if area.getValue("youtube") == None:
         area.setValue("youtube", {'lastLike':lastLikeTab})
         return (None)

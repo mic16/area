@@ -127,7 +127,7 @@ export default class MyArea extends Component {
         "token":token,
       })
     })
-    .then((response) => response.json()).then((json) => {
+    .then((response) => response.json()).then(async(json) => {
       console.log(json)
       if (json.result === undefined) {
         if (Platform.OS === "web") {
@@ -142,44 +142,71 @@ export default class MyArea extends Component {
       }
       let tmpDisplayAllAreas: Array<Object> = [];
       let tmpStockAllAreas: Array<string> = [];
+      let actionDescription: string = '';
+      let reactionDescription: string = '';
       
+      let promiseTab: Array<Promise<any>> = [];
       json.result.forEach((element: any, key: number) => {
-      //   fetch('http://' + mobileIP + `:8080/services/${element.service}`, {
-      //   method: 'POST',
-      //   headers: {
-      //     Accept: 'application/json',
-      //     'Content-Type': 'application/json'
-      //   },
-      //   body: JSON.stringify({
-      //     "token":userToken,
-      //   })
-      // })
-      // .then((response) => response.json()).then((json) => {
-  
-      // })
-        tmpStockAllAreas.push(element.uuid)
-        tmpDisplayAllAreas.push(
-          <View style={{marginTop: 10, width: '100%'}}>
-            <View style={{marginLeft: 'auto', marginRight: 'auto'}}>
-              <View style={{display: 'flex', flexDirection: 'row', height: '100%'}}>
-                <View style={{display: 'flex', flexDirection: 'column', alignItems: 'center'}}>
-                  <Text>{element.action.service}</Text>
-                  <Text>{element.action.name}</Text>
-                </View>
-                <Icon name="arrow-forward-sharp"></Icon>
-                <View style={{display: 'flex', flexDirection: 'column', alignItems: 'center'}}>
-                  <Text>{element.reaction.service}</Text>
-                  <Text>{element.reaction.name}</Text>
+        let promise = fetch('http://' + mobileIP + ':8080/services/' + element.action.service, {
+          method: 'GET',
+          headers: {
+            Accept: 'application/json',
+            'Content-Type': 'application/json'
+          },
+        })
+        .then((response) => response.json()).then((json) => {
+          json.result.actions.forEach((action: any) => {
+            if (action.name === element.action.name) {
+              actionDescription = action.description;
+            }
+          });
+        return fetch('http://' + mobileIP + ':8080/services/' + element.reaction.service, {
+          method: 'GET',
+          headers: {
+            Accept: 'application/json',
+            'Content-Type': 'application/json'
+          },
+        })
+        .then((response) => response.json()).then((json) => {
+          json.result.reactions.forEach((reaction: any) => {
+            if (reaction.name === element.reaction.name) {
+              reactionDescription = reaction.description;
+            }
+          });
+          tmpStockAllAreas.push(element.uuid)
+          tmpDisplayAllAreas.push(
+            <View style={{marginTop: 10, width: '100%'}}>
+              <View style={{marginLeft: 'auto', marginRight: 'auto'}}>
+                <View style={{display: 'flex', flexDirection: 'row', height: '100%'}}>
+                  <View style={{display: 'flex', flexDirection: 'column', alignItems: 'center'}}>
+                    <Text>{element.action.service}</Text>
+                    <Text>{actionDescription}</Text>
+                  </View>
+                  <Icon name="arrow-forward-sharp"></Icon>
+                  <View style={{display: 'flex', flexDirection: 'column', alignItems: 'center'}}>
+                    <Text>{element.reaction.service}</Text>
+                    <Text>{reactionDescription}</Text>
+                  </View>
                 </View>
               </View>
+              <Button style={{right: 10, position: 'absolute'}} onPress={() => this.deleteArea(key)}>
+                <Icon name="trash"></Icon>
+              </Button>
             </View>
-            <Button style={{right: 10, position: 'absolute'}} onPress={() => this.deleteArea(key)}>
-              <Icon name="trash"></Icon>
-            </Button>
-          </View>
-        )
+          )
+          console.log("test")
+        })
+      })
+      promiseTab.push(promise);
+      console.log("yeet")
       });
-      this.setState({allArea: json.result, displayAllAreas: tmpDisplayAllAreas, stockAllAreas: tmpStockAllAreas})
+      await Promise.all(promiseTab);
+      return ([json.result, tmpDisplayAllAreas, tmpStockAllAreas])
+    }).then(([result, displayAllAreas, stockAllAreas]: any) => {
+      console.log("hhhh")
+      if (result && displayAllAreas && stockAllAreas) {
+        this.setState({allArea: result, displayAllAreas: displayAllAreas, stockAllAreas: stockAllAreas})
+      }
     })
     .catch((error) => {
       console.error(error)
