@@ -16,8 +16,11 @@ export default class ServiceRoute extends React.Component {
     webview = null;
 
     render() {
-      if (this.webview === null)
+      if (this.webview === null) {
+        console.log("LES PARAMETRE:")
+        console.log(this.props.route)
         console.log(`L'URL DE LA REDIR EST = ${this.props.route.params.data.result}`)
+      }
       else
         this.webview.getSettings().setUserAgentString("Android");
       return (
