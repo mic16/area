@@ -4,6 +4,8 @@ from Reaction import Reaction
 from Field import Field, FTYPE
 from Trigger import Trigger
 from Imgs import Imgs
+
+import _
 import twitterApi
 
 @Service(oauth='Twitter')
@@ -74,7 +76,7 @@ class Twitter():
         if len(txt) > 280:
             txt = txt[0:279]
         if len(area.get(Imgs)) >= 1:
-            twitterApi.newTweetImages(area.getUser(), txt, area.get(Imgs)[0])
+            twitterApi.newTweetImages(area.getUser(), txt, (area.get(Imgs)[0]).getImages())
         else :
             twitterApi.newTweet(area.getUser(), txt)
 

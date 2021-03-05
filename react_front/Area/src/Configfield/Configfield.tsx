@@ -165,39 +165,39 @@ export default class ConfigComponent extends Component<{}, any> {
       console.log(this.props.route)
     } else
       this.createFields(this.props.route.params.data)
-      if (this.state.loading) {
-        console.log("JE SUIS DANS LA CONFIG")
-        // console.log(this.props)
-        return (
-          <View>
-            <Spinner color="blue" />
-          </View>
-         );
-        }
+    if (this.state.loading) {
+      console.log("JE SUIS DANS LA CONFIG")
+      // console.log(this.props)
+      return (
+        <View>
+          <Spinner color="blue" />
+        </View>
+        );
+      }
 
-        return (
-            <Root>
-            <Container style= {{ position: "relative"}}>
-            <Header >
-                {
-                  this.props.route.params.type === "action" ?
-                  <Button iconLeft transparent style={{ position:"absolute", paddingRight:340 }} onPress={() => this.state.navigation.navigate("CreateArea", { action: this.state.arrayValues})}>
-                    <Icon name="chevron-back-outline" />
-                  </Button>:
-                  <Button iconLeft transparent style={{ position:"absolute", paddingRight:340 }} onPress={() => this.state.navigation.navigate("CreateArea", { reaction: this.state.arrayValues})}>
+      return (
+          <Root>
+          <Container style= {{ position: "relative"}}>
+          <Header >
+              {
+                this.props.route.params.type === "action" ?
+                <Button iconLeft transparent style={{ position:"absolute", paddingRight:340 }} onPress={() => this.state.navigation.navigate("CreateArea", { action: this.state.arrayValues})}>
                   <Icon name="chevron-back-outline" />
-                </Button>
-                }
-              <Title style={{  marginRight:0, color: "white", fontSize:22, alignSelf:"center" }} >{ this.state.headerReact + " configuration"}</Title>
-            </Header>
-            <Content style= {{ position: "relative" }}>
-             {
-             this.state.reactData
-             }
-            </Content>
-          </Container>
-          </Root>
-                )
+                </Button>:
+                <Button iconLeft transparent style={{ position:"absolute", paddingRight:340 }} onPress={() => this.state.navigation.navigate("CreateArea", { reaction: this.state.arrayValues})}>
+                <Icon name="chevron-back-outline" />
+              </Button>
+              }
+            <Title style={{  marginRight:0, color: "white", fontSize:22, alignSelf:"center" }} >{ this.state.headerReact + " configuration"}</Title>
+          </Header>
+          <Content style= {{ position: "relative" }}>
+            {
+            this.state.reactData || <Text></Text>
+            }
+          </Content>
+        </Container>
+        </Root>
+              )
    }
 }
 

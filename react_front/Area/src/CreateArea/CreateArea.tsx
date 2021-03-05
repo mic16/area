@@ -12,6 +12,7 @@ import CustomHeader from '../CustomHeader/CustomHeader';
 import { userToken } from '../Login/Login';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
+
 export default class CreateArea extends Component<{}, any> {
 
   constructor(props:any) {
@@ -264,7 +265,7 @@ export default class CreateArea extends Component<{}, any> {
       console.log(`Les data: `)
       console.log(mapReaction)
       console.log(`et la reaction selectionner `)
-      console.log(this.state.selectedReaction)
+      // console.log(this.state.selectedReaction)
     });
     }
 
@@ -294,8 +295,10 @@ export default class CreateArea extends Component<{}, any> {
     console.log(`Action service selected is ${value}`)
     if (value.length != 0)
       this.setState({actionApp:value})
-    if (value.length > 2)
+    if (value.length > 2) {
+      this.setState({areact:[]})
       this.pickerAction(value)
+    }
   }
 
   onValueChangeAction(value: string) {
@@ -303,6 +306,8 @@ export default class CreateArea extends Component<{}, any> {
       selectedAction: value
     });
     console.log(`Action of the service selected is ${value}`)
+    if (!value)
+      return
     if (value.length != 0) {
       this.pickerReactionService(value)
     }

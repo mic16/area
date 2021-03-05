@@ -86,7 +86,7 @@ def newTweetImages(user, text, imgs):
 
     mediaList = []
     for i in imgs:
-        filename = i.split('/')[:1]
+        filename = i.split('/')[-1]
         request = requests.get(i, stream=True)
 
         if request.status_code == 200:
@@ -94,13 +94,13 @@ def newTweetImages(user, text, imgs):
             with file as image:
                 for chunk in request:
                     image.write(chunk)
-            media = api.media_upload(file=file).media_id
+            file.close()
+            media = api.media_upload(filename=filename).media_id
             if (media != None):
                 mediaList.append(media)
-            file.close()
             os.remove(filename)
 
-    api.update_status(filename, status=text, media_ids=mediaList[:4])
+    api.update_status(status=text, media_ids=mediaList[:4])
 
 
 def sendDirectMessage(user, text, userId):
