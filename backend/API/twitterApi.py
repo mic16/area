@@ -86,7 +86,7 @@ def newTweetImages(user, text, imgs):
 
     mediaList = []
     for i in imgs:
-        filename = i.split('/')[:1]
+        filename = i.split('/')[-1]
         request = requests.get(i, stream=True)
 
         if request.status_code == 200:
