@@ -293,9 +293,11 @@ export default class Connection extends Component<{}, any> {
   }
 
   render() {
-    if (window.location.pathname.includes("/oauth/") && this.state.not_finished) {
-      this.setState({not_finished:false})
-      this.finishOauth()
+    if (Platform.OS === "web") {
+      if (window.location.pathname.includes("/oauth/") && this.state.not_finished) {
+        this.setState({not_finished:false})
+        this.finishOauth()
+      }
     }
     let service = window.location.pathname.match('^/oauth/(.+)$');
 

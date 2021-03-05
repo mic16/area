@@ -1684,6 +1684,13 @@
     native-url "^0.2.6"
     schema-utils "^2.6.5"
 
+"@react-native-async-storage/async-storage@^1.14.1":
+  version "1.14.1"
+  resolved "https://registry.yarnpkg.com/@react-native-async-storage/async-storage/-/async-storage-1.14.1.tgz#3c2ff2b1a312df3b1c809a60fa88665e50a095b8"
+  integrity sha512-UkLUox2q5DKNYB6IMUzsuwrTJeXGLySvtQlnrqd3fd+96JErCT4X3xD+W1cvQjes0nm0LbaELbwObKc+Tea7wA==
+  dependencies:
+    deep-assign "^3.0.0"
+
 "@react-native-community/checkbox@^0.5.7":
   version "0.5.7"
   resolved "https://registry.npmjs.org/@react-native-community/checkbox/-/checkbox-0.5.7.tgz"
@@ -2034,6 +2041,15 @@
   version "5.1.7"
   resolved "https://registry.npmjs.org/@types/react-router-dom/-/react-router-dom-5.1.7.tgz"
   integrity sha512-D5mHD6TbdV/DNHYsnwBTv+y73ei+mMjrkGrla86HthE4/PVvL1J94Bu3qABU+COXzpL23T1EZapVVpwHuBXiUg==
+  dependencies:
+    "@types/history" "*"
+    "@types/react" "*"
+    "@types/react-router" "*"
+
+"@types/react-router-native@^5.1.0":
+  version "5.1.0"
+  resolved "https://registry.yarnpkg.com/@types/react-router-native/-/react-router-native-5.1.0.tgz#72eef279eb6fae34cded6fa1cc48a0b19e3e0fe0"
+  integrity sha512-Lk+aLihT6M3fPuvCQRv8n4G9ORQHuxEJYZe956p4yGmjX9Z2QEZeOWvsNcabljL42v4yOHCadWGZ05UFEodtMg==
   dependencies:
     "@types/history" "*"
     "@types/react" "*"
@@ -8287,7 +8303,7 @@ prompts@2.4.0:
     kleur "^3.0.3"
     sisteransi "^1.0.5"
 
-prop-types@^15.5.10, prop-types@^15.5.8, prop-types@^15.6.0, prop-types@^15.6.2, prop-types@^15.7.2:
+prop-types@^15.5.10, prop-types@^15.5.8, prop-types@^15.6.0, prop-types@^15.6.1, prop-types@^15.6.2, prop-types@^15.7.2:
   version "15.7.2"
   resolved "https://registry.npmjs.org/prop-types/-/prop-types-15.7.2.tgz"
   integrity sha512-8QQikdH7//R2vurIJSutZ1smHYTcLpRWEOlHnzcWHmBYrOGUysKwSsrC89BCiFj3CbrfJ/nXFdJepOVrY1GCHQ==
@@ -8703,6 +8719,14 @@ react-router-dom@^5.2.0:
     react-router "5.2.0"
     tiny-invariant "^1.0.2"
     tiny-warning "^1.0.0"
+
+react-router-native@^5.2.0:
+  version "5.2.0"
+  resolved "https://registry.yarnpkg.com/react-router-native/-/react-router-native-5.2.0.tgz#40c40856a8d1e3b189c7ad5c1be9b1ead4dbacfd"
+  integrity sha512-4J9htwyEDpE8mmuZ3vlgsxUd79BU/R64PqMQoXbZU/QM7gaB1O3EEY9MRryidxDmSy+rrTvVe4PjAzGRV0bFFg==
+  dependencies:
+    prop-types "^15.6.1"
+    react-router "5.2.0"
 
 react-router@5.2.0:
   version "5.2.0"
