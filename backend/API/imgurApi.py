@@ -73,7 +73,7 @@ def getLastFav(user, area):
         area.setValue("imgur", oldImgur)
         return (None)
     oldAlbums = oldImgur['lastFav']
-    diff = diffFirstSecond(lastAlbumsTab, oldAlbums, lambda x,y: x.id == y.id)
+    diff = diffFirstSecond(oldAlbums, lastAlbumsTab, lambda x,y: x.get('id') == y.get('id'))
     if (len(diff) == 0):
         oldImgur['lastFav'] = lastAlbumsTab
         area.setValue("imgur", oldImgur)
@@ -109,7 +109,7 @@ def getLastPost(user, area):
         area.setValue("imgur", oldImgur)
         return (None)
     oldAlbums = oldImgur['lastAlbums']
-    diff = diffFirstSecond(lastAlbumsTab, oldAlbums, lambda x,y: x.id == y.id)
+    diff = diffFirstSecond(oldAlbums, lastAlbumsTab, lambda x,y: x.get('id') == y.get('id'))
     if (len(diff) == 0):
         oldImgur['lastAlbums'] = lastAlbumsTab
         area.setValue("imgur", oldImgur)

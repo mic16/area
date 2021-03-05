@@ -39,6 +39,8 @@ import Youtube
 import Gmail
 import Imgur
 
+import events
+
 tokenManager = TokenManager()
 data.load()
 
@@ -157,17 +159,17 @@ def oauthLinks():
                 return {'result': OAuthManager.userLinks(user)}
     return {'error': 'Invalid Token'}
 
-@app.route('/oauth/login/<string:manager>')
+@app.route('/oauth/login/<string:manager>', methods = [ 'POST' ])
 def oauthLogin(manager):
     if oauth := OAuthManager.getManager(manager):
         return {"result": oauth[0]()}
-    return {"error": "Unkonwn oauth service '%s'" % manager}
+    return {"error": "Unknown oauth service '%s'" % manager}
 
 @app.route('/oauth/callback/<string:manager>', methods = [ 'POST' ])
 def oauthCallback(manager):
     if oauth := OAuthManager.getManager(manager):
         return oauth[1]()
-    return {"error": "Unkonwn oauth service '%s'" % manager}
+    return {"error": "Unknown oauth service '%s'" % manager}
 
 
 print('started')

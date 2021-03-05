@@ -5,7 +5,6 @@ from Field import Field, FTYPE
 from Trigger import Trigger
 from Imgs import Imgs
 import twitterApi
-import Imgs from Imgs
 
 @Service(oauth='Twitter')
 class Twitter():

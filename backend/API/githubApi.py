@@ -69,7 +69,7 @@ def getLastStar(user, area):
     count = 0
     lastStarsTab = []
     for star in lastStarred:
-        lastStarsTab.append({'name':star.full_name, 'description': star.description, 'starNb': star.get_stargazers().totalCount})
+        lastStarsTab.append({'id':star.id, 'name':star.full_name, 'description': star.description, 'starNb': star.get_stargazers().totalCount})
         if (count == 20):
             break
         count += 1
@@ -82,7 +82,7 @@ def getLastStar(user, area):
         area.setValue("github", oldGithub)
         return (None)
     oldStars = oldGithub['lastStars']
-    diff = diffFirstSecond(lastStarsTab, oldStars, lambda x,y: x.id == y.id)
+    diff = diffFirstSecond(oldStars, lastStarsTab, lambda x,y: x.get('id') == y.get('id'))
     if (len(diff) == 0):
         oldGithub['lastStars'] = lastStarsTab
         area.setValue("github", oldGithub)
@@ -99,7 +99,7 @@ def getNewFollower(user, area):
     count = 0
     lastFollowersTab = []
     for follower in lastFollowers:
-        lastFollowersTab.append({'name':follower.full_name, 'avatarUrl': follower.avatar_url, 'bio': follower.bio})
+        lastFollowersTab.append({'id':follower.id, 'name':follower.full_name, 'avatarUrl': follower.avatar_url, 'bio': follower.bio})
         if (count == 20):
             break
         count += 1
@@ -112,7 +112,7 @@ def getNewFollower(user, area):
         area.setValue("github", oldGithub)
         return (None)
     oldFollowers = oldGithub['lastFollowers']
-    diff = diffFirstSecond(lastFollowersTab, oldFollowers, lambda x,y: x.id == y.id)
+    diff = diffFirstSecond(oldFollowers, lastFollowersTab, lambda x,y: x.get('id') == y.get('id'))
     if (len(diff) == 0):
         oldGithub['lastFollowers'] = lastFollowersTab
         area.setValue("github", oldGithub)

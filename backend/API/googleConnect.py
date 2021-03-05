@@ -13,7 +13,18 @@ CLIENT_SECRETS_FILE = "API/code_secret_client_108810952137-1tic3bntk3p466t851t1c
 SCOPES = ['https://www.googleapis.com/auth/youtube.force-ssl',
           'https://www.googleapis.com/auth/gmail.compose']
 
+tokenState = {}
+
 def loginGoogle():
+    tokenManager = TokenManager()
+    req_data = flask.request.get_json()
+    if not req_data:
+        return {"error": "Missing JSON body"}
+    if (req_data.get("token") == None):
+        return ({"error": "Missing token in body"})
+    if not (user := tokenManager.getTokenUser(req_data.get("token"))):
+        return ({"error": "bad token"})
+
     flow = google_auth_oauthlib.flow.Flow.from_client_secrets_file(
         CLIENT_SECRETS_FILE, scopes=SCOPES)
     flow.redirect_uri = 'http://localhost:8081/oauth/Google'
@@ -21,7 +32,7 @@ def loginGoogle():
     authorization_url, state = flow.authorization_url(
         access_type='offline',
         include_granted_scopes='true')
-    flask.session['state'] = state
+    tokenState[user] = state
     return authorization_url
 
 def oauthAuthorizedGoogle():
@@ -33,7 +44,8 @@ def oauthAuthorizedGoogle():
         return ({"error": "Missing token in body"})
     if not (user := tokenManager.getTokenUser(req_data.get("token"))):
         return ({"error": "bad token"})
-    state = flask.session['state']
+    if not (state := tokenState.get(user)):
+        return {"error": "Couldn't finish linking process"}
 
     flow = google_auth_oauthlib.flow.Flow.from_client_secrets_file(
         CLIENT_SECRETS_FILE, scopes=None, state=state)

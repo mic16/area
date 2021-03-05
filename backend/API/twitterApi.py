@@ -117,7 +117,7 @@ def getLastTweetUser(user, area):
     lastTweets = api.user_timeline(include_entities=True, count = 50)
     lastTweetTab = []
     for tweet in lastTweets:
-        lastTweetTab.append({'text':tweet.text, 'entities':tweet.entities})
+        lastTweetTab.append({'id':tweet.id, 'text':tweet.text, 'entities':tweet.entities})
 
     if area.getValue("twitter") == None:
         area.setValue("twitter", {'lastTweet':lastTweetTab})
@@ -128,7 +128,7 @@ def getLastTweetUser(user, area):
         area.setValue("twitter", oldTwitter)
         return (None)
     oldTweets = oldTwitter['lastTweet']
-    diff = diffFirstSecond(lastTweetTab, oldTweets, lambda x,y: x.id == y.id)
+    diff = diffFirstSecond(oldTweets, lastTweetTab, lambda x,y: x.get('id') == y.get('id'))
     if (len(diff) == 0):
         oldTwitter['lastTweet'] = lastTweetTab
         area.setValue("twitter", oldTwitter)
@@ -146,7 +146,7 @@ def getLastLike(user, area):
     lastFavs = api.favorites(include_entities=True, count = 50)
     lastFavTab = []
     for tweet in lastFavs:
-        lastFavTab.append({'text':tweet.text, 'entities':tweet.entities})
+        lastFavTab.append({'id':tweet.id, 'text':tweet.text, 'entities':tweet.entities})
 
     if area.getValue("twitter") == None:
         area.setValue("twitter", {'lastFav':lastFavTab})
@@ -157,7 +157,7 @@ def getLastLike(user, area):
         area.setValue("twitter", oldTwitter)
         return (None)
     oldFavs = oldTwitter['lastFav']
-    diff = diffFirstSecond(lastFavTab, oldFavs, lambda x,y: x.id == y.id)
+    diff = diffFirstSecond(oldFavs, lastFavTab, lambda x,y: x.get('id') == y.get('id'))
     if (len(diff) == 0):
         oldTwitter['lastFav'] = lastFavTab
         area.setValue("twitter", oldTwitter)

@@ -4,7 +4,7 @@ def diffFirstSecond(source, after, compare=None):
         if firstIndex != -1:
             break
         for j in range(len(after)):
-            if (compare and compare(i, after[j])) or i == after[j]:
+            if (compare and compare(i, after[j])) or (not compare and i == after[j]):
                 firstIndex = j
                 break
     if firstIndex == -1:
