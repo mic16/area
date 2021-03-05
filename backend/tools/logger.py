@@ -13,7 +13,7 @@ __logger__ = 'AREA'
 __print__ = print
 
 logfile = open('/var/logs/%s.log' % (time.strftime("%d-%m-%Y")), 'w')
-def log(*args, level=DEBUG, end='\n', flush=False):
+def log(*args, level=DEBUG, end='\n', flush=False, file=None):
     message = ' '.join([str(i) for i in args])
     color = colors.LIGHT_WHITE
     prefix = ''
