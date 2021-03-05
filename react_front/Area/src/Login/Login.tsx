@@ -64,9 +64,7 @@ export default class LoginComponent extends Component<{}, any> {
       console.log("CONNECTED WITH TOKEN:")
       console.log(json)
       userToken = json.result
-      if (Platform.OS === 'web') {
-        this.storeData(userToken);
-      }
+      this.storeData(userToken);
       this.setState({firstLoad:true})
       this.state.navigation.navigate('CreateArea')
     })
