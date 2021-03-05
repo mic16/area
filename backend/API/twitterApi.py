@@ -100,7 +100,7 @@ def newTweetImages(user, text, imgs):
                 mediaList.append(media)
             os.remove(filename)
 
-    api.update_status(filename, status=text, media_ids=mediaList[:4])
+    api.update_status(status=text, media_ids=mediaList[:4])
 
 
 def sendDirectMessage(user, text, userId):
