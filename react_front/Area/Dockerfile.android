@@ -1,0 +1,13 @@
+FROM node:14.15
+
+WORKDIR /var/app
+
+COPY . .
+COPY ./keystore.jks .
+
+RUN npm install -g turtle-cli --unsafe-perm
+RUN apt-get install openjdk-8-jdk
+RUN expo export --dev --public-url http://127.0.0.1:8090/
+RUN npx http-server -p 8090 dist
+
+CMD ["turtle", "build:android", "--type", "apk", "--keystore-path", "./keystore.jks", "--keystore-alias", "keyalias", "--allow-non-https-public-url", "--public-url", "http://localhost:8090/android-index.json"]

@@ -6,19 +6,18 @@ services:
       - "8081:19006"
     depends_on:
       - area-backend
+      - area-mobile
     entrypoint: ["yarn", "web"]
     volumes:
       - "./react_front/Area:/var/app"
 
   area-mobile:
-    build: ./react_front/Area
-    ports:
-      - "8082:19000"
-    depends_on:
-      - area-backend
-    entrypoint: ["yarn", "android"]
-    volumes:
-      - "./react_front/Area:/var/app"
+    build: 
+      context: ./react_front/Area/
+      dockerfile: Dockerfile.android
+    environment:
+      - EXPO_ANDROID_KEYSTORE_PASSWORD=azertyuiop
+      - EXPO_ANDROID_KEY_PASSWORD=azertyuiop
 
   area-backend:
     build: ./backend/
@@ -33,7 +32,7 @@ services:
       - redis-net
     environment:
       - FLASK_APP=main.py
-      - FLASK_ENV=production
+      - FLASK_ENV=development
 
   redis:
     image: redislabs/rejson:latest
@@ -48,6 +47,7 @@ services:
 volumes:
   redis-data:
   redis-dump:
+  shared-volume:
 
 networks:
   redis-net:
