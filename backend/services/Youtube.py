@@ -51,4 +51,4 @@ class Youtube():
     )
     @Field('videoId', FTYPE.STRING, 'VideoId of the youtube video')
     def sendCommentOnVideo(self, area, fields):
-        youtubeApi.sendNewComment(area.getUser(), fields.getString('userId'), area.get(str)[0])
+        youtubeApi.sendNewComment(area.getUser(), fields.getString('videoId'), area.get(str)[0])
