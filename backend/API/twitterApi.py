@@ -107,7 +107,7 @@ def sendDirectMessage(user, text, userId):
     auth = tweepy.OAuthHandler(consumerKey, consumerSecretKey)     
     auth.set_access_token(user.get("twitter.token"), user.get("twitter.token_secret"))  
     api = tweepy.API(auth) 
-    direct_message = api.send_direct_message(userId, text)
+    direct_message = api.send_direct_message(api.get_user(screen_name=userId).id, text)
 
 def getLastTweetUser(user, area):
     auth = tweepy.OAuthHandler(consumerKey, consumerSecretKey)     
