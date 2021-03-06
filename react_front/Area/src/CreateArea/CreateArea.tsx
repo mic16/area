@@ -55,7 +55,8 @@ export default class CreateArea extends Component<{}, any> {
       reactionValue: '',
       mreaction: "",
       mapAction: [],
-      mapReaction: []
+      mapReaction: [],
+      configSet: true
     }
 
     let reactList: Array<any> = [<Picker.Item label={''} value={0} key={0}/>];
@@ -158,9 +159,10 @@ export default class CreateArea extends Component<{}, any> {
         })
     }
 
-    public pickerReactionService(action:String) {
+    public pickerReactionService(action:String, config:Object) {
       let reactReaction = new Array()
-      let config:Object = new Object()
+      console.log("VOICI LA CONF QUE J4ENVOI = ")
+      console.log(config)
       this.getReaction(this.state.actionApp, action, config)
       .then((_) => {
         console.log("Je vais print chaque obj dans l'array reactionReact")
@@ -232,8 +234,8 @@ export default class CreateArea extends Component<{}, any> {
       this.getAction(service)
       .then((_) => {
       this.state.actionReact.get("Action").forEach((obj:any) => {
-        console.log(`PickerAction foreach object = `)
-        console.log(obj)
+        // console.log(`PickerAction foreach object = `)
+        // console.log(obj)
         mapAction.set(obj["name"], obj)
         reactAction.push(
           <Picker.Item label={obj["description"]} value={obj["name"]} key={obj["name"]}/>
@@ -307,8 +309,9 @@ export default class CreateArea extends Component<{}, any> {
     console.log(`Action of the service selected is ${value}`)
     if (!value)
       return
+    this.setState({configSet:true})
     if (value.length != 0) {
-      this.pickerReactionService(value)
+      this.pickerReactionService(value, new Object())
     }
   }
 
@@ -341,6 +344,8 @@ export default class CreateArea extends Component<{}, any> {
 
   public createAreaMobile() {
     let params = this.props.route.params
+    if (!params)
+      return
     let jsonSerial = {}
     let actionSerial = {}
     let reactionSerial = {}
@@ -742,6 +747,21 @@ export default class CreateArea extends Component<{}, any> {
            </View>
          );
        }
+
+       if (this.state.configSet && this.props.route.params) {
+        let params = this.props.route.params
+        console.log("JE TEST LES PARAMS QUI SONT: ")
+        console.log(this.props.route.params)
+        if (params["action"]) {
+          let actionSerial = {}
+          params["action"].forEach((value:any, key:string) => {  
+            actionSerial[key] = value
+          });
+          this.pickerReactionService(this.state.selectedAction, actionSerial)
+          this.setState({configSet:false})
+        }
+       }
+
        if (Platform.OS == "web")
         return (
           <Container>
