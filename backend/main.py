@@ -149,7 +149,6 @@ def oauthList():
 
 @app.route('/oauth/links', methods = [ 'POST' ])
 def oauthLinks():
-    data = {}
     json = request.get_json()
     if json is None:
         return {"error": "Expected json body, got nothing"}
