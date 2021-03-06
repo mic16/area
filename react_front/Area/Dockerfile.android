@@ -2,7 +2,7 @@ FROM node:14.15
 
 WORKDIR /var/app
 
-COPY package.json /app
+COPY package.json .
 
 RUN apt-get update -y && \
     apt-get install -y software-properties-common && \
@@ -10,11 +10,10 @@ RUN apt-get update -y && \
     apt-get install -y openjdk-8-jdk && \
     npm install -g turtle-cli --unsafe-perm && \
     yarn global add expo-cli && \
+    yarn add expo && \
     yarn install
 
 COPY . .
-
-RUN rm -rf .expo
 
 RUN /bin/bash ./android-build.sh
 
