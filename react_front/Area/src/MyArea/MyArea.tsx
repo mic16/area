@@ -78,20 +78,12 @@ export default class MyArea extends Component {
     }
   }
 
-  public deleteArea = async (key: number) => {
-    let otherTmp:Array<Object> = []
-    let i = 0
+  public deleteArea = async (uuid: any) => {
     let token = userToken;
+
     if (Platform.OS === 'web') {
       token = await this.getData();
     }
-    this.state.displayAllAreas.forEach((obj:Object) => {
-      if (key !== i) {
-        otherTmp.push(obj)
-      }
-      i = i + 1
-    })
-    this.setState({displayAllAreas:otherTmp})
     fetch('http://' + mobileIP + ':8080/area/delete', {
       method: 'POST',
       headers: {
@@ -100,11 +92,22 @@ export default class MyArea extends Component {
       },
       body: JSON.stringify({
         'token': token,
-        'uuid': this.state.stockAllAreas[key]
+        'uuid': uuid
       })
     })
     .then((response) => response.json()).then((json) => {
       console.log(json)
+      let i = 0;
+      for (let [key, element] of Object.entries(this.state.stockAllAreas)) {
+        if (element === uuid) {
+          console.log()
+          this.state.stockAllAreas.splice(key, 1);
+          i = key;
+          break;
+        }
+      }
+      this.state.displayAllAreas.splice(i, 1);
+      this.setState({displayAllAreas: this.state.displayAllAreas, stockAllAreas: this.state.stockAllAreas});
     }).catch((error) => {
       console.error(error)
     })
@@ -168,7 +171,6 @@ export default class MyArea extends Component {
             },
           })
           .then((response) => response.json()).then((json) => {
-            console.log(actionDescription)
             json.result.reactions.forEach((reaction: any) => {
               if (reaction.name === element.reaction.name) {
                 reactionDescription = reaction.description;
@@ -202,7 +204,7 @@ export default class MyArea extends Component {
                     </View>
                   </View>
                 </View>
-                <Button style={{right: 10, position: 'absolute'}} onPress={() => this.deleteArea(key)}>
+                <Button style={{right: 10, position: 'absolute'}} onPress={() => this.deleteArea(element.uuid)}>
                   <Icon name="trash"></Icon>
                 </Button>
               </View>
@@ -241,6 +243,7 @@ export default class MyArea extends Component {
       return ([json.result, tmpDisplayAllAreas, tmpStockAllAreas])
     }).then(([result, displayAllAreas, stockAllAreas]: any) => {
       if (result && displayAllAreas && stockAllAreas) {
+        console.log(result)
         this.setState({allArea: result, displayAllAreas: displayAllAreas, stockAllAreas: stockAllAreas})
       }
     })
@@ -250,9 +253,9 @@ export default class MyArea extends Component {
   }
 
   public async listArea() {
-    if (this.state.set != true) {
+    if (this.props.route.params && this.props.route.params.refresh) {
       this.getAREA();
-      this.setState({set: true})
+      this.props.route.params.refresh = false;
     }
   }
 
@@ -338,7 +341,7 @@ export default class MyArea extends Component {
                 <Icon name="add-outline" />
                 <Text>Create Area</Text>
               </Button>
-              <Button vertical onPress={ () =>  this.state.navigation.navigate('MyArea')}>
+              <Button vertical onPress={ () =>  this.state.navigation.navigate('MyArea', {refresh: true})}>
                 <Icon name="person" />
                 <Text>My Area</Text>
               </Button>

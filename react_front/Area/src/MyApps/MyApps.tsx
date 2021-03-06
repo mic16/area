@@ -282,7 +282,7 @@ export default class MyApps extends Component<{}, any> {
                 <Icon name="add-outline" />
                 <Text>Create Area</Text>
               </Button>
-              <Button vertical onPress={ () =>  this.state.navigation.navigate('MyArea')}>
+              <Button vertical onPress={ () =>  this.state.navigation.navigate('MyArea', {refresh: true})}>
                 <Icon name="person" />
                 <Text>My Area</Text>
               </Button>

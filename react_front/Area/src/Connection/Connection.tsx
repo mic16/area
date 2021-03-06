@@ -375,7 +375,7 @@ export default class Connection extends Component<{}, any> {
         return (
             <Container style= {{ position: "relative"}}>
             <Header>
-                <Button iconLeft transparent style={{ position:"absolute", paddingRight:340 }} onPress={() => this.state.navigation.navigate("MyArea", { action: this.state.connections})}>
+                <Button iconLeft transparent style={{ position:"absolute", paddingRight:340 }} onPress={() => this.state.navigation.navigate("MyArea", {action: this.state.connections, refresh: true})}>
                 <Icon name="chevron-back-outline" />
                 </Button>
             <Text style={{ color: "white", fontSize:22, alignSelf:"center" }}>

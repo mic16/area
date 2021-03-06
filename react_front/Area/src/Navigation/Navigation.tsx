@@ -26,7 +26,7 @@ export default function Navigation({navigation}) {
         </Button>
         <Button
           style={styles.button}
-          onPress={() => navigation.navigate('MyArea')}
+          onPress={() => navigation.navigate('MyArea', {refresh: true})}
           transparent={true}
           full={true}
         >
