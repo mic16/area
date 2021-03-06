@@ -2,6 +2,9 @@ import React, { Component } from 'react';
 import { NavigationContainer } from '@react-navigation/native';
 import { createStackNavigator } from '@react-navigation/stack';
 
+console.disableYellowBox = true;
+LogBox.ignoreAllLogs(true)
+
 export function printing(str: string) {
   alert(str)
 }
@@ -9,7 +12,7 @@ let val = ""
 export function saveVar(str: string) {
   val = str
 }
-import { AppRegistry, TextInput, TouchableOpacity, TouchableOpacityBase } from "react-native"
+import { AppRegistry, LogBox, TextInput, TouchableOpacity, TouchableOpacityBase } from "react-native"
 import { Alert, StyleSheet, View } from 'react-native';
 import { Text, Button, Container, Header, Content, Form, Item, Input, Label, Title, Root } from 'native-base';
 import { Font } from 'expo';
