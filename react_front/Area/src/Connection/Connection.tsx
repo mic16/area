@@ -39,7 +39,9 @@ export default class Connection extends Component<{}, any> {
       urlRed: "",
       set: true,
       service: "",
-      not_finished: true
+      not_finished: true,
+      links: new Map(),
+      refresh: true
     }
   }
 
@@ -103,6 +105,7 @@ export default class Connection extends Component<{}, any> {
         }
 
         public listElem() {
+          console.log("JE LISTE LES ELEMENTS")
           let reactList:Array<any> = []
           let i = 0
           if (this.state.servicesData.length === 0) {
@@ -121,36 +124,42 @@ export default class Connection extends Component<{}, any> {
                 mapStyle.set("Github", { backgroundColor:"black" })
                 mapStyle.set("Imgur", { backgroundColor:"#89c623" })
               }
-              this.state.servicesData.forEach((elem:string, key:number) => {
-                connectMap.set(elem, "Press to connect")
-                if (this.state.connectMap.get(elem) === undefined)
-                    this.setState({connectMap:connectMap})
-                if (Platform.OS === 'web') {
-                  reactList.push(
-                    <Card style={mapStyle.get(elem)} key={key}>
-                      <CardItem style={ mapStyle.get(elem)} header button onPress={ () => this.connect(elem)}>
-                        <Text style={{ color:"white" }}>{elem}</Text>
-                      </CardItem>
-                      <CardItem style={ mapStyle.get(elem)} header button onPress={ () => this.connect(elem)}>
-                        <Text style={{ color:"white" }}>{this.state.connectMap.get(elem)}</Text>
-                      </CardItem>
-                    </Card>
-                  )
-                } else {
-                  reactList.push(
-                    <Card style={mapStyle.get(elem)} key={key}>
-                      <CardItem style={ mapStyle.get(elem)} header button onPress={ () => this.connect(elem)}>
-                        <Text style={{ color:"white" }}>{elem}</Text>
-                      </CardItem>
-                      <CardItem style={ mapStyle.get(elem)} header button onPress={ () => this.connect(elem)}>
-                        <Text style={{ color:"white" }}>{this.state.connectMap.get(elem)}</Text>
-                      </CardItem>
-                    </Card>
-                  )
-                }
-                i += 1
+              this.getLinks()
+              .then(() => {
+                this.state.servicesData.forEach((elem:string, key:number) => {
+                  if (this.state.links.get(elem))
+                    connectMap.set(elem, "Already linked !")
+                  else
+                    connectMap.set(elem, "Press to connect")
+                  if (this.state.connectMap.get(elem) === undefined)
+                      this.setState({connectMap:connectMap})
+                  if (Platform.OS === 'web') {
+                    reactList.push(
+                      <Card style={mapStyle.get(elem)} key={key}>
+                        <CardItem style={ mapStyle.get(elem)} header button onPress={ () => this.connect(elem)}>
+                          <Text style={{ color:"white" }}>{elem}</Text>
+                        </CardItem>
+                        <CardItem style={ mapStyle.get(elem)} header button onPress={ () => this.connect(elem)}>
+                          <Text style={{ color:"white" }}>{this.state.connectMap.get(elem)}</Text>
+                        </CardItem>
+                      </Card>
+                    )
+                  } else {
+                    reactList.push(
+                      <Card style={mapStyle.get(elem)} key={key}>
+                        <CardItem style={ mapStyle.get(elem)} header button onPress={ () => this.connect(elem)}>
+                          <Text style={{ color:"white" }}>{elem}</Text>
+                        </CardItem>
+                        <CardItem style={ mapStyle.get(elem)} header button onPress={ () => this.connect(elem)}>
+                          <Text style={{ color:"white" }}>{this.state.connectMap.get(elem)}</Text>
+                        </CardItem>
+                      </Card>
+                    )
+                  }
+                  i += 1
+                })
+                this.setState({reactListData:reactList})
               })
-              this.setState({reactListData:reactList})
             });
             }
           }
@@ -164,8 +173,8 @@ export default class Connection extends Component<{}, any> {
           this.setState({ loading: false });
       }
 
-    public getLinks() {
-        return fetch('http://' + mobileIP + ':8080/oauth/links/', {
+      public getLinks() {
+        return fetch('http://' + mobileIP + ':8080/oauth/links', {
             method: 'POST',
             headers: {
                 Accept: 'application/json',
@@ -174,9 +183,18 @@ export default class Connection extends Component<{}, any> {
             body: JSON.stringify({"token":userToken})
             })
             .then((response) => response.json()).then((json) => {
+              console.log("LES CONNECTION SONT -----------------------------------------------------------")
             console.log(json)
+            let map = new Map()
+            if (json.result) {
+              for (var value in json.result) {  
+                  map.set(value,json.result[value])  
+                }  
+              this.setState({links:map})
+            }
         })
             .catch((error) => {
+              console.log("JE SUIS UNE ERREUR CACHERRRRRRRRR")
             console.error(error)
             })
         }
@@ -276,6 +294,7 @@ export default class Connection extends Component<{}, any> {
     this.sendCallBack(params[1], params[2]).then(() => {
         console.log("SEND DATA TO URL FINISH")
     })
+    this.setState({refresh:true})
     return true
   }
 
@@ -322,8 +341,12 @@ export default class Connection extends Component<{}, any> {
       }
     }
 
-    if (this.state.loading) {
+    if (this.state.refresh) {
       this.listElem()
+      this.setState({refresh:false})
+    }
+
+    if (this.state.loading) {
       return (
         <View>
             <Spinner color="blue" />
