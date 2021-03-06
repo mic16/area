@@ -10,7 +10,7 @@ services:
     entrypoint: ["yarn", "web"]
     volumes:
       - "./react_front/Area:/var/app"
-      - ./android-build:/var/app/android-build
+      - ./android-build:/var/app/web
 
   area-mobile:
     build: 

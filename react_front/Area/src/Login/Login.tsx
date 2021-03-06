@@ -6,6 +6,12 @@ import { NavigationContainer } from "react-navigation";
 import { navigate } from '@react-navigation/routers/lib/typescript/src/CommonActions';
 import { TextInput } from 'react-native-gesture-handler';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import {
+  BrowserRouter as Router,
+  Switch,
+  Route,
+  Link
+} from "react-router-dom";
 
 export let mobileIP = ""
 export let userToken = ""
@@ -177,9 +183,13 @@ export default class LoginComponent extends Component<{}, any> {
       this.setState({ loading: false });
   }
 
+  public handleNav() {
+
+  }
+
   render() {
 
-    if (Platform.OS === 'web' && window.location.pathname.includes("/oauth/")) {
+    if (Platform.OS === 'web' && window.location.pathname.includes("/oauth/") && userToken) {
       this.state.navigation.navigate("Connection")
     }
 
@@ -206,7 +216,10 @@ export default class LoginComponent extends Component<{}, any> {
        if (Platform.OS == "web") {
         mobileIP = "localhost"
         return (
-            <Container>
+          <Container>
+          {/* <Router>
+            <Switch>
+              <Route path="/"> */}
                 <ImageBackground source={require('../../assets/login.png')} style={{ width: '100%', height: '100%' }} >
             <Content>
               <Text style={{ paddingTop:'10%', fontSize:48, alignSelf:"center" }}>
@@ -263,6 +276,12 @@ export default class LoginComponent extends Component<{}, any> {
               </View>
             </Content>
             </ImageBackground>
+          {/* </Route>
+            <Route path="/downloadAPK">
+              <DownloadAPK/>
+            </Route>
+          </Switch>
+          </Router> */}
           </Container>
         );
        }

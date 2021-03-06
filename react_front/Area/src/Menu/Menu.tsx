@@ -11,8 +11,22 @@ import CreateArea from '../CreateArea/CreateArea';
 import ConfigComponent from '../Configfield/Configfield'
 import Connection from "../Connection/Connection"
 import ServiceRoute from "../ServiceRoute/ServiceRoute";
+import {
+  BrowserRouter as Router,
+  Switch,
+  Route,
+  Link
+} from "react-router-dom";
 
 const Stack = createStackNavigator();
+
+// function DownloadAPK() {
+//   return (
+//       <View>
+//         <Link to="/var/app/android-build/client.apk" target="_blank" download >Download</Link>
+//       </View>
+//   )
+// }
 export default class MenuComponent extends Component {
 
   constructor(props:any) {
@@ -31,6 +45,7 @@ export default class MenuComponent extends Component {
       // });
       this.setState({ loading: false });
   }
+
 
   render() {
        if (this.state.loading) {
