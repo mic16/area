@@ -16,6 +16,8 @@ export function saveVar(str: string) {
   val = str
 }
 
+// console.log = () => {};
+
 export default function App() {
   return (
     <Menu></Menu>

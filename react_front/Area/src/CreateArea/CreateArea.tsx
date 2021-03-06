@@ -33,7 +33,6 @@ export default class CreateArea extends Component<{}, any> {
       serviceReaction: '',
       actionNameList: [],
       reactionNameList: [],
-      confirmButton: true,
       actionFieldList: [],
       reactionFieldList: [],
       responseActionField: [],
@@ -52,7 +51,7 @@ export default class CreateArea extends Component<{}, any> {
       reactionApp: "",
       reaction: "",
       actionValue: '',
-      reactionValue: '',
+      reactionValue: 0,
       mreaction: "",
       mapAction: [],
       mapReaction: [],
@@ -408,7 +407,7 @@ export default class CreateArea extends Component<{}, any> {
   }
 
   public createAreaWeb = async () => {
-    let test = {
+    let config = {
       action: {
         service: this.state.actionService,
         name: this.state.serviceAction,
@@ -426,27 +425,32 @@ export default class CreateArea extends Component<{}, any> {
     token: await this.getData()};
     this.state.actionFieldName.forEach((element: any, key: number) => {
       if (element.type === 'string')
-        test.action.config[element.name] = this.state.responseActionField[key];
+        config.action.config[element.name] = this.state.responseActionField[key];
       if (element.type === 'boolean')
-        test.action.config[element.name] = this.state.responseActionField[key];
+        config.action.config[element.name] = this.state.responseActionField[key];
     });
     this.state.reactionFieldName[this.state.reactionService][this.state.reactionValue - 1].fields.forEach((element: any, key: number) => {
       if (element.type === 'string')
-        test.reaction.config[element.name] = this.state.responseReactionField[key];
+        config.reaction.config[element.name] = this.state.responseReactionField[key];
       if (element.type === 'boolean')
-        test.reaction.config[element.name] = this.state.responseReactionField[key];
+        config.reaction.config[element.name] = this.state.responseReactionField[key];
     });
-    console.log(test)
-    await fetch('http://localhost:8080/area/create', {
+    console.log(config)
+    fetch('http://localhost:8080/area/create', {
       method: 'POST',
       headers: {
         Accept: 'application/json',
         'Content-Type': 'application/json',
       },
-      body: JSON.stringify(test),
+      body: JSON.stringify(config),
     }).then((response) => response.json()).then((json) => {
       console.log(`La réponse JSON de la création d'un Area:`);
       console.log(json)
+      if (json.error) {
+        alert(json.error);
+      } else {
+        this.state.navigation.navigate('MyArea', {refresh: true});
+      }
     })
     .catch((error) => {
       console.error(error);
@@ -475,7 +479,7 @@ export default class CreateArea extends Component<{}, any> {
     let service = '';
 
     if (type === 'action') {
-      this.setState({actionValue: 0, actionFieldList: [], reactionServiceList: [], actionList: [], reactionList: [], reactionFieldList: []});
+      this.setState({actionValue: 0, actionFieldList: [], reactionServiceList: [], actionList: [], reactionList: [], reactionValue: 0, reactionFieldList: []});
       service = this.state.actionServiceList[value].props.label;
       this.setState({actionService: service});
       if (value === '0')
@@ -498,6 +502,7 @@ export default class CreateArea extends Component<{}, any> {
           tmpActionNameList.push(json.result.actions[key])
         })
         this.setState({actionList: tmpActionList, actionNameList: tmpActionNameList});
+        console.log(tmpActionNameList)
       }).catch((error) => {
         console.error(error)
       })
@@ -753,10 +758,6 @@ export default class CreateArea extends Component<{}, any> {
   }
 
   changeReaction = async (value: any) => {
-    if (value !== '0')
-      this.setState({confirmButton: false})
-    else
-      this.setState({confirmButton: true});
     await this.setState({serviceReaction: this.state.reactionNameList[this.state.reactionService][value], reactionValue: value, reactionFieldList: []});
 
     if (value === '0')
@@ -888,7 +889,7 @@ export default class CreateArea extends Component<{}, any> {
                               </View>
                             </View>
                           </View>
-                          <Button style={{marginLeft: 'auto',  marginTop: 10, borderRadius: 10}} disabled={this.state.confirmButton} onPress={() => this.createAreaWeb()}><Text>Confirm</Text></Button>
+                          <Button style={{marginLeft: 'auto',  marginTop: 10, borderRadius: 10}} disabled={this.state.reactionValue === 0} onPress={() => this.createAreaWeb()}><Text>Confirm</Text></Button>
                         </View>
                       </View>
                     </View>
@@ -996,7 +997,7 @@ export default class CreateArea extends Component<{}, any> {
               <Icon name="add-outline" />
               <Text>Create Area</Text>
             </Button>
-            <Button vertical onPress={ () =>  this.state.navigation.navigate('MyArea')}>
+            <Button vertical onPress={ () =>  this.state.navigation.navigate('MyArea', {refresh: true})}>
               <Icon name="person" />
               <Text>My Area</Text>
             </Button>
