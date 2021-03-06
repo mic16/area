@@ -173,8 +173,7 @@ export default class Connection extends Component<{}, any> {
           this.setState({ loading: false });
       }
 
-    public getLinks() {
-      console.log("JE LUI ENVOI " + JSON.stringify({"token":userToken}))
+      public getLinks() {
         return fetch('http://' + mobileIP + ':8080/oauth/links', {
             method: 'POST',
             headers: {
@@ -183,16 +182,16 @@ export default class Connection extends Component<{}, any> {
             },
             body: JSON.stringify({"token":userToken})
             })
-            .then((response) =>  {
+            .then((response) => response.json()).then((json) => {
               console.log("LES CONNECTION SONT -----------------------------------------------------------")
-              console.log(response)
+            console.log(json)
             let map = new Map()
-            // if (json.result) {
-            //   for (var value in json.result) {  
-            //       map.set(value,json.result[value])  
-            //     }  
-            //   this.setState({links:map})
-            // }
+            if (json.result) {
+              for (var value in json.result) {  
+                  map.set(value,json.result[value])  
+                }  
+              this.setState({links:map})
+            }
         })
             .catch((error) => {
               console.log("JE SUIS UNE ERREUR CACHERRRRRRRRR")
@@ -254,12 +253,10 @@ export default class Connection extends Component<{}, any> {
                     console.log("SEND DATA TO URL DONE")
                 })
                 this.setState({set:true})
-                this.setState({refresh:true})
             } else if (Platform.OS === "android") {
                 console.log("LE SERVICE QUI EST APPELER EST " + service)
                 this.state.navigation.navigate("ServiceRoute", {data:response, service:service})
                 this.setState({set:true})
-                this.setState({refresh:true})
             }
         })
     }
@@ -297,6 +294,7 @@ export default class Connection extends Component<{}, any> {
     this.sendCallBack(params[1], params[2]).then(() => {
         console.log("SEND DATA TO URL FINISH")
     })
+    this.setState({refresh:true})
     return true
   }
 
