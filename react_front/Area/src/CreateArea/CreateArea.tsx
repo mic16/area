@@ -141,9 +141,7 @@ export default class CreateArea extends Component<{}, any> {
             Accept: 'application/json',
             'Content-Type': 'application/json'
           },
-          body: JSON.stringify({
-            config
-          })
+          body: JSON.stringify(config)
         })
         .then((response) => response.json()).then((json) => {
           let mapAREA:Map<String, Array<Object>> = new Map(Object.entries(json.result))
@@ -752,19 +750,26 @@ export default class CreateArea extends Component<{}, any> {
          );
        }
 
-       if (this.state.configSet && this.props.route.params) {
-        let params = this.props.route.params
-        console.log("JE TEST LES PARAMS QUI SONT: ")
-        console.log(this.props.route.params)
-        if (params["action"]) {
-          let actionSerial = {}
-          params["action"].forEach((value:any, key:string) => {  
-            actionSerial[key] = value
-          });
-          this.pickerReactionService(this.state.selectedAction, actionSerial)
-          this.setState({configSet:false})
+       console.log(`Etat: ${this.state.configSet} et params: ${this.props.route.params}`)
+       if (this.props.route.params) {
+         if (this.props.route.params["refresh"]) {
+          this.setState({configSet:true})
+          this.props.route.params["refresh"] = false
+         }
+        if (this.state.configSet) {
+          let params = this.props.route.params
+          console.log("JE TEST LES PARAMS QUI SONT: ")
+          console.log(this.props.route.params)
+          if (params["action"]) {
+            let actionSerial = {}
+            params["action"].forEach((value:any, key:string) => {  
+              actionSerial[key] = value
+            });
+            this.pickerReactionService(this.state.selectedAction, actionSerial)
+            this.setState({configSet:false})
+          }
         }
-       }
+      }
 
        if (Platform.OS == "web")
         return (

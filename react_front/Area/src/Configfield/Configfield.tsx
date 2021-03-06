@@ -153,7 +153,6 @@ export default class ConfigComponent extends Component<{}, any> {
           )
         }
       });
-
       this.setState({reactData:arrayField})
       this.setState({set:true})
     }
@@ -181,10 +180,10 @@ export default class ConfigComponent extends Component<{}, any> {
           <Header >
               {
                 this.props.route.params.type === "action" ?
-                <Button iconLeft transparent style={{ position:"absolute", paddingRight:340 }} onPress={() => this.state.navigation.navigate("CreateArea", { action: this.state.arrayValues})}>
+                <Button iconLeft transparent style={{ position:"absolute", paddingRight:340 }} onPress={() => this.state.navigation.navigate("CreateArea", { action: this.state.arrayValues, refresh: true})}>
                   <Icon name="chevron-back-outline" />
                 </Button>:
-                <Button iconLeft transparent style={{ position:"absolute", paddingRight:340 }} onPress={() => this.state.navigation.navigate("CreateArea", { reaction: this.state.arrayValues})}>
+                <Button iconLeft transparent style={{ position:"absolute", paddingRight:340 }} onPress={() => this.state.navigation.navigate("CreateArea", { reaction: this.state.arrayValues, refresh: true})}>
                 <Icon name="chevron-back-outline" />
               </Button>
               }
