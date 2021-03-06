@@ -61,7 +61,7 @@ def oauthAuthorizedTwitter():
         
         data.updateUser(user, {"twitter": {"token": oauth_token, "token_secret": oauth_secret}})
     except Exception as err:
-        return {"error": err}
+        return {"error": str(err)}
 
     return {"result": "Twitter account linked to user '%s'" % (user)}
 

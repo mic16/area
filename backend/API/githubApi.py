@@ -50,7 +50,7 @@ def oauthAuthorizedGithub():
         
         data.updateUser(user, {"github": {"token": options.get('access_token')}})
     except Exception as err:
-        return {"error": err}
+        return {"error": str(err)}
 
     return {"result": "Github account linked to user '%s'" % (user)}
 
