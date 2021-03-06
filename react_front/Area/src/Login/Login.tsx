@@ -102,31 +102,17 @@ export default class LoginComponent extends Component<{}, any> {
   }
   
   public postRegister(mail: string, password: string, confPassword: string) {
-    // if (mail.length === 0 || mail.includes("@") === false || mail.includes("."))
-    //   return
     if (mail.length === 0) {
-      this.popUpAlert('Please enter your Email', 'Yeeaaaaah');
-      // Toast.show({
-      //   text: 'Please enter your Email',
-      //   buttonText: 'Yeeaaaaah'
-      // })
+      this.popUpAlert('Please enter your Email', 'Ok');
       return;
     }
     if (mobileIP.length === 0 && Platform.OS == "android") {
-      this.popUpAlert('Please set the IP server', 'Ahah I forgot');
-      // Toast.show({
-      //   text: 'Please set the IP server',
-      //   buttonText: 'Ahah I forgot'
-      // })
+      this.popUpAlert('Please set the IP server', 'Ok');
       return;
     }
     if (password === confPassword) {
       if (password.length < 4) {
-        this.popUpAlert('Password need to be at least 4 character long', 'Oh okay');
-        // Toast.show({
-        //   text: 'Password need to be at least 4 character long',
-        //   buttonText: 'Oh okay'
-        // })
+        this.popUpAlert('Password need to be at least 4 character long', 'Ok');
         return;
       }
       this.setState({ loading: true });
@@ -145,15 +131,11 @@ export default class LoginComponent extends Component<{}, any> {
         if (json.error != undefined) {
           console.error(json.error)
           this.popUpAlert(json.error, 'Ok');
-          // Toast.show({
-          //   text:json.error,
-          //   buttonText: "Ok"
-          // })
           return null
         }
         console.log(json.result);
-        alert("Connection Sucessfull = " + json.result)
         userToken = json.result
+        this.storeData('userToken', userToken);
         this.setState({firstLoad:true})
         this.state.navigation.navigate('CreateArea')
         return json.result;
@@ -165,11 +147,7 @@ export default class LoginComponent extends Component<{}, any> {
         return error;
       })
     } else {
-      this.popUpAlert('Passwords does not match', 'Sorry my bad');
-      // Toast.show({
-      //   text: 'Passwords does not match',
-      //   buttonText: 'Sorry my bad'
-      // })
+      this.popUpAlert('Passwords does not match', 'Ok');
       return;
     }
   }
