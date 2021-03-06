@@ -147,10 +147,9 @@ export default class MyArea extends Component {
       let tmpStockAllAreas: Array<string> = [];
       let actionDescription: Array<Object> = [];
       let reactionDescription: string = '';
-      
-      let promiseTab: Array<Promise<any>> = [];
-      json.result.forEach((element: any, key: number) => {
-        let promise = fetch('http://' + mobileIP + ':8080/services/' + element.action.service, {
+
+      for (let [key, element] of Object.entries(json.result)) {
+        await fetch('http://' + mobileIP + ':8080/services/' + element.action.service, {
           method: 'GET',
           headers: {
             Accept: 'application/json',
@@ -237,9 +236,7 @@ export default class MyArea extends Component {
           }
         })
       })
-      promiseTab.push(promise);
-      });
-      await Promise.all(promiseTab);
+      }
       return ([json.result, tmpDisplayAllAreas, tmpStockAllAreas])
     }).then(([result, displayAllAreas, stockAllAreas]: any) => {
       if (result && displayAllAreas && stockAllAreas) {
