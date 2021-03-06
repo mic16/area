@@ -211,21 +211,21 @@ export default class MyArea extends Component {
             tmpDisplayAllAreas.push(
               <Card style={{ borderColor:"blue" }} key={key}>
               <CardItem>
-                <Text style={{ fontWeight: 'bold', textDecorationLine: 'underline' }} >Service: </Text>
-                <Text>{element.action.service}</Text>
+                <Text style={{ fontWeight: 'bold', textDecorationLine: 'underline' }} >Service:</Text>
+                <Text> {actionDescription[key].service}</Text>
               </CardItem>
               <CardItem>
-                <Text style={{ fontWeight: 'bold', textDecorationLine: 'underline' }} >Action: </Text>
-                <Text>{actionDescription}</Text>
+                <Text style={{ fontWeight: 'bold', textDecorationLine: 'underline' }} >Action:</Text>
+                <Text> {actionDescription[key].description}</Text>
               </CardItem>
               <Icon style={{ alignSelf:'center' }} name="arrow-down-outline" />
               <CardItem>
-                <Text style={{ fontWeight: 'bold', textDecorationLine: 'underline' }} >Service: </Text>
-                <Text>{element.reaction.service}</Text>
+                <Text style={{ fontWeight: 'bold', textDecorationLine: 'underline' }} >Service:</Text>
+                <Text> {element.reaction.service}</Text>
               </CardItem>
               <CardItem>
-                <Text style={{ fontWeight: 'bold', textDecorationLine: 'underline' }} >Reaction: </Text>
-                <Text>{reactionDescription}</Text>
+                <Text style={{ fontWeight: 'bold', textDecorationLine: 'underline' }} >Reaction:</Text>
+                <Text> {reactionDescription}</Text>
               </CardItem>
                 <Button style={{ alignSelf:'center' }} onPress={() => this.deleteArea(key)}>
                   <Icon name="trash"></Icon>

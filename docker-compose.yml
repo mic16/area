@@ -10,14 +10,15 @@ services:
     entrypoint: ["yarn", "web"]
     volumes:
       - "./react_front/Area:/var/app"
+      - ./android-build:/var/app/android-build
 
   area-mobile:
     build: 
       context: ./react_front/Area/
       dockerfile: Dockerfile.android
-    environment:
-      - EXPO_ANDROID_KEYSTORE_PASSWORD=azertyuiop
-      - EXPO_ANDROID_KEY_PASSWORD=azertyuiop
+    entrypoint: [ "/bin/bash", "-c", "cp /root/expo-apps/*.apk /var/app/android-build/client.apk" ]
+    volumes:
+      - ./android-build:/var/app/android-build
 
   area-backend:
     build: ./backend/
@@ -32,7 +33,7 @@ services:
       - redis-net
     environment:
       - FLASK_APP=main.py
-      - FLASK_ENV=development
+      - FLASK_ENV=production
 
   redis:
     image: redislabs/rejson:latest
@@ -47,7 +48,6 @@ services:
 volumes:
   redis-data:
   redis-dump:
-  shared-volume:
 
 networks:
   redis-net:

@@ -65,7 +65,7 @@ OAuthManager.addManager('Github', loginGithub, oauthAuthorizedGithub, githubConn
 
 def getLastStar(user, area):
     git = Github(user.get("github.token"))
-    lastStarred = git.get_user().get_starred().reversed
+    lastStarred = git.get_user().get_starred()
     count = 0
     lastStarsTab = []
     for star in lastStarred:
@@ -95,11 +95,11 @@ def getLastStar(user, area):
 
 def getNewFollower(user, area):
     git = Github(user.get("github.token"))
-    lastFollowers = git.get_user().get_followers()
+    lastFollowers = git.get_user().get_followers().reversed
     count = 0
     lastFollowersTab = []
     for follower in lastFollowers:
-        lastFollowersTab.append({'id':follower.id, 'name':follower.full_name, 'avatarUrl': follower.avatar_url, 'bio': follower.bio})
+        lastFollowersTab.append({'id':follower.id, 'name':follower.name, 'avatarUrl': follower.avatar_url, 'bio': follower.bio})
         if (count == 20):
             break
         count += 1
