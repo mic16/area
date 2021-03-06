@@ -90,10 +90,7 @@ export default class CreateArea extends Component<{}, any> {
       })
       .then((response) => response.json()).then((json) => {
         if (json.error != undefined) {
-          Toast.show({
-            text:json.error,
-            buttonText:"ok"
-          })
+          alert(json.error)
           return
         }
         let var_tmp:Array<String> = []
@@ -209,19 +206,16 @@ export default class CreateArea extends Component<{}, any> {
             body: json
           })
           .then((response) => response.json()).then((json) => {
-            if (json.result !== undefined) {
+            if (json.result) {
             console.log(`Area Created with UUID {${json.result}}`)
-            } else if (json.error !== undefined) {
-              Toast.show({
-                text: json.error,
-                buttonText: 'Ok',
-                duration: 5
-              })
+            } else if (json.error) {
+              alert(json.error)
             }
+            return json
           })
           .catch((error) => {
             console.error(error)
-            
+            return error
           })
         }
 
@@ -341,12 +335,14 @@ export default class CreateArea extends Component<{}, any> {
 
   public createAreaMobile() {
     let params = this.props.route.params
-    if (!params)
+    if (!params) {
+      alert("Please have a look to the config before creating an Area")
       return
+    }
     let jsonSerial = {}
     let actionSerial = {}
     let reactionSerial = {}
-    if (params) {
+    if (params && params["action"] && params["reaction"]) {
       console.log(`Les parametres pour L'Area a créer sont:`)
       console.log(params)
 
@@ -374,15 +370,14 @@ export default class CreateArea extends Component<{}, any> {
 
       
       console.log(`Les donées transformer en json sont: ${JSON.stringify(jsonSerial)}`)
-      this.createAreaFetch(JSON.stringify(jsonSerial))
-      this.props.route.params = undefined
-      this.state.navigation.navigate('MyArea')
-    } else
-      Toast.show({
-        text: "Please have a look to the config before creating an Area",
-        buttonText: 'Ok',
-        duration: 5
+      this.createAreaFetch(JSON.stringify(jsonSerial)).then((response) => {
+        this.props.route.params = undefined
+        if (response.result) {
+          this.state.navigation.navigate('MyArea', {refresh: true})
+        }
       })
+    } else
+      alert("Please have a look to the config before creating an Area")
   }
 
   async componentDidMount() {
