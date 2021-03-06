@@ -229,7 +229,7 @@ export default class MyArea extends Component {
                 <Text style={{ fontWeight: 'bold', textDecorationLine: 'underline' }} >Reaction:</Text>
                 <Text> {reactionDescription}</Text>
               </CardItem>
-                <Button style={{ alignSelf:'center' }} onPress={() => this.deleteArea(key)}>
+                <Button style={{ alignSelf:'center' }} onPress={() => this.deleteArea(element.uuid)}>
                   <Icon name="trash"></Icon>
                 </Button>
             </Card>
@@ -314,7 +314,7 @@ export default class MyArea extends Component {
               <Body>
               <Title style={{ color: "white", fontSize:22, alignSelf:"center" }} >My Area Page</Title>
               </Body>
-              <Button transparent onPress={() => this.state.navigation.navigate("Connection")}>
+              <Button transparent onPress={() => this.state.navigation.navigate("Connection", {refresh:true})}>
                   <Icon name="globe-outline" />
                 </Button>
             </Header>
