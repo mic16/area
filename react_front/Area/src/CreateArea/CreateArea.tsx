@@ -789,6 +789,13 @@ export default class CreateArea extends Component<{}, any> {
     this.setState({reactionFieldList: tmpReactionFieldList});
   }
 
+  checkIfReactionServiceHasBeenSelected = (): boolean => {
+    if (this.state.reactionServiceList.length !== 0 && this.state.reactionService !== '')
+      return true;
+    else
+      return false;
+  }
+
   render() {
        if (this.state.loading) {
           this.listElem()
@@ -798,7 +805,6 @@ export default class CreateArea extends Component<{}, any> {
            </View>
          );
        }
-
        console.log(`Etat: ${this.state.configSet} et params: ${this.props.route.params}`)
        if (this.props.route.params) {
          if (this.props.route.params["refresh"]) {
@@ -849,13 +855,13 @@ export default class CreateArea extends Component<{}, any> {
                           </Text>
                           <View style={{display: 'flex', flexDirection: 'row', height: '100%'}}>
                             <View style={{width: '50%', left: 0, backgroundColor: 'rgba(255, 255, 255, 0.5)', height: '100%', borderRadius: 20 }}>
-                              <Form style={{ width: '90%', alignSelf:'center', marginTop: 10, height: '25%' }}>
+                              <Form style={{ width: '90%', alignSelf:'center', marginTop: 10, height: '25%'}}>
                                 <Picker style={{borderRadius: 5}} onValueChange={(value) => this.changeService(value, 'action')}>
                                   {
                                     this.state.actionServiceList
                                   }
                                 </Picker>
-                                <Picker style={{borderRadius: 5, marginTop: 10}} selectedValue={this.state.actionValue} onValueChange={(value) => this.changeAction(value)}>
+                                <Picker enabled={this.state.actionList.length !== 0} style={this.state.actionList.length !== 0 ? {borderRadius: 5, marginTop: 10} : {borderRadius: 5, marginTop: 10, opacity: 0}} selectedValue={this.state.actionValue} onValueChange={(value) => this.changeAction(value)}>
                                   {
                                     this.state.actionList
                                   }
@@ -870,12 +876,12 @@ export default class CreateArea extends Component<{}, any> {
                             <Icon style={{marginTop: 10, }} name="arrow-forward-sharp"/>
                             <View style={{width: '50%', right: 0, backgroundColor: 'rgba(255, 255, 255, 0.5)', height: '100%', borderRadius: 20 }}>
                               <Form style={{ width: '90%', alignSelf:'center', marginTop: 10, height: '25%' }}>
-                                <Picker style={{borderRadius: 5}} onValueChange={(value) => this.changeService(value, 'reaction')}>
+                                <Picker enabled={this.state.actionList.length !== 0} style={this.state.reactionServiceList.length !== 0 ? {borderRadius: 5} : {borderRadius: 5, opacity: 0}} onValueChange={(value) => this.changeService(value, 'reaction')}>
                                   {
                                     this.state.reactionServiceList
                                   }
                                 </Picker>
-                                <Picker style={{borderRadius: 5, marginTop: 10}} selectedValue={this.state.reactionValue} onValueChange={(value) => this.changeReaction(value)}>
+                                <Picker enabled={this.state.actionList.length !== 0} style={this.checkIfReactionServiceHasBeenSelected() ? {borderRadius: 5, marginTop: 10} : {borderRadius: 5, marginTop: 10, opacity: 0}} selectedValue={this.state.reactionValue} onValueChange={(value) => this.changeReaction(value)}>
                                   {
                                     this.state.reactionList[this.state.reactionService]
                                   }
