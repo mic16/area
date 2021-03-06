@@ -45,6 +45,22 @@ class Youtube():
                 area.ret(Imgs([_.get(like, 'url')]))
         return trig.setAction(func)
 
+    @Action('When the connected user create a playlist')
+    def onCreatePlaylist(self, fields):
+
+        trig = Trigger(types=[str, Imgs])
+
+        def func(area, fields):
+            newPlaylist = youtubeApi.getLastPlaylist(area.getUser(), area)
+            if (newPlaylist == None):
+                return
+            for playlist in newPlaylist:
+                area.newReaction()
+                area.ret(_.get(playlist, 'title'))
+                area.ret(_.get(playlist, 'description'))
+                area.ret(Imgs([_.get(playlist, 'url')]))
+        return trig.setAction(func)
+
     @Reaction(
         'Send a comment on a video',
         str,
