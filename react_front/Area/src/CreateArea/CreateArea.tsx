@@ -467,9 +467,11 @@ export default class CreateArea extends Component<{}, any> {
     let service = '';
 
     if (type === 'action') {
-      this.setState({actionValue: 0, actionFieldList: [], reactionServiceList: [], actionList: [], reactionList: []});
+      this.setState({actionValue: 0, actionFieldList: [], reactionServiceList: [], actionList: [], reactionList: [], reactionFieldList: []});
       service = this.state.actionServiceList[value].props.label;
       this.setState({actionService: service});
+      if (value === '0')
+        return;
       await fetch('http://localhost:8080/services/' + service, {
         method: 'GET',
         headers: {
@@ -691,18 +693,22 @@ export default class CreateArea extends Component<{}, any> {
     })
   }
 
-  changeReaction = (value: any) => {
+  changeReaction = async (value: any) => {
     if (value !== '0')
       this.setState({confirmButton: false})
     else
       this.setState({confirmButton: true});
-    this.setState({serviceReaction: this.state.reactionNameList[this.state.reactionService][value], reactionValue: value, reactionFieldList: []});
+    await this.setState({serviceReaction: this.state.reactionNameList[this.state.reactionService][value], reactionValue: value, reactionFieldList: []});
 
     if (value === '0')
       return;
     let tmpReactionFieldList: Array<any> = [<View key={0}></View>];
 
-    this.state.reactionFieldName[this.state.reactionService][this.state.reactionValue].fields.forEach((element: any, key: number) => {
+    console.log(this.state.reactionValue)
+    console.log(value)
+    console.log(this.state.reactionFieldName[this.state.reactionService])
+    console.log(this.state.reactionFieldName[this.state.reactionService][this.state.reactionValue - 1])
+    this.state.reactionFieldName[this.state.reactionService][this.state.reactionValue - 1].fields.forEach((element: any, key: number) => {
       this.generateField(element, key, 'reaction');
       tmpReactionFieldList.push(
         <View key={key + 1}>
