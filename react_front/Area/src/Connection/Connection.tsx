@@ -108,7 +108,6 @@ export default class Connection extends Component<{}, any> {
           console.log("JE LISTE LES ELEMENTS")
           let reactList:Array<any> = []
           let i = 0
-          if (this.state.servicesData.length === 0) {
             this.getServices()
             .then((_) => {
               let mapStyle = new Map()
@@ -131,8 +130,8 @@ export default class Connection extends Component<{}, any> {
                     connectMap.set(elem, "Already linked !")
                   else
                     connectMap.set(elem, "Press to connect")
-                  if (this.state.connectMap.get(elem) === undefined)
-                      this.setState({connectMap:connectMap})
+                  this.setState({connectMap:connectMap})
+                  console.log(`ET DONC POUR ${elem} c'est ${this.state.connectMap.get(elem)}`)
                   if (Platform.OS === 'web') {
                     reactList.push(
                       <Card style={mapStyle.get(elem)} key={key}>
@@ -161,7 +160,6 @@ export default class Connection extends Component<{}, any> {
                 this.setState({reactListData:reactList})
               })
             });
-            }
           }
     
       async componentDidMount() {
@@ -329,7 +327,7 @@ export default class Connection extends Component<{}, any> {
         }
       }
     } else {
-      if (this.props.route.params !== undefined) {
+      if (this.props.route.params && this.props.route.params["service"]) {
         console.log(`LES SERVICE SONT -${this.props.route.params.service}- et -${this.state.service}-`)
         console.log(`ET LES PARAMETRES SONT -${this.state.set}- et -${this.props.route.params.data}-`)
         if (this.state.set && this.props.route.params.service === this.state.service) {
@@ -339,11 +337,11 @@ export default class Connection extends Component<{}, any> {
             this.setState({set:false})
         }
       }
+      if (this.props.route.params && this.props.route.params["refresh"]) {
+        this.listElem()
+        this.props.route.params["refresh"] = false
     }
 
-    if (this.state.refresh) {
-      this.listElem()
-      this.setState({refresh:false})
     }
 
     if (this.state.loading) {
