@@ -41,6 +41,6 @@ export default class ServiceRoute extends React.Component {
       console.log(`CONSOLE LOG ACT URL IS: ${url}`)
       console.log(`http://${mobileIP}:8081/oauth/${this.props.route.params.service}`)
       if (url.includes(`http://localhost:8081/oauth/${this.props.route.params.service}`))
-        this.state.navigation.navigate("Connection", {data:url, service:this.props.route.params.service})
+        this.state.navigation.navigate("Connection", {data:url, service:this.props.route.params.service, refresh:true})
     };
   }

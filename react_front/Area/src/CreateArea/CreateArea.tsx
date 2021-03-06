@@ -474,7 +474,7 @@ export default class CreateArea extends Component<{}, any> {
     let service = '';
 
     if (type === 'action') {
-      this.setState({actionValue: 0, actionFieldList: [], reactionServiceList: [], actionList: [], reactionList: [], reactionValue: 0, reactionFieldList: []});
+      this.setState({actionValue: 0, actionFieldList: [], reactionServiceList: [], actionList: [], reactionList: [], reactionValue: 0, reactionFieldList: [], reactionServiceValue: 0});
       service = this.state.actionServiceList[value].props.label;
       this.setState({actionService: service});
       if (value === '0')
@@ -502,7 +502,7 @@ export default class CreateArea extends Component<{}, any> {
         console.error(error)
       })
     } else if (type === 'reaction') {
-      this.setState({reactionValue: 0, reactionFieldList: []})
+      this.setState({reactionValue: 0, reactionFieldList: [], reactionServiceValue: value})
       service = this.state.reactionServiceList[value].props.label;
       this.setState({reactionService: service, reactionValue: 0});
       if (value === '0') {
@@ -516,7 +516,7 @@ export default class CreateArea extends Component<{}, any> {
       let tmpResponseActionField = this.state.responseActionField;
 
       tmpResponseActionField[key] = !this.state.responseActionField[key];
-      this.setState({responseActionField: tmpResponseActionField});
+      this.setState({responseActionField: tmpResponseActionField, reactionServiceValue: 0, reactionService: ''});
       let tmpField = this.state.actionField;
 
       tmpField[key] = <CheckBox color='black' checked={this.state.responseActionField[key]} onPress={() => this.updateFieldBoolean(key, type, element, value)}/>
@@ -552,7 +552,6 @@ export default class CreateArea extends Component<{}, any> {
       },
       body: JSON.stringify(config)
     }).then((response) => response.json()).then(async(json) => {
-      console.log(json)
       let tmpReactionList: {[k: string]: any} = {};
       let tmpReactionNameList: {[k: string]: any} = {};
       let tmpReactionServiceList = [<Picker.Item label={''} value={0} key={0}/>];
@@ -577,7 +576,7 @@ export default class CreateArea extends Component<{}, any> {
           serviceKey += 1;
         }
       }
-      this.setState({actionFieldName: this.state.actionNameList[value - 1].fields, reactionServiceList: tmpReactionServiceList, reactionList: tmpReactionList, reactionNameList: tmpReactionNameList, reactionFieldName: json.result})
+      this.setState({actionFieldName: this.state.actionNameList[value - 1].fields, reactionServiceList: tmpReactionServiceList, reactionList: tmpReactionList, reactionNameList: tmpReactionNameList, reactionFieldName: json.result, reactionValue: 0})
     }).catch((error) => {
       console.error(error)
     })
@@ -676,7 +675,7 @@ export default class CreateArea extends Component<{}, any> {
   }
   
   changeAction = async (value: number) => {
-    this.setState({actionFieldList: [], actionValue: value, reactionServiceList: [], reactionList: []})
+    this.setState({actionFieldList: [], actionValue: value, reactionServiceList: [], reactionList: [], reactionValue: 0, reactionFieldList: [], reactionService: '', actionField: [], reactionServiceValue: 0})
     if (value === '0') {
       return;
     }
@@ -801,7 +800,6 @@ export default class CreateArea extends Component<{}, any> {
            </View>
          );
        }
-       console.log(`Etat: ${this.state.configSet} et params: ${this.props.route.params}`)
        if (this.props.route.params) {
          if (this.props.route.params["refresh"]) {
           this.setState({configSet:true})
@@ -872,12 +870,12 @@ export default class CreateArea extends Component<{}, any> {
                             <Icon style={{marginTop: 10, }} name="arrow-forward-sharp"/>
                             <View style={{width: '50%', right: 0, backgroundColor: 'rgba(255, 255, 255, 0.5)', height: '100%', borderRadius: 20 }}>
                               <Form style={{ width: '90%', alignSelf:'center', marginTop: 10, height: '25%' }}>
-                                <Picker enabled={this.state.actionList.length !== 0} style={this.state.reactionServiceList.length !== 0 ? {borderRadius: 5} : {borderRadius: 5, opacity: 0}} onValueChange={(value) => this.changeService(value, 'reaction')}>
+                                <Picker enabled={this.state.actionList.length !== 0} style={this.state.reactionServiceList.length !== 0 ? {borderRadius: 5} : {borderRadius: 5, opacity: 0}} selectedValue={this.state.reactionServiceValue} onValueChange={(value) => this.changeService(value, 'reaction')}>
                                   {
                                     this.state.reactionServiceList
                                   }
                                 </Picker>
-                                <Picker enabled={this.state.actionList.length !== 0} style={this.checkIfReactionServiceHasBeenSelected() ? {borderRadius: 5, marginTop: 10} : {borderRadius: 5, marginTop: 10, opacity: 0}} selectedValue={this.state.reactionValue} onValueChange={(value) => this.changeReaction(value)}>
+                                <Picker enabled={this.checkIfReactionServiceHasBeenSelected()} style={this.checkIfReactionServiceHasBeenSelected() ? {borderRadius: 5, marginTop: 10} : {borderRadius: 5, marginTop: 10, opacity: 0}} selectedValue={this.state.reactionValue} onValueChange={(value) => this.changeReaction(value)}>
                                   {
                                     this.state.reactionList[this.state.reactionService]
                                   }

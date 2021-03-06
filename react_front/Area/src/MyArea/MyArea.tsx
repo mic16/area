@@ -147,10 +147,9 @@ export default class MyArea extends Component {
       let tmpStockAllAreas: Array<string> = [];
       let actionDescription: Array<Object> = [];
       let reactionDescription: string = '';
-      
-      let promiseTab: Array<Promise<any>> = [];
-      json.result.forEach((element: any, key: number) => {
-        let promise = fetch('http://' + mobileIP + ':8080/services/' + element.action.service, {
+
+      for (let [key, element] of Object.entries(json.result)) {
+        await fetch('http://' + mobileIP + ':8080/services/' + element.action.service, {
           method: 'GET',
           headers: {
             Accept: 'application/json',
@@ -229,7 +228,7 @@ export default class MyArea extends Component {
                 <Text style={{ fontWeight: 'bold', textDecorationLine: 'underline' }} >Reaction:</Text>
                 <Text> {reactionDescription}</Text>
               </CardItem>
-                <Button style={{ alignSelf:'center' }} onPress={() => this.deleteArea(key)}>
+                <Button style={{ alignSelf:'center' }} onPress={() => this.deleteArea(element.uuid)}>
                   <Icon name="trash"></Icon>
                 </Button>
             </Card>
@@ -237,9 +236,7 @@ export default class MyArea extends Component {
           }
         })
       })
-      promiseTab.push(promise);
-      });
-      await Promise.all(promiseTab);
+      }
       return ([json.result, tmpDisplayAllAreas, tmpStockAllAreas])
     }).then(([result, displayAllAreas, stockAllAreas]: any) => {
       if (result && displayAllAreas && stockAllAreas) {
@@ -314,7 +311,7 @@ export default class MyArea extends Component {
               <Body>
               <Title style={{ color: "white", fontSize:22, alignSelf:"center" }} >My Area Page</Title>
               </Body>
-              <Button transparent onPress={() => this.state.navigation.navigate("Connection")}>
+              <Button transparent onPress={() => this.state.navigation.navigate("Connection", {refresh:true})}>
                   <Icon name="globe-outline" />
                 </Button>
             </Header>
