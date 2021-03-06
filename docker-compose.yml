@@ -34,6 +34,7 @@ services:
     environment:
       - FLASK_APP=main.py
       - FLASK_ENV=production
+      - AREA_ENV=debug
 
   redis:
     image: redislabs/rejson:latest
