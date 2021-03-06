@@ -676,7 +676,7 @@ export default class CreateArea extends Component<{}, any> {
   }
   
   changeAction = async (value: number) => {
-    this.setState({actionFieldList: [], actionValue: value, reactionServiceList: [], reactionList: []})
+    this.setState({actionFieldList: [], actionValue: value, reactionServiceList: [], reactionList: [], reactionValue: 0, reactionFieldList: [], reactionService: ''})
     if (value === '0') {
       return;
     }
