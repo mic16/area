@@ -31,8 +31,6 @@ def getLastPlaylist(user, area):
         if (_.get(playlists, 'id') == None or _.get(playlists, 'snippet.title') == None or _.get(playlists, 'snippet.description') == None or _.get(playlists, 'snippet.thumbnails.medium.url') == None):
             continue
         lastPlaylistTab.append({'id':_.get(playlists, 'id'), 'title':_.get(playlists, 'snippet.title'), 'description':_.get(playlists, 'snippet.description'), 'url':_.get(playlists, 'snippet.thumbnails.medium.url')})
-    print("test")
-    print(lastPlaylistTab)
     if area.getValue("youtube") == None:
         area.setValue("youtube", {'lastPlaylist':lastPlaylistTab})
         return (None)
