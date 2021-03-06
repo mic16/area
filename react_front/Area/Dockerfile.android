@@ -2,12 +2,20 @@ FROM node:14.15
 
 WORKDIR /var/app
 
+COPY package.json /app
+
+RUN apt-get update -y && \
+    apt-get install -y software-properties-common && \
+    add-apt-repository ppa:webupd8team/java && \
+    apt-get install -y openjdk-8-jdk && \
+    npm install -g turtle-cli --unsafe-perm && \
+    yarn global add expo-cli && \
+    yarn install
+
 COPY . .
-COPY ./keystore.jks .
 
-RUN npm install -g turtle-cli --unsafe-perm
-RUN apt-get install openjdk-8-jdk
-RUN expo export --dev --public-url http://127.0.0.1:8090/
-RUN npx http-server -p 8090 dist
+RUN rm -rf .expo
 
-CMD ["turtle", "build:android", "--type", "apk", "--keystore-path", "./keystore.jks", "--keystore-alias", "keyalias", "--allow-non-https-public-url", "--public-url", "http://localhost:8090/android-index.json"]
+RUN /bin/bash ./android-build.sh
+
+CMD [ "/bin/bash", "-c", "cp /root/expo-apps/*.apk /var/app/android-build/client.apk" ]
