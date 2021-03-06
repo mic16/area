@@ -380,7 +380,11 @@ export default class CreateArea extends Component<{}, any> {
       this.createAreaFetch(JSON.stringify(jsonSerial))
       this.props.route.params = undefined
     } else
-      alert("Please have a look to the config before creating an Area")
+      Toast.show({
+        text: "Please have a look to the config before creating an Area",
+        buttonText: 'Ok',
+        duration: 5
+      })
   }
 
   async componentDidMount() {
@@ -508,7 +512,7 @@ export default class CreateArea extends Component<{}, any> {
     }
   }
 
-  updateFieldBoolean = (key: number, type: string, element: Array<Object>) => {
+  updateFieldBoolean = (key: number, type: string, element: Array<Object>, value: number) => {
     if (type === 'action') {
       let tmpResponseActionField = this.state.responseActionField;
 
@@ -516,7 +520,7 @@ export default class CreateArea extends Component<{}, any> {
       this.setState({responseActionField: tmpResponseActionField});
       let tmpField = this.state.actionField;
 
-      tmpField[key] = <CheckBox color='black' checked={this.state.responseActionField[key]} onPress={() => this.updateFieldBoolean(key, type, element)}/>
+      tmpField[key] = <CheckBox color='black' checked={this.state.responseActionField[key]} onPress={() => this.updateFieldBoolean(key, type, element, value)}/>
       this.setState({actionField: tmpField});
       let tmpActionFieldList: Array<any> = this.state.actionFieldList;
 
@@ -531,6 +535,53 @@ export default class CreateArea extends Component<{}, any> {
         </View>
       
       this.setState({actionFieldList: tmpActionFieldList})
+      
+    let config = {};
+
+    this.state.actionNameList[value - 1].fields.forEach((field, iter) => {
+      if (field.type === 'boolean')
+        config[field.name] = this.state.responseActionField[iter];
+      else if (field.type === 'string')
+        config[field.name] = this.state.responseActionField[iter];
+    });
+    console.log(config)
+      fetch('http://localhost:8080/services/' + this.state.actionService + '/' + this.state.actionNameList[value - 1].name, {
+      method: 'POST',
+      headers: {
+        Accept: 'application/json',
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify(config)
+    }).then((response) => response.json()).then(async(json) => {
+      console.log(json)
+      let tmpReactionList: {[k: string]: any} = {};
+      let tmpReactionNameList: {[k: string]: any} = {};
+      let tmpReactionServiceList = [<Picker.Item label={''} value={0} key={0}/>];
+      let serviceKey = 1;
+      
+      const jsonValue = JSON.stringify(json.result)
+      await this.storeData('reactions', jsonValue);
+      for (let service in json.result) {
+        if (json.result.hasOwnProperty(service)) {
+          tmpReactionList[service] = [<Picker.Item label={''} value={0} key={0}/>];
+          tmpReactionServiceList.push(
+            <Picker.Item label={service} value={serviceKey} key={serviceKey}/>
+          )
+          json.result[service].forEach((reaction: any, key: number) => {
+            tmpReactionList[service].push(
+              <Picker.Item label={reaction.description} value={key + 1} key={key + 1}/>
+            )
+            if (!tmpReactionNameList[service])
+              tmpReactionNameList[service] = [''];
+            tmpReactionNameList[service].push(reaction.name);
+          })
+          serviceKey += 1;
+        }
+      }
+      this.setState({actionFieldName: this.state.actionNameList[value - 1].fields, reactionServiceList: tmpReactionServiceList, reactionList: tmpReactionList, reactionNameList: tmpReactionNameList, reactionFieldName: json.result})
+    }).catch((error) => {
+      console.error(error)
+    })
     } else if (type === 'reaction') {
       let tmpResponseReactionField = this.state.responseReactionField;
 
@@ -538,7 +589,7 @@ export default class CreateArea extends Component<{}, any> {
       this.setState({responseReactionField: tmpResponseReactionField});
       let tmpField = this.state.reactionField;
 
-      tmpField[key] = <CheckBox color='black' checked={this.state.responseReactionField[key]} onPress={() => this.updateFieldBoolean(key, type, element)}/>
+      tmpField[key] = <CheckBox color='black' checked={this.state.responseReactionField[key]} onPress={() => this.updateFieldBoolean(key, type, element, value)}/>
       this.setState({reactionField: tmpField});
       let tmpReactionFieldList: Array<any> = this.state.reactionFieldList;
 
@@ -570,7 +621,7 @@ export default class CreateArea extends Component<{}, any> {
     }
   }
 
-  generateField = (element: any, key: number, type: string) => {
+  generateField = (element: any, key: number, type: string, value: number) => {
     if (element.type === 'boolean') {
       if (type === 'action') {
         let tmpField = this.state.actionField;
@@ -580,7 +631,7 @@ export default class CreateArea extends Component<{}, any> {
         this.setState({responseActionField: tmpResponseActionField});
 
         tmpField.push(
-          <CheckBox color='black' checked={this.state.responseActionField[key]} onPress={() => this.updateFieldBoolean(key, type, element)}/>
+          <CheckBox color='black' checked={this.state.responseActionField[key]} onPress={() => this.updateFieldBoolean(key, type, element, value)}/>
         )
         this.setState({actionField: tmpField});
       } else if (type === 'reaction') {
@@ -591,7 +642,7 @@ export default class CreateArea extends Component<{}, any> {
         this.setState({responseReactionField: tmpResponseReactionField});
 
         tmpField.push(
-          <CheckBox color='black' checked={this.state.responseReactionField[key]} onPress={() => this.updateFieldBoolean(key, type, element)}/>
+          <CheckBox color='black' checked={this.state.responseReactionField[key]} onPress={() => this.updateFieldBoolean(key, type, element, value)}/>
         )
         this.setState({reactionField: tmpField});
       }
@@ -631,16 +682,20 @@ export default class CreateArea extends Component<{}, any> {
       return;
     }
     this.setState({serviceAction: this.state.actionNameList[value - 1].name})
+    let config = {};
+    this.state.actionNameList[value - 1].fields.forEach(field => {
+      if (field.type === 'boolean')
+        config[field.name] = false;
+      else if (field.type === 'string')
+        config[field.name] = '';
+    });
     await fetch('http://localhost:8080/services/' + this.state.actionService + '/' + this.state.actionNameList[value - 1].name, {
       method: 'POST',
       headers: {
         Accept: 'application/json',
         'Content-Type': 'application/json',
       },
-      body: JSON.stringify({
-        'with image': false,
-        'string': '',
-      })
+      body: JSON.stringify({config})
     }).then((response) => response.json()).then(async(json) => {
       let tmpReactionList: {[k: string]: any} = {};
       let tmpReactionNameList: {[k: string]: any} = {};
@@ -670,7 +725,7 @@ export default class CreateArea extends Component<{}, any> {
       let tmpActionFieldList: Array<any> = [<View key={0}></View>];
 
       this.state.actionNameList[value - 1].fields.forEach((element: any, key: number) => {
-        this.generateField(element, key, 'action');
+        this.generateField(element, key, 'action', value);
 
         tmpActionFieldList.push(
           <View key={key + 1} style={{marginTop: 10}}>
@@ -709,9 +764,6 @@ export default class CreateArea extends Component<{}, any> {
       return;
     let tmpReactionFieldList: Array<any> = [<View key={0}></View>];
 
-    console.log(this.state.reactionValue)
-    console.log(value)
-    console.log(this.state.reactionFieldName[this.state.reactionService])
     console.log(this.state.reactionFieldName[this.state.reactionService][this.state.reactionValue - 1])
     this.state.reactionFieldName[this.state.reactionService][this.state.reactionValue - 1].fields.forEach((element: any, key: number) => {
       this.generateField(element, key, 'reaction');

@@ -39,15 +39,15 @@ export default class LoginComponent extends Component<{}, any> {
 
   public postLog(mail:string, password:string) {
     if (mail.length === 0) {
-      this.popUpAlert('Please enter your Email', 'Yeeaaaaah');
+      this.popUpAlert('Please enter your Email', 'Ok');
       return;
     }
     if (password.length === 0) {
-      this.popUpAlert('Password need to be at least 4 character long', 'Oh okay');
+      this.popUpAlert('Password need to be at least 4 character long', 'Ok');
       return;
     }
     if (mobileIP.length === 0 && Platform.OS == "android") {
-      this.popUpAlert('Please set the IP server', 'Ahah I forgot');
+      this.popUpAlert('Please set the IP server', 'Ok');
       return;
     }
     this.setState({ loading: true });
@@ -165,9 +165,21 @@ export default class LoginComponent extends Component<{}, any> {
 
   }
 
+  public getData = async () => {
+    try {
+      const value = await AsyncStorage.getItem('userToken')
+      if (value !== null) {
+        return (value)
+      }
+    } catch(e) {
+      console.log(e);
+      return (null);
+    }
+  }
+
   render() {
 
-    if (Platform.OS === 'web' && window.location.pathname.includes("/oauth/") && userToken) {
+    if (Platform.OS === 'web' && window.location.pathname.includes("/oauth/") && this.getData()) {
       this.state.navigation.navigate("Connection")
     }
 
