@@ -2,6 +2,7 @@ import colors
 import sys
 import builtins
 import time
+import os
 
 INFO=0
 WARNING=1
@@ -27,6 +28,8 @@ def log(*args, level=DEBUG, end='\n', flush=False, file=None):
         color = colors.RED
         prefix = '[ERROR]'
     elif level == DEBUG:
+        if os.getenv('AREA_ENV') == 'production':
+            return
         color = colors.LIGHT_PURPLE
         prefix = '[DEBUG]'
     coloredMessage = '%s[%s][%s]%s %s' % (color, time.ctime(), __logger__, prefix, message)
