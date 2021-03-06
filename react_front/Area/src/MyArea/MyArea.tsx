@@ -177,26 +177,36 @@ export default class MyArea extends Component {
           tmpStockAllAreas.push(element.uuid)
           
           if (Platform.OS === "web") {
-          tmpDisplayAllAreas.push(
-            <View style={{marginTop: 10, width: '100%'}}>
-                <View style={{marginLeft: 'auto', marginRight: 'auto'}}>
-              <View style={{display: 'flex', flexDirection: 'row', height: '100%'}}>
-                <View style={{display: 'flex', flexDirection: 'column', alignItems: 'center'}}>
-                  <Text>{actionDescription[key].service}</Text>
-                  <Text>{actionDescription[key].description}</Text>
+            tmpDisplayAllAreas.push(
+              <View style={{marginTop: 10, width: '100%'}}>
+                <View style={{marginLeft: 'auto', marginRight: 'auto', width: '100%'}}>
+                  <View style={{display: 'flex', flexDirection: 'row', width: '100%'}}>
+                    <View style={{width: '50%', alignItems: 'flex-end'}}>
+                      <View style={{width: '50%', backgroundColor: 'rgba(255, 255, 255, 0.5)', borderRadius: 10, padding: 10}}>      
+                        <View style={{display: 'flex', flexDirection: 'column', alignItems: 'center'}}>
+                          <Text style={{fontWeight: 'bold', fontSize: 20}}>{actionDescription[key].service}</Text>
+                          <Text style={{textAlign: 'center'}}>{actionDescription[key].description}</Text>
+                        </View>
+                      </View>
+                    </View>
+                    <View style={{top: '25%'}}>
+                      <Icon name="arrow-forward-sharp"></Icon>
+                    </View>
+                    <View style={{width: '50%', alignItems: 'flex-start'}}>
+                      <View style={{width: '50%', backgroundColor: 'rgba(255, 255, 255, 0.5)', borderRadius: 10, padding: 10, minHeight: '100%'}}>   
+                        <View style={{display: 'flex', flexDirection: 'column', alignItems: 'center'}}>
+                          <Text style={{fontWeight: 'bold', fontSize: 20}}>{element.reaction.service}</Text>
+                          <Text style={{textAlign: 'center'}}>{reactionDescription}</Text>
+                        </View>
+                      </View>
+                    </View>
+                  </View>
                 </View>
-                  <Icon name="arrow-forward-sharp"></Icon>
-                <View style={{display: 'flex', flexDirection: 'column', alignItems: 'center'}}>
-                  <Text>{element.reaction.service}</Text>
-                  <Text>{reactionDescription}</Text>
+                <Button style={{right: 10, position: 'absolute'}} onPress={() => this.deleteArea(key)}>
+                  <Icon name="trash"></Icon>
+                </Button>
               </View>
-            </View>
-            </View>
-              <Button style={{right: 10, position: 'absolute'}} onPress={() => this.deleteArea(key)}>
-                <Icon name="trash"></Icon>
-              </Button>
-            </View>
-          )
+            )
           } else {
             tmpDisplayAllAreas.push(
               <Card style={{ borderColor:"blue" }} key={key}>
