@@ -75,7 +75,7 @@ class Twitter():
         txt = area.get(str)[0]
         if len(txt) > 280:
             txt = txt[0:279]
-        if len(area.get(Imgs)) >= 1:
+        if area.get(Imgs) != None and len(area.get(Imgs)) >= 1:
             twitterApi.newTweetImages(area.getUser(), txt, (area.get(Imgs)[0]).getImages())
         else :
             twitterApi.newTweet(area.getUser(), txt)

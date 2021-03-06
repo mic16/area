@@ -99,7 +99,7 @@ def getNewFollower(user, area):
     count = 0
     lastFollowersTab = []
     for follower in lastFollowers:
-        lastFollowersTab.append({'id':follower.id, 'name':follower.full_name, 'avatarUrl': follower.avatar_url, 'bio': follower.bio})
+        lastFollowersTab.append({'id':follower.id, 'name':follower.name, 'avatarUrl': follower.avatar_url, 'bio': follower.bio})
         if (count == 20):
             break
         count += 1

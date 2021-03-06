@@ -11,7 +11,7 @@ import google_auth_oauthlib.flow
 
 CLIENT_SECRETS_FILE = "API/code_secret_client_108810952137-1tic3bntk3p466t851t1c89p5a75r6bj.apps.googleusercontent.com.json"
 SCOPES = ['https://www.googleapis.com/auth/youtube.force-ssl',
-          'https://www.googleapis.com/auth/gmail.compose']
+          'https://mail.google.com/']
 
 tokenState = {}
 
