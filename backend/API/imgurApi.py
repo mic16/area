@@ -147,5 +147,5 @@ def createPost(user, imageUrl, postTitle, postDescription):
     client = ImgurClient(client_id, client_secret, user.get("imgur.token"), user.get("imgur.refresh_token"))
     id = []
     for img in imageUrl:
-        id.append( UploadPhoto([img])['id'])
+        id.append(UploadPhoto(client, [img])['id'])
     CreateAlbumAndUploadImages(client, postTitle, postDescription, id)
