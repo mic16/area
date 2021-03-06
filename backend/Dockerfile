@@ -1,18 +1,19 @@
 FROM python:3.9
 
 WORKDIR /var/app
-ADD ./ ./
 
-RUN pip3 install flask --trusted-host pypi.python.org
-RUN pip3 install blinker --trusted-host pypi.python.org
-RUN pip3 install rejson --trusted-host pypi.python.org
-RUN pip3 install tweepy --trusted-host pypi.python.org
-RUN pip3 install requests-oauthlib --trusted-host pypi.python.org
-RUN pip3 install flask-restful --trusted-host pypi.python.org
-RUN pip3 install --upgrade google-api-python-client --trusted-host pypi.python.org
-RUN pip3 install --upgrade google-auth google-auth-oauthlib google-auth-httplib2 --trusted-host pypi.python.org
-RUN pip3 install PyGithub --trusted-host pypi.python.org
-RUN pip3 install imgurpython --trusted-host pypi.python.org
+RUN pip3 install flask --trusted-host pypi.python.org && \
+    pip3 install blinker --trusted-host pypi.python.org && \
+    pip3 install rejson --trusted-host pypi.python.org && \
+    pip3 install tweepy --trusted-host pypi.python.org && \
+    pip3 install requests-oauthlib --trusted-host pypi.python.org && \
+    pip3 install flask-restful --trusted-host pypi.python.org && \
+    pip3 install --upgrade google-api-python-client --trusted-host pypi.python.org && \
+    pip3 install --upgrade google-auth google-auth-oauthlib google-auth-httplib2 --trusted-host pypi.python.org && \
+    pip3 install PyGithub --trusted-host pypi.python.org && \
+    pip3 install imgurpython --trusted-host pypi.python.org
+
+COPY ./ ./
 
 EXPOSE 5000
 
