@@ -380,7 +380,11 @@ export default class CreateArea extends Component<{}, any> {
       this.createAreaFetch(JSON.stringify(jsonSerial))
       this.props.route.params = undefined
     } else
-      alert("Please have a look to the config before creating an Area")
+      Toast.show({
+        text: "Please have a look to the config before creating an Area",
+        buttonText: 'Ok',
+        duration: 5
+      })
   }
 
   async componentDidMount() {
