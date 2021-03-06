@@ -15,7 +15,7 @@ def after_request(response):
             for i in rtext.split('\n'):
                 print(i)
         except:
-            pass
+            print(rbody)
     print('=%s=' % ('RESPONSE'.center(blocklen - 2, '-')))
     if response and response.get_data() and (body := response.get_data().decode()):
         try:
@@ -23,7 +23,7 @@ def after_request(response):
             for i in text.split('\n'):
                 print(i)
         except:
-            pass
+            print(body)
     print('-'*blocklen)
     print('='*blocklen)
     return response
