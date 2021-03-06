@@ -171,14 +171,15 @@ export default class Connection extends Component<{}, any> {
           this.setState({ loading: false });
       }
 
-      public getLinks() {
+      public async getLinks() {
+        let token = await this.getData();
         return fetch('http://' + mobileIP + ':8080/oauth/links', {
             method: 'POST',
             headers: {
                 Accept: 'application/json',
                 'Content-Type': 'application/json'
             },
-            body: JSON.stringify({"token":userToken})
+            body: JSON.stringify({"token": token})
             })
             .then((response) => response.json()).then((json) => {
               console.log("LES CONNECTION SONT -----------------------------------------------------------")
@@ -337,13 +338,13 @@ export default class Connection extends Component<{}, any> {
             this.setState({set:false})
         }
       }
-      if (this.props.route.params && this.props.route.params["refresh"]) {
-        this.listElem()
-        this.props.route.params["refresh"] = false
+      
     }
-
+    
+    if (this.props.route.params && this.props.route.params["refresh"]) {
+      this.listElem()
+      this.props.route.params["refresh"] = false
     }
-
     if (this.state.loading) {
       return (
         <View>

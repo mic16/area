@@ -35,7 +35,7 @@ export default function Navigation({navigation}) {
           </Text>
         </Button>
         <Button style={styles.button}
-          onPress={() => navigation.navigate('Connection')}
+          onPress={() => navigation.navigate('Connection', {refresh: true})}
           transparent={true}
           full={true}>
             <Text>

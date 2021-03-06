@@ -155,7 +155,7 @@ export default class LoginComponent extends Component<{}, any> {
 
   render() {
     if (Platform.OS === 'web' && window.location.pathname.includes('/oauth/') && this.getData()) {
-      this.state.navigation.navigate('Connection')
+      this.state.navigation.navigate('Connection', {refresh: true})
     }
 
     if (this.state.firstLoad) {
