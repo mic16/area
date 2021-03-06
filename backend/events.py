@@ -10,14 +10,20 @@ def after_request(response):
     print(url.center(blocklen, '='))
     print('=%s=' % ('REQUEST'.center(blocklen - 2, '-')))
     if request and request.get_data() and (rbody := request.get_data().decode()):
-        rtext = json.dumps(json.loads(rbody), indent=4)
-        for i in rtext.split('\n'):
-            print(i)
+        try:
+            rtext = json.dumps(json.loads(rbody), indent=4)
+            for i in rtext.split('\n'):
+                print(i)
+        except:
+            pass
     print('=%s=' % ('RESPONSE'.center(blocklen - 2, '-')))
     if response and response.get_data() and (body := response.get_data().decode()):
-        text = json.dumps(json.loads(body), indent=4)
-        for i in text.split('\n'):
-            print(i)
+        try:
+            text = json.dumps(json.loads(body), indent=4)
+            for i in text.split('\n'):
+                print(i)
+        except:
+            pass
     print('-'*blocklen)
     print('='*blocklen)
     return response
