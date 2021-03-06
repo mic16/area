@@ -547,7 +547,7 @@ export default class CreateArea extends Component<{}, any> {
         Accept: 'application/json',
         'Content-Type': 'application/json',
       },
-      body: JSON.stringify({config})
+      body: JSON.stringify(config)
     }).then((response) => response.json()).then(async(json) => {
       console.log(json)
       let tmpReactionList: {[k: string]: any} = {};
@@ -574,7 +574,7 @@ export default class CreateArea extends Component<{}, any> {
           serviceKey += 1;
         }
       }
-      this.setState({actionFieldName: this.state.actionNameList[value - 1].fields, reactionServiceList: tmpReactionServiceList, reactionList: tmpReactionList, reactionNameList: tmpReactionNameList})
+      this.setState({actionFieldName: this.state.actionNameList[value - 1].fields, reactionServiceList: tmpReactionServiceList, reactionList: tmpReactionList, reactionNameList: tmpReactionNameList, reactionFieldName: json.result})
     }).catch((error) => {
       console.error(error)
     })
@@ -760,6 +760,7 @@ export default class CreateArea extends Component<{}, any> {
       return;
     let tmpReactionFieldList: Array<any> = [<View key={0}></View>];
 
+    console.log(this.state.reactionFieldName[this.state.reactionService][this.state.reactionValue - 1])
     this.state.reactionFieldName[this.state.reactionService][this.state.reactionValue - 1].fields.forEach((element: any, key: number) => {
       this.generateField(element, key, 'reaction');
       tmpReactionFieldList.push(

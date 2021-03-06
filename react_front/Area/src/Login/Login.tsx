@@ -165,9 +165,21 @@ export default class LoginComponent extends Component<{}, any> {
 
   }
 
+  public getData = async () => {
+    try {
+      const value = await AsyncStorage.getItem('userToken')
+      if (value !== null) {
+        return (value)
+      }
+    } catch(e) {
+      console.log(e);
+      return (null);
+    }
+  }
+
   render() {
 
-    if (Platform.OS === 'web' && window.location.pathname.includes("/oauth/") && userToken) {
+    if (Platform.OS === 'web' && window.location.pathname.includes("/oauth/") && this.getData()) {
       this.state.navigation.navigate("Connection")
     }
 
