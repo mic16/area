@@ -14,6 +14,44 @@ import googleapiclient.discovery
 API_SERVICE_NAME = 'youtube'
 API_VERSION = 'v3'
 
+def getLastPlaylist(user, area):
+    c = google.oauth2.credentials.Credentials(**user.get("Google.credential"))
+
+    youtube = googleapiclient.discovery.build(
+        API_SERVICE_NAME, API_VERSION, credentials=c)
+    
+    request = youtube.playlists().list(
+        part="snippet,contentDetails",
+        maxResults=50,
+        mine=True
+    )
+    lastPlaylist = request.execute()
+    lastPlaylistTab = []
+    for playlists in lastPlaylist.get('items'):
+        if (_.get(playlists, 'id') == None or _.get(playlists, 'snippet.title') == None or _.get(playlists, 'snippet.description') == None or _.get(playlists, 'snippet.thumbnails.medium.url') == None):
+            continue
+        lastPlaylistTab.append({'id':_.get(playlists, 'id'), 'title':_.get(playlists, 'snippet.title'), 'description':_.get(playlists, 'snippet.description'), 'url':_.get(playlists, 'snippet.thumbnails.medium.url')})
+    print("test")
+    print(lastPlaylistTab)
+    if area.getValue("youtube") == None:
+        area.setValue("youtube", {'lastPlaylist':lastPlaylistTab})
+        return (None)
+    oldPlaylist = area.getValue("youtube")
+    if oldPlaylist.get('lastPlaylist') == None:
+        oldPlaylist['lastPlaylist'] = lastPlaylistTab
+        area.setValue("youtube", oldPlaylist)
+        return (None)
+    oldSub = oldPlaylist['lastPlaylist']
+    diff = diffFirstSecond(oldSub, lastPlaylistTab, lambda x,y: x.get('id') == y.get('id'))
+    if (len(diff) == 0):
+        oldPlaylist['lastPlaylist'] = lastPlaylistTab
+        area.setValue("youtube", oldPlaylist)
+        return (None)
+    else:
+        oldPlaylist['lastPlaylist'] = lastPlaylistTab
+        area.setValue("youtube", oldPlaylist)
+        return (diff)
+
 def getLastSubscriber(user, area):
     c = google.oauth2.credentials.Credentials(**user.get("Google.credential"))
 
