@@ -24,6 +24,14 @@ export default class MyArea extends Component {
     }
   }
 
+  private storeData = async (item: string, value: string) => {
+    try {
+      await AsyncStorage.setItem(item, value)
+    } catch (e) {
+      console.log(e);
+    }
+  }
+
   public async logout() {
     console.log("Je vais me logout")
     let token = userToken;
@@ -40,7 +48,7 @@ export default class MyArea extends Component {
             "token": token,
           })
         })
-        .then((response) => response.json()).then((json) => {
+        .then((response) => response.json()).then(async(json) => {
           // let mapAREA:Map<String, Array<Object>> = new Map()
           // mapAREA.set("Action", json.result.actions)
           // mapAREA.set("Reaction", json.result.reactions)
@@ -58,6 +66,7 @@ export default class MyArea extends Component {
             text: 'Logout Success',
             buttonText: 'Ok'
           })
+          await this.storeData('userToken', undefined);
           this.state.navigation.navigate("LoginComponent")
         })
         .catch((error) => {
