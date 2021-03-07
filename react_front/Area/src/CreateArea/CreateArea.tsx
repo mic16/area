@@ -763,8 +763,10 @@ componentWillUnmount() {
   changeReaction = async (value: any) => {
     await this.setState({serviceReaction: this.state.reactionNameList[this.state.reactionService][value], reactionValue: value, reactionFieldList: []});
 
-    if (value === '0')
+    if (value === '0') {
+      this.setState({reactionValue: 0})
       return;
+    }
     let tmpReactionFieldList: Array<any> = [<View key={0}></View>];
 
     console.log(this.state.reactionFieldName[this.state.reactionService][this.state.reactionValue - 1])
