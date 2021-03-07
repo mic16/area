@@ -6,7 +6,7 @@ from Trigger import Trigger
 from Imgs import Imgs
 import imgurApi
 import _
-import formatter
+import safeformat
 
 @Service(oauth='Imgur')
 class Imgur():
@@ -69,7 +69,7 @@ class Imgur():
         title = ''
         description = ''
         if len(area.get(str)) >= 1:
-            title = formatter.format(fmtTitle, area.get(str)[0])
+            title = safeformat.format(fmtTitle, area.get(str)[0])
         if len(area.get(str)) >= 2:
-            description = formatter.format(fmtDesc, *area.get(str)[1:])
+            description = safeformat.format(fmtDesc, *area.get(str)[1:])
         imgurApi.createPost(area.getUser(), area.get(Imgs)[0].getImages(), title, description)

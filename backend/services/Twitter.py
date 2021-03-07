@@ -5,7 +5,7 @@ from Field import Field, FTYPE
 from Trigger import Trigger
 from Imgs import Imgs
 
-import formatter
+import safeformat
 import _
 import twitterApi
 
@@ -75,7 +75,7 @@ class Twitter():
     @Field('message', FTYPE.STRING, 'format string of your message (%s will be replaced by the message)')
     def tweet(self, area, fields):
         fmtStr = fields.getString('message', '%s') or '%s'
-        txt = formatter.format(fmtStr, *area.get(str))
+        txt = safeformat.format(fmtStr, *area.get(str))
         if len(txt) > 280:
             txt = txt[0:279]
         if area.get(Imgs) != None and len(area.get(Imgs)) >= 1:
@@ -91,4 +91,4 @@ class Twitter():
     @Field('message', FTYPE.STRING, 'format string of your message (%s will be replaced by the message)')
     def directMessage(self, area, fields):
         fmtStr = fields.getString('message', '%s') or '%s'
-        twitterApi.sendDirectMessage(area.getUser(), formatter.format(fmtStr, *area.get(str)), fields.getString('userId'))
+        twitterApi.sendDirectMessage(area.getUser(), safeformat.format(fmtStr, *area.get(str)), fields.getString('userId'))
