@@ -60,11 +60,15 @@ class Imgur():
         'Make a post',
         Imgs,
     )
+    @Field('title', FTYPE.STRING, 'format string of your title (%s will be replaced)')
+    @Field('description', FTYPE.STRING, 'format string of your description (%s will be replaced by the message)')
     def createPost(self, area, fields):
+        fmtTitle = fields.get('title', '%s') or '%s'
+        fmtDesc = fields.get('description', '%s') or '%s'
         title = ''
         description = ''
         if len(area.get(str)) >= 1:
-            title = area.get(str)[0]
+            title = fmtTitle % area.get(str)[0]
         if len(area.get(str)) >= 2:
-            description = area.get(str)[1]
+            description = fmtDesc % area.get(str)[1]
         imgurApi.createPost(area.getUser(), area.get(Imgs)[0].getImages(), title, description)

@@ -71,8 +71,10 @@ class Twitter():
         'Post a new tweet',
         str,
     )
+    @Field('message', FTYPE.STRING, 'format string of your message (%s will be replaced by the message)')
     def tweet(self, area, fields):
-        txt = area.get(str)[0]
+        fmtStr = fields.getString('message', '%s') or '%s'
+        txt = fmtStr % area.get(str)[0]
         if len(txt) > 280:
             txt = txt[0:279]
         if area.get(Imgs) != None and len(area.get(Imgs)) >= 1:
@@ -85,5 +87,7 @@ class Twitter():
         str,
     )
     @Field('userId', FTYPE.STRING, 'screen name of the targeted user')
+    @Field('message', FTYPE.STRING, 'format string of your message (%s will be replaced by the message)')
     def directMessage(self, area, fields):
-        twitterApi.sendDirectMessage(area.getUser(), area.get(str)[0], fields.getString('userId'))
+        fmtStr = fields.getString('message', '%s') or '%s'
+        twitterApi.sendDirectMessage(area.getUser(), fmtStr % area.get(str)[0], fields.getString('userId'))

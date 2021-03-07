@@ -28,5 +28,7 @@ class Gmail():
     )
     @Field('mailAdresse', FTYPE.STRING, 'Email adress of the targeted user')
     @Field('object', FTYPE.STRING, 'Subject of the mail')
+    @Field('message', FTYPE.STRING, 'format string of your message (%s will be replaced by the message)')
     def sendMail(self, area, fields):
-        gmailApi.sendMail(area.getUser(), area.get(str)[0], fields.getString('mailAdresse'), fields.getString('object'))
+        fmtStr = fields.get('message', '%s') or '%s'
+        gmailApi.sendMail(area.getUser(), fmtStr % area.get(str)[0], fields.getString('mailAdresse'), fields.getString('object'))

@@ -66,5 +66,7 @@ class Youtube():
         str,
     )
     @Field('videoId', FTYPE.STRING, 'VideoId of the youtube video')
+    @Field('message', FTYPE.STRING, 'format string of your message (%s will be replaced by the message)')
     def sendCommentOnVideo(self, area, fields):
-        youtubeApi.sendNewComment(area.getUser(), fields.getString('videoId'), area.get(str)[0])
+        fmtStr = fields.getString('message', '%s') or '%s'
+        youtubeApi.sendNewComment(area.getUser(), fields.getString('videoId'), fmtStr % area.get(str)[0])
