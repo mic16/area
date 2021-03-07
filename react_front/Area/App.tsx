@@ -18,7 +18,7 @@ export function saveVar(str: string) {
   val = str
 }
 
-// console.log = () => {};
+console.log = () => {};
 
 export default function App() {
   return (

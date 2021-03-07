@@ -355,7 +355,7 @@ export default class Connection extends Component<{}, any> {
     if (Platform.OS === 'web') {
       return (
           <Container>
-            <CustomHeader/>
+            <CustomHeader navigation={this.state.navigation}/>
             <ImageBackground source={require('../../assets/login.png')} style={{ width: '100%', height: '100%' }}>
               <Navigation navigation={this.state.navigation}/>
               <View style={{height: '90%', width: '78%', right: 0, position: 'absolute'}}>
