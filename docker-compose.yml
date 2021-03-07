@@ -6,19 +6,19 @@ services:
       - "8081:19006"
     depends_on:
       - area-backend
-      - area-mobile
+      # - area-mobile
     entrypoint: ["yarn", "web"]
     volumes:
       # - "./react_front/Area:/var/app"
       - ./android-build:/var/app/web
 
-  area-mobile:
-    build: 
-      context: ./react_front/Area/
-      dockerfile: Dockerfile.android
-    entrypoint: [ "/bin/bash", "-c", "cp /root/expo-apps/*.apk /var/app/android-build/client.apk" ]
-    volumes:
-      - ./android-build:/var/app/android-build
+  # area-mobile:
+  #   build: 
+  #     context: ./react_front/Area/
+  #     dockerfile: Dockerfile.android
+  #   entrypoint: [ "/bin/bash", "-c", "cp /root/expo-apps/*.apk /var/app/android-build/client.apk" ]
+  #   volumes:
+  #     - ./android-build:/var/app/android-build
 
   area-backend:
     build: ./backend/
@@ -35,6 +35,7 @@ services:
       - FLASK_APP=main.py
       - FLASK_ENV=production
       - AREA_ENV=debug
+      - AREA_TIMER=20
 
   redis:
     image: redislabs/rejson:latest
