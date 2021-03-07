@@ -879,7 +879,7 @@ componentWillUnmount() {
                             <Icon style={{marginTop: 10, }} name="arrow-forward-sharp"/>
                             <View style={{width: '50%', right: 0, backgroundColor: 'rgba(255, 255, 255, 0.5)', height: '100%', borderRadius: 20 }}>
                               <Form style={{ width: '90%', alignSelf:'center', marginTop: 10, height: '25%' }}>
-                                <Picker enabled={this.state.actionList.length !== 0} style={this.state.reactionServiceList.length !== 0 ? {borderRadius: 5} : {borderRadius: 5, opacity: 0}} selectedValue={this.state.reactionServiceValue} onValueChange={(value) => this.changeService(value, 'reaction')}>
+                                <Picker enabled={this.state.reactionServiceList.length !== 0} style={this.state.reactionServiceList.length !== 0 ? {borderRadius: 5} : {borderRadius: 5, opacity: 0}} selectedValue={this.state.reactionServiceValue} onValueChange={(value) => this.changeService(value, 'reaction')}>
                                   {
                                     this.state.reactionServiceList
                                   }
