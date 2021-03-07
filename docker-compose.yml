@@ -34,7 +34,7 @@ services:
     environment:
       - FLASK_APP=main.py
       - FLASK_ENV=production
-      - AREA_ENV=debug
+      - AREA_ENV=production
       - AREA_TIMER=20
 
   redis:
