@@ -50,3 +50,15 @@ def logout():
             return {"result": "you are disconnected"}
         return {"error": "you are not connected"}
     return {"error": "logout need a token"}
+
+@app.route('/checkToken', methods = ["POST"])
+def checkToken():
+    req_data = request.get_json()
+    if req_data is None:
+        return {"error": "Expected json body, got nothing"}
+    if (token := req_data.get("token")):
+        tokenManager = TokenManager()
+        if mail := tokenManager.getTokenUser(token):
+            return {"result": True}
+        return {"result": False}
+    return {"error": "checkToken need a token"}

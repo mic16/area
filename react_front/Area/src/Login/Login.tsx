@@ -153,12 +153,50 @@ export default class LoginComponent extends Component<{}, any> {
     }
   }
 
+  public async checkToken(token: string) {
+    if (!token)
+      return false;
+
+    const response: any = await fetch('http://' + mobileIP + ':8080/checkToken', {
+      method: 'POST',
+      headers: {
+        Accept: 'application/json',
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({token})
+    });
+
+    if (!response)
+      return false;
+
+    const json = await response.json();
+
+    return json && json.result || false;
+  }
+
   render() {
-    if (Platform.OS === 'web' && window.location.pathname.includes('/oauth/')) {
-      this.getData().then((token) => {
-        if (token)
-          this.state.navigation.navigate('Connection', {refresh: true})
-      });
+    if (Platform.OS === 'web') {
+      if (window.location.pathname.includes('/oauth/')) {
+        this.getData().then(async (token) => {
+          if (token) {
+            if (await this.checkToken(token)) {
+              this.state.navigation.navigate('Connection', {refresh: true});
+            } else {
+              await this.storeData('userToken', '');
+            }
+          }
+        });
+      } else {
+        this.getData().then(async (token) => {
+          if (token) {
+            if (await this.checkToken(token)) {
+              this.state.navigation.navigate('MyArea', {refresh: true});
+            } else {
+              await this.storeData('userToken', '');
+            }
+          }
+        });
+      }
     }
 
     if (this.state.firstLoad) {
