@@ -4,8 +4,8 @@ from Reaction import Reaction
 from Field import Field, FTYPE
 from Trigger import Trigger
 from Imgs import Imgs
-import formatter
 
+import formatter
 import _
 import twitterApi
 
