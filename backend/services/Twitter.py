@@ -13,7 +13,7 @@ class Twitter():
     def __init__(self):
         pass
 
-    @Action('When the user likes something')
+    @Action('When I like a tweet')
     @Field('match', FTYPE.STRING, 'String that should be matched')
     @Field('with image', FTYPE.BOOLEAN, 'If the post should contain an image')
     def onLike(self, fields):
@@ -41,7 +41,7 @@ class Twitter():
 
         return trig.setAction(func)
 
-    @Action('When the user tweets something')
+    @Action('When I tweet')
     @Field('match', FTYPE.STRING, 'String that should be matched')
     @Field('with image', FTYPE.BOOLEAN, 'If the post should contain an image')
     def onTweet(self, fields):

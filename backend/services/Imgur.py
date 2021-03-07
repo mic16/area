@@ -12,7 +12,7 @@ class Imgur():
     def __init__(self):
         pass
 
-    @Action('When the user posts something')
+    @Action('When I posts something')
     @Field('match', FTYPE.STRING, 'String that should be matched with the title or description')
     def onPost(self, fields):
 
@@ -34,7 +34,7 @@ class Imgur():
 
         return trig.setAction(func)
 
-    @Action('When the user favs a post')
+    @Action('When I favs a post')
     @Field('match', FTYPE.STRING, 'String that should be matched with the title or description')
     def onFav(self, fields):
 

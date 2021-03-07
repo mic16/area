@@ -13,7 +13,7 @@ class Youtube():
     def __init__(self):
         pass
 
-    @Action('When the connected user gets a new subscriber')
+    @Action('[SLOW: 12h] When I get a new subscriber')
     def onSubscribe(self, fields):
 
         trig = Trigger(types=[str, Imgs])
@@ -29,7 +29,7 @@ class Youtube():
                 area.ret(Imgs([_.get(subscriber, 'url')]))
         return trig.setAction(func)
 
-    @Action('When the connected user likes a video')
+    @Action('When I like a video')
     def onLike(self, fields):
 
         trig = Trigger(types=[str, Imgs])
@@ -45,7 +45,7 @@ class Youtube():
                 area.ret(Imgs([_.get(like, 'url')]))
         return trig.setAction(func)
 
-    @Action('When the connected user create a playlist')
+    @Action('When I create a playlist')
     def onCreatePlaylist(self, fields):
 
         trig = Trigger(types=[str, Imgs])

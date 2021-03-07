@@ -10,7 +10,7 @@ class Gmail():
     def __init__(self):
         pass
 
-    @Action('When the user receives a mail')
+    @Action('When I receives a mail')
     def onMail(self, fields):
         trig = Trigger(types=[str])
         def func(area, fields):

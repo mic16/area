@@ -11,7 +11,7 @@ class Github():
     def __init__(self):
         pass
 
-    @Action('When the connected user stars a Repo')
+    @Action('When I star a Repo')
     @Field('match', FTYPE.STRING, 'String that should be matched with the name or description of the repo')
     def onStar(self, fields):
 
@@ -33,7 +33,7 @@ class Github():
 
         return trig.setAction(func)
 
-    @Action('When a user follows the connected user')
+    @Action('When a user follows me')
     @Field('match', FTYPE.STRING, 'String that should be matched in the new follower\'s bio')
     def onFolow(self, fields):
 
