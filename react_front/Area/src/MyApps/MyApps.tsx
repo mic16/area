@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { ImageBackground, Platform, View, StyleSheet } from "react-native";
+import { ImageBackground, Platform, View, StyleSheet, BackHandler } from "react-native";
 import { Footer, FooterTab, Text, Button, Container, Content, Form, Item, Input, Label, Title, Icon, Drawer, Accordion, Spinner, Picker, Header, Card, CardItem, Body, Left, Right, Thumbnail } from 'native-base';
 // import * as Font from 'expo-font';
 // import { Ionicons } from '@expo/vector-icons';
@@ -198,14 +198,23 @@ export default class MyApps extends Component<{}, any> {
         }
       }
 
-  async componentDidMount() {
-      // await Font.loadAsync({
-      //     Roboto: require('native-base/Fonts/Roboto.ttf'),
-      //     Roboto_medium: require('native-base/Fonts/Roboto_medium.ttf'),
-      //     ...Ionicons.font,
-      // });
-      this.setState({ loading: false });
-  }
+      componentDidMount() {
+        BackHandler.addEventListener("hardwareBackPress", this.handleBack)
+        // await Font.loadAsync({
+        //     Roboto: require('native-base/Fonts/Roboto.ttf'),
+        //     Roboto_medium: require('native-base/Fonts/Roboto_medium.ttf'),
+        //     ...Ionicons.font,
+        // });
+        this.setState({ loading: false });
+    }
+  
+    public handleBack() {
+      return true
+    }
+  
+    componentWillUnmount() {
+      BackHandler.removeEventListener("hardwareBackPress", this.handleBack)
+    }
 
   openCloseDrawer = () => {
     if (!this.state.drawerState)

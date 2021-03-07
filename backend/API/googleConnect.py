@@ -59,7 +59,7 @@ def oauthAuthorizedGoogle():
 
         data.updateUser(user, {"Google": {"credential":  credentials_to_dict(credentials)}})
     except Exception as err:
-        return {"error": err}
+        return {"error": str(err)}
 
     return {"result": "Google account linked to user '%s'" % (user)}
 

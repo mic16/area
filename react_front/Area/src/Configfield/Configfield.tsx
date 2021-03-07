@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { Alert, ImageBackground, Platform, View } from "react-native";
+import { Alert, BackHandler, ImageBackground, Platform, View } from "react-native";
 import { Spinner, Root, Text, Accordion, FooterTab, Footer, Button, Container, Header, Content, Form, Item, Input, Label, Title, Icon, Grid, Col, Left, Right, Body, Toast, CheckBox, ListItem, List } from 'native-base';
 // import * as Font from 'expo-font';
 // import { Ionicons } from '@expo/vector-icons';
@@ -7,8 +7,9 @@ import { Ionicons } from "react-icons/io"
 import { NavigationContainer } from "react-navigation";
 import { TextInput } from 'react-native-gesture-handler';
 
-export default class ConfigComponent extends Component<{}, any> {
 
+export default class ConfigComponent extends Component<{}, any> {
+  
   constructor(props:any) {
     super(props);
     this.state = {
@@ -22,13 +23,22 @@ export default class ConfigComponent extends Component<{}, any> {
     }
   }
   
-  async componentDidMount() {
+  componentDidMount() {
+      BackHandler.addEventListener("hardwareBackPress", this.handleBack)
       // await Font.loadAsync({
       //     Roboto: require('native-base/Fonts/Roboto.ttf'),
       //     Roboto_medium: require('native-base/Fonts/Roboto_medium.ttf'),
       //     ...Ionicons.font,
       // });
       this.setState({ loading: false });
+  }
+
+  public handleBack() {
+    return true
+  }
+
+  componentWillUnmount() {
+    BackHandler.removeEventListener("hardwareBackPress", this.handleBack)
   }
 
   public onChangeValueString(value:any, name:string) {
@@ -162,8 +172,9 @@ export default class ConfigComponent extends Component<{}, any> {
     if (this.props.route.params.data === undefined) {
       console.log("Les paramètres data sont undefined, voici la route: ")
       console.log(this.props.route)
-    } else
+    } else {
       this.createFields(this.props.route.params.data)
+    }
     if (this.state.loading) {
       console.log("JE SUIS DANS LA CONFIG")
       // console.log(this.props)
@@ -187,7 +198,7 @@ export default class ConfigComponent extends Component<{}, any> {
                 <Icon name="chevron-back-outline" />
               </Button>
               }
-            <Title style={{  marginRight:0, color: "white", fontSize:22, alignSelf:"center" }} >{ this.state.headerReact + " configuration"}</Title>
+            <Title style={{  marginRight:0, color: "white", fontSize:22, alignSelf:"center" }} >Configuration</Title>
           </Header>
           <Content style= {{ position: "relative" }}>
             {
