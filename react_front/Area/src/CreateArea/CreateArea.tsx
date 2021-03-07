@@ -525,7 +525,7 @@ componentWillUnmount() {
       let tmpResponseActionField = this.state.responseActionField;
 
       tmpResponseActionField[key] = !this.state.responseActionField[key];
-      this.setState({responseActionField: tmpResponseActionField, reactionServiceValue: 0, reactionService: ''});
+      this.setState({responseActionField: tmpResponseActionField, reactionServiceValue: 0, reactionService: '', reactionFieldList: []});
       let tmpField = this.state.actionField;
 
       tmpField[key] = <CheckBox color='black' checked={this.state.responseActionField[key]} onPress={() => this.updateFieldBoolean(key, type, element, value)}/>
