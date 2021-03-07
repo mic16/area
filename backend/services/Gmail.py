@@ -4,6 +4,7 @@ from Reaction import Reaction
 from Field import Field, FTYPE
 from Trigger import Trigger
 import gmailApi
+import formatter
 
 @Service(oauth='Google')
 class Gmail():
@@ -31,4 +32,4 @@ class Gmail():
     @Field('message', FTYPE.STRING, 'format string of your message (%s will be replaced by the message)')
     def sendMail(self, area, fields):
         fmtStr = fields.get('message', '%s') or '%s'
-        gmailApi.sendMail(area.getUser(), fmtStr % area.get(str)[0], fields.getString('mailAdresse'), fields.getString('object'))
+        gmailApi.sendMail(area.getUser(), formatter.format(fmtStr, *area.get(str)), fields.getString('mailAdresse'), fields.getString('object'))

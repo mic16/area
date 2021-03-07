@@ -5,6 +5,7 @@ from Field import Field, FTYPE
 from Trigger import Trigger
 from Imgs import Imgs
 
+import formatter
 import _
 import youtubeApi
 
@@ -69,4 +70,4 @@ class Youtube():
     @Field('message', FTYPE.STRING, 'format string of your message (%s will be replaced by the message)')
     def sendCommentOnVideo(self, area, fields):
         fmtStr = fields.getString('message', '%s') or '%s'
-        youtubeApi.sendNewComment(area.getUser(), fields.getString('videoId'), fmtStr % area.get(str)[0])
+        youtubeApi.sendNewComment(area.getUser(), fields.getString('videoId'), formatter.format(fmtStr, *area.get(str)))
