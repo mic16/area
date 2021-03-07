@@ -23,7 +23,7 @@ export default class LoginComponent extends Component<{}, any> {
       RegMail: '',
       RegPassword: '',
       RegConfPassword: '',
-      firstLoad: true
+      firstLoad: true,
     }
   }
 
@@ -154,8 +154,11 @@ export default class LoginComponent extends Component<{}, any> {
   }
 
   render() {
-    if (Platform.OS === 'web' && window.location.pathname.includes('/oauth/') && this.getData()) {
-      this.state.navigation.navigate('Connection', {refresh: true})
+    if (Platform.OS === 'web' && window.location.pathname.includes('/oauth/')) {
+      this.getData().then((token) => {
+        if (token)
+          this.state.navigation.navigate('Connection', {refresh: true})
+      });
     }
 
     if (this.state.firstLoad) {

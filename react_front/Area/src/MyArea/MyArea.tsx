@@ -66,7 +66,7 @@ export default class MyArea extends Component {
             text: 'Logout Success',
             buttonText: 'Ok'
           })
-          await this.storeData('userToken', undefined);
+          await this.storeData('userToken', '');
           this.state.navigation.navigate("LoginComponent")
         })
         .catch((error) => {

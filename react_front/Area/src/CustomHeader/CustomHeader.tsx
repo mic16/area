@@ -52,7 +52,7 @@ export default class CustomHeader extends Component {
             alert('Logout failed');
             return;
           }
-          await this.storeData('userToken', undefined);
+          await this.storeData('userToken', '');
           this.state.navigation.navigate("LoginComponent")
         })
         .catch((error) => {
