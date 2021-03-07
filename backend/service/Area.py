@@ -8,6 +8,14 @@ from User import User
 from didyoumean import DidYouMean
 import OAuthManager
 import traceback
+import os
+
+maxTimer = 60
+try:
+    maxTimer = max(int(os.getenv('AREA_TIMER')), 5)
+except:
+    pass
+
 
 tokenManager = TokenManager()
 
@@ -142,7 +150,7 @@ class Area():
         return self.user
 
     def trigger(self):
-        if (time.time() - self.lastTrigger)>= 60:
+        if (time.time() - self.lastTrigger)>= maxTimer:
             print("Executing area %s" % self.getUUID())
             print('    Area Infos: %s' % self.debug)
             try:
