@@ -84,24 +84,27 @@ def newTweetImages(user, text, imgs):
     auth.set_access_token(user.get("twitter.token"), user.get("twitter.token_secret"))
     api=tweepy.API(auth)
 
-    mediaList = []
-    for i in imgs:
-        filename = i.split('/')[-1]
-        request = requests.get(i, stream=True)
+    try:
+        mediaList = []
+        for i in imgs:
+            filename = i.split('/')[-1]
+            if (not '.' in filename):
+                filename += '.jpg'
+            request = requests.get(i, stream=True)
 
-        if request.status_code == 200:
-            file = open(filename, 'wb')
-            with file as image:
-                for chunk in request:
-                    image.write(chunk)
-            file.close()
-            media = api.media_upload(filename=filename).media_id
-            if (media != None):
-                mediaList.append(media)
-            os.remove(filename)
-
-    api.update_status(status=text, media_ids=mediaList[:4])
-
+            if request.status_code == 200:
+                file = open(filename, 'wb')
+                with file as image:
+                    for chunk in request:
+                        image.write(chunk)
+                file.close()
+                media = api.media_upload(filename=filename).media_id
+                if (media != None):
+                    mediaList.append(media)
+                os.remove(filename)
+        api.update_status(status=text, media_ids=mediaList[:4])
+    except ValueError:
+        newTweet(user, text)
 
 def sendDirectMessage(user, text, userId):
     auth = tweepy.OAuthHandler(consumerKey, consumerSecretKey)     
